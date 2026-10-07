@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "shwgconfigtestmod",
+  "version": "${version}",
+  "name": "Shwg Config Testmod",
+  "description": "Testmod for Shwg Config",
+  "authors": ["Schauweg"],
+  "contact": {},
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "${group}.testmod.TestMod"
+    ],
+    "modmenu": [
+      "${group}.testmod.config.ModMenuIntegration"
+    ]
+
+  },
+  "mixins": [
+    {
+      "config": "shwgconfigtestmod.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": "*",
+    "${fabricId}": ">=${fabricVersion}",
+    "minecraft": ">=${minecraftVersion}"
+  }
+}

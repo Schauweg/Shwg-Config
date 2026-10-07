@@ -1,0 +1,8 @@
+{
+  "shwgconfig.button.on": "ON",
+  "shwgconfig.button.off": "OFF",
+  "shwgconfig.number.min": "Min",
+  "shwgconfig.number.max": "Max",
+  "shwgconfig.keybind.listening": "Press Key",
+  "key.category.testmod.keybinds": "My Mod Keybinds"
+}

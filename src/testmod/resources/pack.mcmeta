@@ -1,0 +1,7 @@
+{
+  "pack": {
+    "description": "Test Mod Resource Pack.",
+    "pack_format": ${packVersion},
+    "forge:resource_pack_format": ${packVersion}
+  }
+}

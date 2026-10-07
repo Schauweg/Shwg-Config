@@ -1,0 +1,92 @@
+/*? if >= 1.21.9 { */
+
+/*?} else if >= 1.21.1 {*/
+
+/*?}*/
+
+
+
+/*? if >= 1.21 {*/
+
+/*?} else {*/
+
+/*?}*/
+
+
+/*? if >= 1.21 {*/ //OPTION_ONE /*? } else {*/ //OPTION_TWO /*?} */
+
+
+/*? if >= 1.21.9 {*/ //OPTION_ONE /*? } else {*/ //OPTION_TWO /*?} */
+
+============================================================================
+
+/*? if > 1.21.11 {*/
+
+/*? } else if >= 1.20 { */
+
+/*? } else { */
+
+/*? } */
+
+============================================================================
+
+/*? if >= 1.20 {*/
+
+/*?} else {*/
+
+/*?}*/
+
+
+============================================================================
+
+
+/*? if >= 1.21.9 { */
+
+/*?} else {*/
+
+/*?}*/
+
+
+
+
+/*? if >= 1.21.9 { */
+
+/*?} else if >= 1.20 {*/
+
+/*?}*/
+
+
+
+
+
+/*? if < 1.21 && >= 1.20 {*/
+
+/*?}*/
+
+
+
+
+
+/*? if >= 1.20 { */
+/*import net.minecraft.client.gui.GuiGraphics;
+*//*?} else {*/
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiComponent;
+/*?} */
+
+
+
+
+/*? if >= 1.20 {*/
+//    public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+/*?} else {*/
+//public void render(@NotNull PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
+ /*?}*/
+}
+
+
+/*? if >= 1.20 {*/
+
+/*?} else {*/
+
+/*?}*/

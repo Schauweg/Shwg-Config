@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "dev.shwg.shwgconfig.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "minVersion": "0.8.4",
+  "client": [
+    "EditBoxAccessor",
+    "GraphicsMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

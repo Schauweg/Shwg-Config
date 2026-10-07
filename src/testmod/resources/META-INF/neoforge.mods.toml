@@ -1,0 +1,25 @@
+modLoader = "javafml"
+loaderVersion = "*"
+issueTrackerURL = ""
+license = "MIT"
+
+[[mods]]
+modId = "shwgconfigtestmod"
+version = "${version}"
+displayName = "Shwg Config Testmod"
+authors = "Schauweg"
+description = '''
+Testmod for Shwg Config
+'''
+logoFile = "assets/testmod/icon.png"
+logoBlur = false
+
+[[dependencies.shwgconfigtestmod]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[${minecraftVersion},)"
+ordering = "NONE"
+side = "CLIENT"
+
+[[mixins]]
+config = "shwgconfigtestmod.client.mixins.json"

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "${id}",
+  "version": "${version}",
+  "name": "${name}",
+  "description": "${description}",
+  "authors": ["${authors}"],
+  "icon": "assets/${id}/icon.png",
+  "contact": {
+    "issues": "${issueUrl}"
+  },
+  "license": "${license}",
+  "environment": "client",
+  "entrypoints": {
+    "main": [
+      "${group}.shwgconfig.ShwgConfig"
+    ]
+
+  },
+  "mixins": [
+    {
+      "config": "${id}.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": "*",
+    "${fabricId}": ">=${fabricVersion}",
+    "minecraft": ">=${minecraftVersion}"
+  }
+}
