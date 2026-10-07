@@ -15,6 +15,11 @@ It's built with [Stonecraft](https://stonecraft.meza.gg/) (Stonecutter + Archite
 - **Automatic JSON persistence** - config values save/load themselves, no manual serialization code
 - **Multi-loader, multi-version** - built with Stonecraft (Stonecutter + Architectury) so the same mod source can target Fabric, NeoForge, and Forge across a range of MC versions
 
+<details>
+  <summary>Screenshot</summary>
+<img src="https://cdn.modrinth.com/data/pWM8kTBg/images/efe937a7bf1bc25a5fe4ececac253991829547d3.png" alt="screenshot of basic controllers the library provides">
+</details>
+
 ## Quick example
 
 ```java
@@ -50,9 +55,11 @@ public void onInitializeClient() {
 
 That's enough to get a working, saved, resizable config screen. Open it with `MANAGER.getScreen(parentScreen)`.
 
+For a more complete example you can take a look at the [Test Mod](https://github.com/Schauweg/Shwg-Config/blob/main/src/testmod/java/dev/shwg/testmod/TestMod.java) inside this repository.
+
 ## Installation
 
-Published on [Modrinth](https://modrinth.com/) (also available on the Modrinth Maven) and [CurseForge](https://www.curseforge.com/). Add it as a dependency through whichever of those you already use for your mod's other dependencies.
+Published on [Modrinth](https://modrinth.com/mod/shwgconfig) (also available on the Modrinth Maven) and [CurseForge](https://www.curseforge.com/minecraft/mc-mods/shwgconfig). Add it as a dependency through whichever of those you already use for your mod's other dependencies.
 
 ## Available controllers and value types
 
