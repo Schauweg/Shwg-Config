@@ -263,14 +263,7 @@ publishing {
 
 publishMods {
     modrinth {
-        projectId = providers.gradleProperty("MODRINTH_ID")
-            .orElse(providers.environmentVariable("MODRINTH_ID"))
-        accessToken = providers.gradleProperty("MODRINTH_TOKEN")
-            .orElse(providers.environmentVariable("MODRINTH_TOKEN"))
-
-        if (mod.isFabric) {
-            requires("fabric-api")
-        }
+        environment = CLIENT_ONLY
 
         additionalFile(tasks.named("sourcesJar")) {
             type = SOURCES_JAR
@@ -279,17 +272,10 @@ publishMods {
         additionalFile(javadocJar){
             type = JAVADOC_JAR
         }
-
-
     }
 
-//    curseforge {
-//        clientRequired = true
-//        serverRequired = false
-//        if (mod.isFabric) {
-//            requires("fabric-api")
-//            optional("modmenu")
-//        }
-//        requires("cloth-config")
-//    }
+    curseforge {
+        client = true
+        server = false
+    }
 }
