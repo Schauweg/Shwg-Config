@@ -27,7 +27,7 @@ import net.minecraft.client.input.MouseButtonInfo;
 /*?} */
 
 /*? if >= 1.20 { */
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 /*?} else {*/
 //import com.mojang.blaze3d.vertex.PoseStack;
 /*?} */
@@ -57,9 +57,9 @@ public abstract class GenericAbstractWidget extends AbstractWidget implements Re
 
     @Override
     /*? if >= 26 { */
-    public final void extractWidgetRenderState(@NotNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+    //public final void extractWidgetRenderState(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
     /*? } else if >= 1.20 { */
-    //public final void renderWidget(@NotNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+    public final void renderWidget(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
     /*? } else if >= 1.19.4 { */
     //public final void renderWidget(@NotNull PoseStack graphics, int mouseX, int mouseY, float partialTick) {
     /*? } else { */
@@ -71,9 +71,9 @@ public abstract class GenericAbstractWidget extends AbstractWidget implements Re
 
     public final void render(@NotNull GenericGraphics graphics, int mouseX, int mouseY, float partialTick) {
         /*? if >= 26 { */
-        super.extractRenderState(graphics.getGraphics(), mouseX, mouseY, partialTick);
+        //super.extractRenderState(graphics.getGraphics(), mouseX, mouseY, partialTick);
         /*? } else { */
-        //super.render(graphics.getGraphics(), mouseX, mouseY, partialTick);
+        super.render(graphics.getGraphics(), mouseX, mouseY, partialTick);
         /*? }*/
     }
 

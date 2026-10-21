@@ -16,9 +16,9 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /*? if >= 26 { */
-import dev.shwg.shwgconfig.mixin.EditBoxAccessor;
+/*import dev.shwg.shwgconfig.mixin.EditBoxAccessor;
 import net.minecraft.util.StringUtil;
-/*? } */
+*//*? } */
 
 /*? if >= 1.21.9 { */
 import net.minecraft.client.input.CharacterEvent;
@@ -57,9 +57,9 @@ public abstract class GenericAbstractEditBox extends GenericAbstractWidget {
     @Override
     public void renderWidget(@NotNull GenericGraphics graphics, int mouseX, int mouseY, float partialTick) {
         /*? if >= 26 { */
-        editBox.extractRenderState(graphics.getGraphics(),  mouseX, mouseY, partialTick);
+        //editBox.extractRenderState(graphics.getGraphics(),  mouseX, mouseY, partialTick);
         /*? } else if >= 1.19.4 { */
-        //editBox.render(graphics.getGraphics(), mouseX, mouseY, partialTick);
+        editBox.render(graphics.getGraphics(), mouseX, mouseY, partialTick);
         /*? } else { */
         //editBox.render(graphics.getGraphics(), mouseX, mouseY, partialTick);
         /*? }*/
@@ -202,9 +202,9 @@ public abstract class GenericAbstractEditBox extends GenericAbstractWidget {
     @Override
     protected boolean onCharTyped(GenericCharacterEvent characterEvent) {
         /*? if >= 26 { */
-        return editBox.charTyped(new CharacterEvent(characterEvent.getCodepoint()));
+        //return editBox.charTyped(new CharacterEvent(characterEvent.getCodepoint()));
         /*? } else if >= 1.21.9 { */
-        //return editBox.charTyped(new CharacterEvent(characterEvent.getCodepoint(), characterEvent.getModifier()));
+        return editBox.charTyped(new CharacterEvent(characterEvent.getCodepoint(), characterEvent.getModifier()));
         /*? } else { */
         //return editBox.charTyped(characterEvent.getCodepointAsChar(), characterEvent.getModifier());
         /*? } */
@@ -249,7 +249,7 @@ public abstract class GenericAbstractEditBox extends GenericAbstractWidget {
         }
 
         /*? if >= 26 { */
-        private Predicate<String> filter = Objects::nonNull;
+        /*private Predicate<String> filter = Objects::nonNull;
 
         public void setFilter(Predicate<String> filter) {
             this.filter = filter == null ? Objects::nonNull : filter;
@@ -292,7 +292,7 @@ public abstract class GenericAbstractEditBox extends GenericAbstractWidget {
                 }
             }
         }
-        /*? } */
+        *//*? } */
 
         /*? if < 1.20.2 { */
         /*public void moveCursor(int offset, boolean shiftDown) {

@@ -8,7 +8,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 
 /*? if >= 26 { */
-import net.minecraft.core.component.DataComponentPatch;
+//import net.minecraft.core.component.DataComponentPatch;
 /*? } */
 
 /*? if >= 1.21.2 { */
@@ -97,7 +97,7 @@ public class DisplayItemStack {
 
     public static ItemStack getStackSimple(Item item, int count) {
         /*? if >= 26 { */
-        return new ItemStack(
+        /*return new ItemStack(
                 Holder.direct(item),
                 count,
                 DataComponentPatch.builder()
@@ -105,11 +105,11 @@ public class DisplayItemStack {
                         .set(DataComponents.MAX_STACK_SIZE, 64)
                         .build()
         );
-        /*? } else { */
-        /*ItemStack stack = item.getDefaultInstance();
+        *//*? } else { */
+        ItemStack stack = item.getDefaultInstance();
         stack.setCount(count);
         return stack;
-         *//*? } */
+         /*? } */
     }
 
     public static ItemStack getStackSimple(Item item) {

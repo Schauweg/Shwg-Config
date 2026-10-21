@@ -6,7 +6,7 @@ import dev.shwg.shwgconfig.api.ClientTickDispatcher;
 import dev.shwg.testmod.config.TestConfig;
 
 /*? if fabric {*/
-//import net.fabricmc.api.ModInitializer;
+import net.fabricmc.api.ModInitializer;
 /*?}*/
 
 /*? if forge {*/
@@ -17,17 +17,17 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 *//*?}*/
 
 /*? if neoforge {*/
-import net.neoforged.fml.common.Mod;
+/*import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.bus.api.IEventBus;
-/*?}*/
+*//*?}*/
 
 /*? if forgeLike{ */
-import dev.shwg.shwgconfig.ShwgConfig;
+/*import dev.shwg.shwgconfig.ShwgConfig;
 @Mod(TestMod.MOD_ID)
-/*?}*/
+*//*?}*/
 /*~ if fabric '{' -> 'implements ModInitializer {' */
-public class TestMod {
+public class TestMod implements ModInitializer {
 
     public static final String MOD_ID = "shwgconfigtestmod";
     public static final TestConfig TEST_CONFIG = new TestConfig();
@@ -43,18 +43,18 @@ public class TestMod {
     *//*?}*/
 
     /*? if neoforge {*/
-    public TestMod(IEventBus modEventBus, ModContainer modContainer) {
+    /*public TestMod(IEventBus modEventBus, ModContainer modContainer) {
         init();
         ShwgConfig.neoForgeInit(configManager, modEventBus, modContainer);
     }
-    /*?}*/
+    *//*?}*/
 
     /*? if fabric {*/
-    /*@Override
+    @Override
     public void onInitialize() {
         init();
     }
-    *//*?}*/
+    /*?}*/
 
     private void init(){
         configManager = ConfigManager.of(TEST_CONFIG, "shwgconfig-testmod.json");
@@ -62,7 +62,7 @@ public class TestMod {
 
         ClientTickDispatcher.registerGUI(keyEvent ->  {
             if (keyEvent.matches(TEST_CONFIG.keybindValue)) {
-                Minecraft.getInstance().gui.setScreen(configManager.getScreen(Minecraft.getInstance().gui.screen()));
+                Minecraft.getInstance().setScreen(configManager.getScreen(Minecraft.getInstance().screen));
             }
         });
     }

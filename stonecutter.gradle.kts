@@ -3,7 +3,7 @@ plugins {
     id("gg.meza.stonecraft")
 }
 
-stonecutter active "26.2-neoforge" /* [SC] DO NOT EDIT */
+stonecutter active "1.21.11-fabric" /* [SC] DO NOT EDIT */
 
 tasks.register("runActiveTestmod") {
     group = "mod"

@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /*? if fabric {*/
-//import net.fabricmc.api.ModInitializer;
+import net.fabricmc.api.ModInitializer;
 /*?}*/
 
 /*? if forge {*/
@@ -20,20 +20,20 @@ import net.minecraftforge.fml.ModLoadingContext;
 *//*?}*/
 
 /*? if neoforge {*/
-import net.neoforged.fml.common.Mod;
+/*import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
-/*?}*/
+*//*?}*/
 
 /*? if forgeLike {*/
-import dev.shwg.shwgconfig.api.ConfigManager;
+/*import dev.shwg.shwgconfig.api.ConfigManager;
 import dev.shwg.shwgconfig.api.KeybindRegistrar;
 @Mod(ShwgConfig.MOD_ID)
-/*?}*/
+*//*?}*/
 /*~ if fabric '{' -> 'implements ModInitializer {' */
-public class ShwgConfig {
+public class ShwgConfig implements ModInitializer {
 
     public static final String MOD_ID = "shwgconfig";
 
@@ -66,7 +66,7 @@ public class ShwgConfig {
     *//*?}*/
 
     /*? if neoforge {*/
-    public static void neoForgeInit(ConfigManager configManager, IEventBus modEventBus, ModContainer modContainer) {
+    /*public static void neoForgeInit(ConfigManager configManager, IEventBus modEventBus, ModContainer modContainer) {
         ModLoadingContext.get().registerExtensionPoint(IConfigScreenFactory.class,
                 () -> (client, parent) -> configManager.getScreen(parent));
         modEventBus.addListener(KeybindRegistrar::registerAll);
@@ -75,14 +75,14 @@ public class ShwgConfig {
     public ShwgConfig(IEventBus modEventBus, ModContainer modContainer) {
         initializePlatform();
     }
-    /*?}*/
+    *//*?}*/
 
     /*? if fabric {*/
-    /*@Override
+    @Override
     public void onInitialize() {
         initializePlatform();
     }
-    *//*?}*/
+    /*?}*/
 
     private static void initializePlatform() {
         if (initialized) {

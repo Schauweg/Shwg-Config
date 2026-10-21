@@ -44,9 +44,9 @@ public class KeybindValue extends StringValue {
         super(defaultKey.getName());
         this.keyMapping = createKeyMapping(translationKey, category, defaultKey);
         /*? if fabric { */
-        //KeybindRegistrar.registerImmediately(this.keyMapping);
+        KeybindRegistrar.registerImmediately(this.keyMapping);
         /*? } else { */
-        KeybindRegistrar.enqueue(this.keyMapping);
+        //KeybindRegistrar.enqueue(this.keyMapping);
          /*? } */
          this.key = defaultKey;
     }

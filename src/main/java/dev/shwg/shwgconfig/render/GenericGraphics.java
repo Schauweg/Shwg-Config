@@ -32,13 +32,12 @@ import net.minecraft.client.renderer.RenderPipelines;
 
 /*? if <=1.21.5 && >=1.21.2 {*/
 //import net.minecraft.client.renderer.RenderType;
-        /*?}*/
+/*?}*/
 
 /*? if >=1.20 {*/
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 /*?} else {*/
-/*import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.gui.GuiComponent;
+/*import net.minecraft.client.gui.GuiComponent;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screens.Screen;
 *//*?}*/
@@ -50,7 +49,7 @@ import net.minecraft.client.gui.screens.Screen;
 /**
  * Cross-version abstraction layer over Minecraft's GUI rendering API.
  *
- * <p>Wraps the version-specific rendering context - {@code GuiGraphicsExtractor} for
+ * <p>Wraps the version-specific rendering context - {@code GuiGraphics} for
  * Minecraft 1.20 and above, {@code PoseStack} for older versions - behind a
  * single unified interface. Rendering code written against {@code GenericGraphics}
  * compiles correctly for every Minecraft version supported by Stonecutter without
@@ -69,28 +68,28 @@ public class GenericGraphics {
     List<DeferredElement> deferredElements;
 
     /*? if >=1.20 { */
-    private final GuiGraphicsExtractor graphics;
+    private final GuiGraphics graphics;
 
     /**
-     * Creates a {@code GenericGraphics} instance backed by the given {@code GuiGraphicsExtractor}.
+     * Creates a {@code GenericGraphics} instance backed by the given {@code GuiGraphics}.
      * This constructor is used for Minecraft 1.20 and above.
      *
      * @param guiGraphics the native rendering context provided by the current render frame
      **/
-    public GenericGraphics(@NotNull GuiGraphicsExtractor guiGraphics) {
+    public GenericGraphics(@NotNull GuiGraphics guiGraphics) {
         this.graphics = guiGraphics;
         this.deferredElements = new ArrayList<>();
     }
 
     /**
-     * Returns the underlying {@code GuiGraphicsExtractor} instance (Minecraft 1.20+).
+     * Returns the underlying {@code GuiGraphics} instance (Minecraft 1.20+).
      *
      * <p>Prefer the wrapper methods on this class over calling the native API directly,
      * as direct usage bypasses cross-version compatibility.</p>
      *
      * @return the native rendering context
      **/
-    public GuiGraphicsExtractor getGraphics() {
+    public GuiGraphics getGraphics() {
         return this.graphics;
     }
     /*?} else {*/
@@ -132,7 +131,7 @@ public class GenericGraphics {
         /*Font font = Minecraft.getInstance().font;
         graphics.renderTooltip(font, tooltip.getLines(), image, mouseX, mouseY);
         *//*?} else { */
-        /*Screen screen = Minecraft.getInstance().gui.screen();
+        /*Screen screen = Minecraft.getInstance().screen;
         if (screen != null) {
             screen.renderTooltip(poseStack, tooltip.getLines(), image, mouseX, mouseY);
         }
@@ -233,9 +232,9 @@ public class GenericGraphics {
      */
     public void hLine(int x0, int x1, int y, int color) {
         /*? if >=26 {*/
-        graphics.horizontalLine(x0, x1, y, color);
+        //graphics.horizontalLine(x0, x1, y, color);
         /*?} else if >=1.20 { */
-        //graphics.hLine(x0, x1, y, color);
+        graphics.hLine(x0, x1, y, color);
         /*?} else { */
         //GuiComponentAccessor.shLine(poseStack, x0, x1, y, color);
         /*?} */
@@ -253,9 +252,9 @@ public class GenericGraphics {
      */
     public void vLine(int x, int y0, int y1, int color) {
         /*? if >=26 {*/
-        graphics.verticalLine(x, y0, y1, color);
+        //graphics.verticalLine(x, y0, y1, color);
         /*?} else if >=1.20 { */
-        //graphics.vLine(x, y0, y1, color);
+        graphics.vLine(x, y0, y1, color);
         /*?} else { */
         //GuiComponentAccessor.svLine(poseStack, x, y0, y1, color);
         /*?} */
@@ -273,9 +272,9 @@ public class GenericGraphics {
      */
     public void outline(int x, int y, int width, int height, int color) {
         /*? if >=26 {*/
-        graphics.outline(x, y, width, height, color);
+        //graphics.outline(x, y, width, height, color);
         /*?} else if =1.21.11 { */
-        //graphics.renderOutline(x, y, width, height, color);
+        graphics.renderOutline(x, y, width, height, color);
         /*?} else if <1.21.11 && >=1.21.9 { */
         /*/^for some reason in version 1.21.9 and 1.21.10 renderOutline does not exist?!^/
         this.hLine(x, x + width - 1, y, color); // top
@@ -319,9 +318,9 @@ public class GenericGraphics {
      */
     public void drawString(Font font, String text, int x, int y, int color, boolean shadow) {
         /*? if >=26 {*/
-        graphics.text(font, text, x, y, color, shadow);
+        //graphics.text(font, text, x, y, color, shadow);
         /*?} else if >=1.20 { */
-        //graphics.drawString(font, text, x, y, color, shadow);
+        graphics.drawString(font, text, x, y, color, shadow);
         /*?} else { */
         /*if (shadow) font.drawShadow(poseStack, text, x, y, color);
         else font.draw(poseStack, text, x, y, color);
@@ -343,9 +342,9 @@ public class GenericGraphics {
 
     public void drawString(Font font, Component text, int x, int y, int color, boolean shadow) {
         /*? if >=26 {*/
-        graphics.text(font, text, x, y, color, shadow);
+        //graphics.text(font, text, x, y, color, shadow);
         /*?} else if >=1.20 { */
-        //graphics.drawString(font, text, x, y, color, shadow);
+        graphics.drawString(font, text, x, y, color, shadow);
         /*?} else { */
         /*if (shadow) font.drawShadow(poseStack, text, x, y, color);
         else font.draw(poseStack, text, x, y, color);
@@ -369,9 +368,9 @@ public class GenericGraphics {
 
     public void drawString(Font font, FormattedCharSequence text, int x, int y, int color, boolean shadow) {
         /*? if >=26 {*/
-        graphics.text(font, text, x, y, color, shadow);
+        //graphics.text(font, text, x, y, color, shadow);
         /*?} else if >=1.20 { */
-        //graphics.drawString(font, text, x, y, color, shadow);
+        graphics.drawString(font, text, x, y, color, shadow);
         /*?} else { */
         /*if (shadow) font.drawShadow(poseStack, text, x, y, color);
         else font.draw(poseStack, text, x, y, color);
@@ -967,9 +966,9 @@ public class GenericGraphics {
 
     public void renderItem(ItemStack itemStack, int x, int y) {
         /*? if >=26 { */
-        graphics.item(itemStack, x, y);
+        //graphics.item(itemStack, x, y);
         /*?} else if >=1.20 { */
-        //graphics.renderItem(itemStack, x, y);
+        graphics.renderItem(itemStack, x, y);
         /*?} else if >=1.19.4 {*/
         //Minecraft.getInstance().getItemRenderer().renderGuiItem(poseStack, itemStack, x, y);
         /*?} else {*/
@@ -985,9 +984,9 @@ public class GenericGraphics {
 
     public void renderItemDecorations(Font font, ItemStack itemStack, int x, int y, @Nullable String countText) {
         /*? if >=26 { */
-        graphics.itemDecorations(font, itemStack, x, y, countText);
+        //graphics.itemDecorations(font, itemStack, x, y, countText);
         /*?} else if >=1.20 { */
-        //graphics.renderItemDecorations(font, itemStack, x, y, countText);
+        graphics.renderItemDecorations(font, itemStack, x, y, countText);
         /*?} else if >=1.19.4 {*/
         //Minecraft.getInstance().getItemRenderer().renderGuiItemDecorations(poseStack, font, itemStack, x, y, countText);
         /*?} else {*/

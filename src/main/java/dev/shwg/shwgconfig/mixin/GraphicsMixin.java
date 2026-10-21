@@ -9,9 +9,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /*? if >= 26 { */
-import net.minecraft.client.renderer.state.gui.GuiRenderState;
+//import net.minecraft.client.renderer.state.gui.GuiRenderState;
 /*? } else if >= 1.21.6 { */
-//import net.minecraft.client.gui.render.state.GuiRenderState;
+import net.minecraft.client.gui.render.state.GuiRenderState;
 /*? } */
 
 /*? if >= 1.21.6 { */
@@ -26,11 +26,11 @@ import org.joml.Matrix3x2fStack;
 
 /*? if >= 1.20 { */
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 /*? } */
 
 /*? if >= 1.20 { */
-@Mixin(GuiGraphicsExtractor.class)
+@Mixin(GuiGraphics.class)
 /*? } else { */
 //@Mixin(PoseStack.class)
 /*? } */
@@ -40,24 +40,24 @@ public class GraphicsMixin implements GraphicsAccessor {
     GenericGraphics shwgConfigs$genericGraphics;
 
     /*? if >= 26 { */
-    @Inject(method = "<init>(Lnet/minecraft/client/Minecraft;Lorg/joml/Matrix3x2fStack;Lnet/minecraft/client/renderer/state/gui/GuiRenderState;II)V", at = @At("RETURN"))
+    /*@Inject(method = "<init>(Lnet/minecraft/client/Minecraft;Lorg/joml/Matrix3x2fStack;Lnet/minecraft/client/renderer/state/gui/GuiRenderState;II)V", at = @At("RETURN"))
     public void onInit(Minecraft minecraft, Matrix3x2fStack pose, GuiRenderState guiRenderState, int mouseX, int mouseY, CallbackInfo ci) {
-        this.shwgConfigs$genericGraphics = new GenericGraphics((GuiGraphicsExtractor)(Object)this);
+        this.shwgConfigs$genericGraphics = new GenericGraphics((GuiGraphics)(Object)this);
     }
-    /*? } else if >= 1.21.11 { */
-    /*@Inject(method = "<init>(Lnet/minecraft/client/Minecraft;Lorg/joml/Matrix3x2fStack;Lnet/minecraft/client/gui/render/state/GuiRenderState;II)V", at = @At("RETURN"))
+    *//*? } else if >= 1.21.11 { */
+    @Inject(method = "<init>(Lnet/minecraft/client/Minecraft;Lorg/joml/Matrix3x2fStack;Lnet/minecraft/client/gui/render/state/GuiRenderState;II)V", at = @At("RETURN"))
     public void onInit(Minecraft minecraft, Matrix3x2fStack pose, GuiRenderState guiRenderState, int mouseX, int mouseY, CallbackInfo ci) {
-        this.shwgConfigs$genericGraphics = new GenericGraphics((GuiGraphicsExtractor)(Object)this);
+        this.shwgConfigs$genericGraphics = new GenericGraphics((GuiGraphics)(Object)this);
     }
-    *//*? } else if >= 1.21.6 { */
+    /*? } else if >= 1.21.6 { */
     /*@Inject(method = "<init>(Lnet/minecraft/client/Minecraft;Lorg/joml/Matrix3x2fStack;Lnet/minecraft/client/gui/render/state/GuiRenderState;)V", at = @At("RETURN"))
     public void onInit(Minecraft minecraft, Matrix3x2fStack pose, GuiRenderState guiRenderState, CallbackInfo ci) {
-        this.shwgConfigs$genericGraphics = new GenericGraphics((GuiGraphicsExtractor)(Object)this);
+        this.shwgConfigs$genericGraphics = new GenericGraphics((GuiGraphics)(Object)this);
     }
     *//*? } else if >= 1.20 { */
     /*@Inject(method = "<init>(Lnet/minecraft/client/Minecraft;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;)V", at = @At("RETURN"))
     public void onInit(Minecraft minecraft, PoseStack poseStack, MultiBufferSource.BufferSource bufferSource, CallbackInfo ci) {
-        this.shwgConfigs$genericGraphics = new GenericGraphics((GuiGraphicsExtractor)(Object)this);
+        this.shwgConfigs$genericGraphics = new GenericGraphics((GuiGraphics)(Object)this);
     }
     *//*? } else { */
     /*@Inject(method = "<init>", at = @At("RETURN"))

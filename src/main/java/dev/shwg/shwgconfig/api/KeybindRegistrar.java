@@ -8,18 +8,18 @@ import net.minecraft.resources.Identifier;
 import java.util.*;
 
 /*? if neoforge {*/
-import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+//import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 /*?}*/
 /*? if forge {*/
 //import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 /*?}*/
 /*? if fabric {*/
-/*/^? if >= 26 { ^/
-import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
-/^? } else { ^/
-//import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-/^? } ^/
-*//*? } */
+/*? if >= 26 { */
+//import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
+/*? } else { */
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+/*? } */
+/*? } */
 
 /*~ if forgeLike '{@code #registerAll}' -> '{@link #registerAll}', '{@code #enqueue}' -> '{@link #enqueue}' { */
 /**
@@ -31,7 +31,7 @@ import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
  * </p>
  * <p><b>On NeoForge and Forge</b>, keybind registration is tied to a per-mod event that only
  * your own mod's listeners receive, so one manual step is required: every {@link KeybindValue}
- * constructor queues itself via {@link #enqueue} and you call {@link #registerAll} once from
+ * constructor queues itself via {@code #enqueue} and you call {@code #registerAll} once from
  * a listener on your mod's own event bus.
  * </p>
  *
@@ -62,36 +62,36 @@ import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 public class KeybindRegistrar {
 
     /*? if >= 1.21.9 && forgeLike {*/
-    private static final Set<Identifier> REGISTERED_CATEGORIES = new HashSet<>();
+    //private static final Set<Identifier> REGISTERED_CATEGORIES = new HashSet<>();
     /*?}*/
 
     private static final List<KeyMapping> PENDING = new ArrayList<>();
 
     /*? if forgeLike {*/
-    public static void enqueue(KeyMapping keyMapping) {
+    /*public static void enqueue(KeyMapping keyMapping) {
         if (!PENDING.contains(keyMapping)) {
             PENDING.add(keyMapping);
         }
     }
-    /*?}*/
+    *//*?}*/
     // Registration
 
     /*? if fabric { */
-    /*/^*
+    /**
      * Registers a KeyMapping with Fabric immediately. Called automatically by every
      * KeybindValue - mod authors never need to call this themselves.
-     ^/
+     */
     public static void registerImmediately(KeyMapping keyMapping) {
-        /^~ if >=26 'KeyBindingHelper.registerKeyBinding' -> 'KeyMappingHelper.registerKeyMapping' ^/
-        KeyMappingHelper.registerKeyMapping(keyMapping);
+        /*~ if >=26 'KeyBindingHelper.registerKeyBinding' -> 'KeyMappingHelper.registerKeyMapping' */
+        KeyBindingHelper.registerKeyBinding(keyMapping);
     }
-    *//*? } else if neoforge { */
-    /**
+    /*? } else if neoforge { */
+    /*/^*
      * Registers all pending KeyMappings and categories via the NeoForge event.
      * Annotate calling method with @SubscribeEvent on the mod event bus. <br>
      * Call inside Mod Constructor: <br>
      * {@code modEventBus.addListener(KeybindRegistrar::registerAll);}
-     */
+     ^/
     public static void registerAll(RegisterKeyMappingsEvent event) {
         //? if >= 1.21.9 {
         for (Map.Entry<Identifier, KeyMapping.Category> entry : KeybindCategoryResolver.CATEGORY_CACHE.entrySet()) {
@@ -105,7 +105,7 @@ public class KeybindRegistrar {
         }
         PENDING.clear();
     }
-    /*? } else if forge { */
+    *//*? } else if forge { */
     /*/^*
      * Registers all pending KeyMappings via the Forge event.
      * Annotate calling method with @SubscribeEvent on the mod event bus. <br>

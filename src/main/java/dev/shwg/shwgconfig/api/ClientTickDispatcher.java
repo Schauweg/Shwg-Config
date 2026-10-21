@@ -8,16 +8,16 @@ import dev.shwg.shwgconfig.api.values.stringvalues.KeybindValue;
 import dev.shwg.shwgconfig.gui.input.events.GenericKeyEvent;
 
 /*? if fabric { */
-/*import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents;
-*//*? } */
+/*? } */
 /*? if neoforge { */
-import net.neoforged.bus.api.SubscribeEvent;
+/*import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.common.NeoForge;
- /*? } */
+ *//*? } */
 /*? if forge { */
 /*import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -109,37 +109,37 @@ public class ClientTickDispatcher {
     }
 
     /*? if fabric { */
-    /*/^*
+    /**
      * Sets up Fabric's world-tick and screen key-press events. Called once by ShwgConfig's
      * own client initializer - not meant to be called by mod authors. Safe to call
      * again (it would just re-register the same listeners), but never necessary.<br>
      * You can add to the events using {@link #registerWorld(Runnable)} and {@link #registerGUI(Consumer)}.
-     ^/
+     */
     public static void init() {
         ClientTickEvents.END_CLIENT_TICK.register(client -> worldTick());
         ScreenEvents.BEFORE_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
-            /^? if >= 1.21.9 { ^/
+            /*? if >= 1.21.9 { */
             ScreenKeyboardEvents.beforeKeyPress(screen).register((s, keyEvent) -> {
                 guiKeyPress(new GenericKeyEvent(keyEvent));
             });
-            /^? } else { ^/
-            /^ScreenKeyboardEvents.beforeKeyPress(screen).register((s, keyCode, scancode, modifiers) -> {
+            /*? } else { */
+            /*ScreenKeyboardEvents.beforeKeyPress(screen).register((s, keyCode, scancode, modifiers) -> {
                 guiKeyPress(new GenericKeyEvent(keyCode, scancode, modifiers));
             });
-            ^//^? } ^/
+            *//*? } */
         });
     }
-    *//*? } */
+    /*? } */
 
     /*? if neoforge { */
-    /**
+    /*/^*
      * <p>Registers this class on NeoForge's shared client event bus and registers the {@link ClientTickEvent.Post} and {@link ScreenEvent.KeyPressed.Pre} events.
      * </p>
      * <p>Called once by ShwgConfig's own client initializer - not meant to be called by mod authors.
      * Safe to call again (it would just re-register the same listener), but never necessary.<br>
      * You can add to them using {@link #registerWorld(Runnable)} and {@link #registerGUI(Consumer)}.
      * </p>
-     */
+     ^/
     public static void init() {
         NeoForge.EVENT_BUS.register(ClientTickDispatcher.class);
     }
@@ -151,13 +151,13 @@ public class ClientTickDispatcher {
 
     @SubscribeEvent
     public static void onScreenKeyPress(ScreenEvent.KeyPressed.Pre event) {
-        /*? if >= 1.21.9 { */
+        /^? if >= 1.21.9 { ^/
         guiKeyPress(new GenericKeyEvent(event.getKeyEvent()));
-        /*? } else {*/
+        /^? } else {^/
         //guiKeyPress(new GenericKeyEvent(event.getKeyCode(), event.getScanCode(), event.getModifiers()));
-        /*? } */
+        /^? } ^/
     }
-    /*? } */
+    *//*? } */
 
     /*? if forge { */
     /*/^*

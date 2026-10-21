@@ -32,7 +32,7 @@ import net.minecraft.client.input.CharacterEvent;
 /*?} */
 
 /*? if >= 1.20 { */
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 /*?} else {*/
 //import com.mojang.blaze3d.vertex.PoseStack;
 /*?} */
@@ -66,9 +66,9 @@ public class GenericScreen extends Screen {
 
     @Override
     /*? if >= 26 { */
-    public final void extractRenderState(@NotNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+    //public final void extractRenderState(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
      /*? } else if >= 1.20 { */
-    //public final void render(@NotNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+    public final void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
      /*? } else { */
     //public final void render(@NotNull PoseStack graphics, int mouseX, int mouseY, float partialTicks) {
         /*? } */
@@ -149,9 +149,9 @@ public class GenericScreen extends Screen {
 
     public void renderBackground(GenericGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         /*?  if >= 26 { */
-        super.extractBackground(graphics.getGraphics(), mouseX, mouseY, partialTicks);
+        //super.extractBackground(graphics.getGraphics(), mouseX, mouseY, partialTicks);
          /*? } else if >= 1.20.2 { */
-        //super.renderBackground(graphics.getGraphics(), mouseX, mouseY, partialTicks);
+        super.renderBackground(graphics.getGraphics(), mouseX, mouseY, partialTicks);
          /*? } else { */
         //super.renderBackground(graphics.getGraphics());
         /*? } */
@@ -436,9 +436,9 @@ public class GenericScreen extends Screen {
 
     public void setScreen(Screen screen) {
         /*? if >= 26.2 { */
-        Minecraft.getInstance().setScreenAndShow(screen);
+        //Minecraft.getInstance().setScreenAndShow(screen);
          /*? } else { */
-        //Minecraft.getInstance().gui.setScreen(screen);
+        Minecraft.getInstance().setScreen(screen);
         /*? } */
     }
 
