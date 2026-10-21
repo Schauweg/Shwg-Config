@@ -4,6 +4,7 @@ run/
 #other
 prism-instances.py
 *.psd
+scripts/
 
 # gradle
 secrets.gradle
