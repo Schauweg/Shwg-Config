@@ -69,7 +69,7 @@ public abstract class ListWidgetOverlay<E extends OverlayEntry> extends Scrollab
     @Override
     public void render(GenericGraphics graphics, int mouseX, int mouseY, float partialTick) {
         graphics.fillWH(x, y, width, height, 0xC9000000);
-        graphics.enableScissor(getX(), getY(), getWidth(), getHeight());
+        graphics.enableScissorWH(getX(), getY(), getWidth(), getHeight());
         for (E entry : items) {
             if (entry.getY() + entry.getHeight() >= getY() && entry.getY() <= getY() + getHeight()) {
                 entry.render(graphics, mouseX, mouseY, partialTick);

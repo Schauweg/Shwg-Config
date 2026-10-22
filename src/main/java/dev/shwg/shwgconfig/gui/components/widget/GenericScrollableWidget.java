@@ -85,7 +85,7 @@ public class GenericScrollableWidget extends GenericAbstractContainerWidget {
         if (backgroundColor != 0) {
             graphics.fillWH(getX(), getY(), width, height, backgroundColor);
         }
-        graphics.enableScissor(getX(), getY(), getWidth(), getHeight());
+        graphics.enableScissorWH(getX(), getY(), getWidth(), getHeight());
         boolean blocked = OverlayDispatch.isMouseBlocked(this.children(), mouseX, mouseY) || !isHovered;
         layout.visitChildren(layoutElement -> {
             if (layoutElement instanceof RenderableElement renderableElement && isElementVisible(renderableElement)) {

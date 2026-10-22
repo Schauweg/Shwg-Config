@@ -231,15 +231,15 @@ public class RenderTestScreen extends GenericScreen {
 
     private void pageClipAndPose(GenericGraphics g, Font font) {
         cell(g, font, 0, "scissor (single)", "red only inside white box; blue visible");
-        g.enableScissor(cx, cy, 40, 30);
+        g.enableScissorWH(cx, cy, 40, 30);
         g.fill(cx - 10, cy - 6, cx + 60, cy + 36, RED);
         g.disableScissor();
         g.outline(cx, cy, 40, 30, WHITE);
         g.fillWH(cx + 50, cy, 8, 8, BLUE);             // drawn after release: must not be clipped
 
         cell(g, font, 1, "scissor (nested)", "green only in white box; blue to x+50");
-        g.enableScissor(cx, cy, 50, 30);
-        g.enableScissor(cx + 30, cy + 10, 50, 30);
+        g.enableScissorWH(cx, cy, 50, 30);
+        g.enableScissorWH(cx + 30, cy + 10, 50, 30);
         g.fill(cx - 10, cy - 6, cx + 90, cy + 40, GREEN);
         g.disableScissor();
         g.fill(cx - 10, cy + 2, cx + 90, cy + 6, BLUE); // only the outer scissor is active here
@@ -250,7 +250,7 @@ public class RenderTestScreen extends GenericScreen {
         g.pushPose();
         g.translate(60, 0);
         g.outline(cx, cy, 40, 24, WHITE);              // where the clip lands if scissor follows the pose
-        g.enableScissor(cx, cy, 40, 24);
+        g.enableScissorWH(cx, cy, 40, 24);
         g.fill(cx - 20, cy - 6, cx + 100, cy + 30, GREEN);
         g.disableScissor();
         g.popPose();
@@ -339,7 +339,7 @@ public class RenderTestScreen extends GenericScreen {
         g.popPose();
 
         cell(g, font, 4, "item inside scissor", "only the top-left 8x8 of the item");
-        g.enableScissor(cx, cy, 8, 8);
+        g.enableScissorWH(cx, cy, 8, 8);
         g.renderItem(sword, cx, cy);
         g.disableScissor();
         g.outline(cx - 1, cy - 1, 10, 10, WHITE);
@@ -387,7 +387,7 @@ public class RenderTestScreen extends GenericScreen {
         g.popPose();
 
         cell(g, font, 5, "texture inside scissor", "top-left 16x16 of the 32x32 only");
-        g.enableScissor(cx, cy, 16, 16);
+        g.enableScissorWH(cx, cy, 16, 16);
         g.drawTexture(appleTex, cx, cy, 32, 32);
         g.disableScissor();
         g.drawTexture(appleTex, cx + 40, cy, 32, 32);  // after release: complete
@@ -440,10 +440,10 @@ public class RenderTestScreen extends GenericScreen {
         g.popPose();
 
         cell(g, font, 5, "sprites inside scissor", "only the top-left 30x20 of each");
-        g.enableScissor(cx, cy, 30, 20);
+        g.enableScissorWH(cx, cy, 30, 20);
         g.drawTexture(nineSliceSprite, cx, cy, 60, 40);
         g.disableScissor();
-        g.enableScissor(cx + 70, cy, 30, 20);
+        g.enableScissorWH(cx + 70, cy, 30, 20);
         g.drawTexture(tiledSprite, cx + 60, cy - 10, 60, 40);
         g.disableScissor();
     }

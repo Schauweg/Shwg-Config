@@ -452,7 +452,7 @@ public class GenericGraphics {
         }
 
         if (!scrollActive) {
-            enableScissor(left, top, right - left, bottom - top);
+            enableScissor(left, top, right, bottom);
             drawString(font, text, left, y, color, shadow);
             disableScissor();
             return;
@@ -464,7 +464,7 @@ public class GenericGraphics {
         double phase = Math.sin(Math.PI / 2.0 * Math.cos(Math.PI * 2.0 * time / cycle)) / 2.0 + 0.5;
         int scrollX = (int) Mth.lerp(phase, 0.0, (double) overflow);
 
-        enableScissor(left, top, right - left, bottom - top);
+        enableScissor(left, top, right, bottom);
         drawString(font, text, left - scrollX, y, color, shadow);
         disableScissor();
     }
@@ -693,6 +693,20 @@ public class GenericGraphics {
     // --- Scissor
 
     /**
+     * Overloaded method of {@link #enableScissor(int, int, int, int)}
+     * to use with and height to create the scissor rectangle
+     *
+     * @param x      left edge of the scissor rectangle
+     * @param y      top edge of the scissor rectangle
+     * @param width  width of the scissor rectangle in pixels
+     * @param height height of the scissor rectangle in pixels
+     * @see #enableScissor(int, int, int, int)
+     */
+    public void enableScissorWH(int x, int y, int width, int height) {
+        enableScissor(x, y, x + width, y + height);
+    }
+
+    /**
      * Restricts subsequent rendering to the given rectangular region.
      * Anything drawn outside this region is clipped and not visible.
      *
@@ -704,19 +718,28 @@ public class GenericGraphics {
      * corner coordinates. The conversion to corner coordinates is handled
      * internally.</p>
      *
-     * @param x      left edge of the scissor rectangle
-     * @param y      top edge of the scissor rectangle
-     * @param width  width of the scissor rectangle in pixels
-     * @param height height of the scissor rectangle in pixels
+     * @param x1 x position of top left corner of the scissor rectangle
+     * @param y1 y position of top left corner of the scissor rectangle
+     * @param x2 x position of bottom right corner of the scissor rectangle
+     * @param y2 y position of bottom right corner of the scissor rectangle
      * @see #disableScissor()
      */
-    public void enableScissor(int x, int y, int width, int height) {
-        /*? if >=1.20 {*/
-        graphics.enableScissor(x, y, x + width, y + height);
-        /*?} else if >=1.19.4 {*/
-        //GuiComponent.enableScissor(x, y, x + width, y + height);
+    public void enableScissor(int x1, int y1, int x2, int y2) {
+        /*? if >=1.21.6 {*/
+        graphics.enableScissor(x1, y1, x2, y2); // already follows the pose
         /*?} else {*/
-        //ScissorStack.push(x, y, width, height);
+        /*int[] r = mapThroughPose(x1, y1, x2, y2);
+        enableScissorRaw(r[0], r[1], r[2], r[3]);
+        *//*?}*/
+    }
+
+    private void enableScissorRaw(int x1, int y1, int x2, int y2) {
+        /*? if >=1.20 {*/
+        graphics.enableScissor(x1, y1, x2, y2);
+        /*?} else if >=1.19.4 {*/
+        //GuiComponent.enableScissor(x1, y1, x2, y2);
+        /*?} else {*/
+        //ScissorStack.push(x1, y1, x2, y2);
         /*?}*/
     }
 
@@ -736,6 +759,33 @@ public class GenericGraphics {
         //ScissorStack.pop();
         /*?}*/
     }
+
+    /*? if < 1.21.6 { */
+    /*private int[] mapThroughPose(int x1, int y1, int x2, int y2) {
+        /^? if >=1.20 {^/
+        org.joml.Matrix4f m = graphics.pose().last().pose();
+        /^?} else if >=1.19.3 {^/
+        //org.joml.Matrix4f m = poseStack.last().pose();
+        /^?} else {^/
+        //com.mojang.math.Matrix4f m = poseStack.last().pose();
+        /^?}^/
+
+        /^? if >=1.19.3 {^/
+        org.joml.Vector4f a = new org.joml.Vector4f(x1, y1, 0, 1).mul(m);
+        org.joml.Vector4f b = new org.joml.Vector4f(x2, y2, 0, 1).mul(m);
+        float ax = a.x, ay = a.y, bx = b.x, by = b.y;
+        /^?} else {^/
+        /^com.mojang.math.Vector4f a = new com.mojang.math.Vector4f(x1, y1, 0, 1);
+        com.mojang.math.Vector4f b = new com.mojang.math.Vector4f(x2, y2, 0, 1);
+        a.transform(m);
+        b.transform(m);
+        float ax = a.x(), ay = a.y(), bx = b.x(), by = b.y();
+        ^//^?}^/
+
+        return new int[]{Math.round(Math.min(ax, bx)), Math.round(Math.min(ay, by)),
+                Math.round(Math.max(ax, bx)), Math.round(Math.max(ay, by))};
+    }
+    *//*? } */
 
 
     // --- Textures

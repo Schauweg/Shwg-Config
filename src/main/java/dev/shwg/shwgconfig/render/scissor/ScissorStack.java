@@ -13,44 +13,36 @@ public class ScissorStack {
 
     private static final Deque<ScissorRect> stack = new ArrayDeque<>();
 
-    private record ScissorRect(int x, int y, int width, int height) {
-        // Returns intersection with another rect, or null if no overlap
-        public ScissorRect intersect(ScissorRect other) {
-            int x1 = Math.max(this.x, other.x);
-            int y1 = Math.max(this.y, other.y);
-            int x2 = Math.min(this.x + this.width, other.x + other.width);
-            int y2 = Math.min(this.y + this.height, other.y + other.height);
+    // Corner coordinates in GUI space; x2/y2 are exclusive. May be empty (x2 <= x1 or y2 <= y1).
+    private record ScissorRect(int x1, int y1, int x2, int y2) {
+        // Intersection with another rect. Empty (but never null) if they don't overlap.
+        ScissorRect intersect(ScissorRect other) {
+            int nx1 = Math.max(x1, other.x1);
+            int ny1 = Math.max(y1, other.y1);
+            int nx2 = Math.min(x2, other.x2);
+            int ny2 = Math.min(y2, other.y2);
+            return (nx2 > nx1 && ny2 > ny1) ? new ScissorRect(nx1, ny1, nx2, ny2) : EMPTY;
+        }
 
-            int w = x2 - x1;
-            int h = y2 - y1;
-
-            return (w > 0 && h > 0) ? new ScissorRect(x1, y1, w, h) : null;
+        boolean isEmpty() {
+            return x2 <= x1 || y2 <= y1;
         }
     }
 
-    /^*
-     * Push a new scissor area (relative to screen)
-     ^/
-    public static void push(int x, int y, int width, int height) {
-        ScissorRect newRect = new ScissorRect(x, y, width, height);
+    private static final ScissorRect EMPTY = new ScissorRect(0, 0, 0, 0);
 
-        ScissorRect finalRect = newRect;
-        if (!stack.isEmpty()) {
-            finalRect = stack.peek().intersect(newRect);
-        }
-
-        stack.push(finalRect != null ? finalRect : new ScissorRect(x, y, width, height));
-
+    // Push a new scissor area (corner coordinates in GUI space), clipped to the current one.
+    public static void push(int x1, int y1, int x2, int y2) {
+        ScissorRect rect = new ScissorRect(x1, y1, x2, y2);
+        if (rect.isEmpty()) rect = EMPTY;
+        if (!stack.isEmpty()) rect = stack.peek().intersect(rect);
+        stack.push(rect);
         applyCurrentScissor();
     }
 
-    /^*
-     * Pop the last scissor area
-     ^/
+    // Pop the last scissor area.
     public static void pop() {
-        if (!stack.isEmpty()) {
-            stack.pop();
-        }
+        if (!stack.isEmpty()) stack.pop();
         applyCurrentScissor();
     }
 
@@ -59,27 +51,23 @@ public class ScissorStack {
             RenderSystem.disableScissor();
             return;
         }
-
         ScissorRect rect = stack.peek();
-        if (rect.width <= 0 || rect.height <= 0) {
-            RenderSystem.disableScissor();
+        if (rect.isEmpty()) {
+            RenderSystem.enableScissor(0, 0, 0, 0); // clip everything
             return;
         }
-
-        enableScissorRaw(rect.x, rect.y, rect.width, rect.height);
+        enableScissorRaw(rect.x1, rect.y1, rect.x2, rect.y2);
     }
 
-    /^*
-     * Enable scissor using raw coordinates (for 1.19)
-     ^/
-    private static void enableScissorRaw(int x, int y, int width, int height) {
+    // Converts GUI space corners to window pixels (origin bottom left) and enables the GL scissor.
+    private static void enableScissorRaw(int x1, int y1, int x2, int y2) {
         Window window = Minecraft.getInstance().getWindow();
         double scale = window.getGuiScale();
 
-        int scissorX = (int) (x * scale);
-        int scissorY = (int) (window.getHeight() - (y + height) * scale);
-        int scissorW = (int) (width * scale);
-        int scissorH = (int) (height * scale);
+        int scissorX = (int) (x1 * scale);
+        int scissorY = (int) (window.getHeight() - y2 * scale);
+        int scissorW = (int) ((x2 - x1) * scale);
+        int scissorH = (int) ((y2 - y1) * scale);
 
         RenderSystem.enableScissor(scissorX, scissorY, scissorW, scissorH);
     }
