@@ -982,7 +982,7 @@ public class GenericGraphics {
                 internalBlit(texture, currentX, currentY,         // where to draw on screen
                         u, v,                       // where to sample from texture
                         drawWidth, drawHeight,      // how big to draw this piece
-                        repeatWidth, repeatHeight   // how big are on texture is
+                        drawWidth, drawHeight   // how big are on texture is
                 );
                 currentY += drawHeight;
             }
