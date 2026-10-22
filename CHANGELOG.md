@@ -1,4 +1,3 @@
-# 0.1.0-alpha.2
-- add method do get current pose of transformation-stack
-- add pose rotation
-- added a compatibility fix so text rendering works the same on older versions too
+# 0.2.0-alpha.1
+- changed method parameters of enableScissor(int x, int y, int width, int height) to enableScissor(int x1, int y1, int x2, int y2)
+- added enableScissorWH(int x, int y, int width, int height)
