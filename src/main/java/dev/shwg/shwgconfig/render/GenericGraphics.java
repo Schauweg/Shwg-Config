@@ -45,7 +45,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screens.Screen;
 *//*?}*/
 
-/*? if <1.19.1 { */
+/*? if <1.19.4 { */
 //import dev.shwg.shwgconfig.render.scissor.ScissorStack;
 /*?} */
 
@@ -713,7 +713,7 @@ public class GenericGraphics {
     public void enableScissor(int x, int y, int width, int height) {
         /*? if >=1.20 {*/
         graphics.enableScissor(x, y, x + width, y + height);
-        /*?} else if >=1.19.1 {*/
+        /*?} else if >=1.19.4 {*/
         //GuiComponent.enableScissor(x, y, x + width, y + height);
         /*?} else {*/
         //ScissorStack.push(x, y, width, height);
@@ -730,7 +730,7 @@ public class GenericGraphics {
     public void disableScissor() {
         /*? if >=1.20 {*/
         graphics.disableScissor();
-        /*?} else if >=1.19.1 {*/
+        /*?} else if >=1.19.4 {*/
         //GuiComponent.disableScissor();
         /*?} else {*/
         //ScissorStack.pop();
