@@ -28,6 +28,9 @@ import net.minecraft.util.Util;
 
 /*? if >=1.21.6 {*/
 import net.minecraft.client.renderer.RenderPipelines;
+import org.joml.Matrix3x2fStack;
+/*?} else {*/
+//import com.mojang.blaze3d.vertex.PoseStack;
 /*?}*/
 
 /*? if <=1.21.5 && >=1.21.2 {*/
@@ -577,6 +580,29 @@ public class GenericGraphics {
     }
 
     /**
+     * Returns the current transformation stack of this rendering context, so callers
+     * can apply transforms (translate, scale, rotate) that the wrapper methods don't cover.
+     *
+     * <p><strong>The return type depends on the Minecraft version:</strong>
+     * {@code Matrix3x2fStack} (2D) on 1.21.6+, {@code PoseStack} on all older versions.
+     * Callers using the result directly need their own version conditionals.
+     * Always pair changes with {@link #pushPose()} / {@link #popPose()}.</p>
+     */
+    /*? if >=1.21.6 { */
+    public Matrix3x2fStack getPose() {
+        return graphics.pose();
+    }
+    /*?} else if >=1.20 { */
+    /*public PoseStack getPose() {
+        return graphics.pose();
+    }
+    *//*?} else { */
+    /*public PoseStack getPose() {
+        return poseStack;
+    }
+    *//*?} */
+
+    /**
      * Translates the current pose.
      * In newer versions (1.21.6+), z translation has limited effect in GUI.
      */
@@ -616,6 +642,23 @@ public class GenericGraphics {
      */
     public void scale(float x, float y) {
         scale(x, y, 1);
+    }
+
+    /**
+     * Rotates the current pose around the Z axis (i.e. in the screen plane).
+     *
+     * @param radians rotation angle in radians, positive = clockwise on screen
+     */
+    public void rotate(float radians) {
+        /*? if >=1.21.6 { */
+        graphics.pose().rotate(radians);
+        /*?} else if >=1.20 { */
+        //graphics.pose().mulPose(com.mojang.math.Axis.ZP.rotation(radians));
+        /*?} else if >=1.19.3 { */
+        //poseStack.mulPose(com.mojang.math.Axis.ZP.rotation(radians));
+        /*?} else { */
+        //poseStack.mulPose(com.mojang.math.Vector3f.ZP.rotation(radians));
+        /*?} */
     }
 
     /*? if <1.19.4 { */
