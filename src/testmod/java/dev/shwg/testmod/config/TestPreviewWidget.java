@@ -6,7 +6,6 @@ import dev.shwg.shwgconfig.gui.layout.LayoutElement;
 import dev.shwg.shwgconfig.gui.layout.RenderableElement;
 import dev.shwg.shwgconfig.render.GenericGraphics;
 import dev.shwg.shwgconfig.util.DisplayItemStack;
-import dev.shwg.shwgconfig.util.RegistryHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
@@ -23,7 +22,7 @@ public class TestPreviewWidget implements GenericLayout, RenderableElement {
     private int height;
     private boolean visible = true;
 
-    private final ItemStack itemStack = DisplayItemStack.builder(Items.DIAMOND_PICKAXE).withDamage(RegistryHelper.DIAMOND_TOOL_MAX_DAMAGE).build();
+    private final ItemStack itemStack = DisplayItemStack.builder(Items.DIAMOND_PICKAXE).withDamage(DisplayItemStack.DIAMOND_TOOL_MAX_DAMAGE).build();
     private final NumberSlider<Integer> damageSlider;
 
     public TestPreviewWidget() {
