@@ -320,6 +320,9 @@ public class GenericGraphics {
      * @param shadow whether to draw a drop shadow behind the text
      */
     public void drawString(Font font, String text, int x, int y, int color, boolean shadow) {
+        /*? if <=1.21.2 {*/
+        //if ((color & 0xFC000000) == 0) return; // old vanilla forces alpha 0-3 to opaque, newer versions draw nothing
+        /*?}*/
         /*? if >=26 {*/
         //graphics.text(font, text, x, y, color, shadow);
         /*?} else if >=1.20 { */
@@ -344,6 +347,9 @@ public class GenericGraphics {
     }
 
     public void drawString(Font font, Component text, int x, int y, int color, boolean shadow) {
+        /*? if <=1.21.2 {*/
+        //if ((color & 0xFC000000) == 0) return; // old vanilla forces alpha 0-3 to opaque, newer versions draw nothing
+        /*?}*/
         /*? if >=26 {*/
         //graphics.text(font, text, x, y, color, shadow);
         /*?} else if >=1.20 { */
@@ -370,6 +376,9 @@ public class GenericGraphics {
     }
 
     public void drawString(Font font, FormattedCharSequence text, int x, int y, int color, boolean shadow) {
+        /*? if <=1.21.2 {*/
+        //if ((color & 0xFC000000) == 0) return; // old vanilla forces alpha 0-3 to opaque, newer versions draw nothing
+        /*?}*/
         /*? if >=26 {*/
         //graphics.text(font, text, x, y, color, shadow);
         /*?} else if >=1.20 { */
