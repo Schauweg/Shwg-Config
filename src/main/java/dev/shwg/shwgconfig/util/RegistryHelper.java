@@ -25,51 +25,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 
 public class RegistryHelper {
 
-    // Tools
-    public static final int WOOD_TOOL_MAX_DAMAGE = 59;
-    public static final int STONE_TOOL_MAX_DAMAGE = 131;
-    public static final int COPPER_TOOL_MAX_DAMAGE = 190;
-    public static final int IRON_TOOL_MAX_DAMAGE = 250;
-    public static final int GOLD_TOOL_MAX_DAMAGE = 32;
-    public static final int DIAMOND_TOOL_MAX_DAMAGE = 1561;
-    public static final int NETHERITE_TOOL_MAX_DAMAGE = 2031;
-
-    // Helmets
-    public static final int LEATHER_HELMET_MAX_DAMAGE = 55;
-    public static final int COPPER_HELMET_MAX_DAMAGE = 121;
-    public static final int CHAINMAIL_HELMET_MAX_DAMAGE = 165;
-    public static final int IRON_HELMET_MAX_DAMAGE = 165;
-    public static final int GOLD_HELMET_MAX_DAMAGE = 77;
-    public static final int DIAMOND_HELMET_MAX_DAMAGE = 363;
-    public static final int NETHERITE_HELMET_MAX_DAMAGE = 407;
-
-    // Chestplates
-    public static final int LEATHER_CHESTPLATE_MAX_DAMAGE = 80;
-    public static final int COPPER_CHESTPLATE_MAX_DAMAGE = 176;
-    public static final int CHAINMAIL_CHESTPLATE_MAX_DAMAGE = 240;
-    public static final int IRON_CHESTPLATE_MAX_DAMAGE = 240;
-    public static final int GOLD_CHESTPLATE_MAX_DAMAGE = 112;
-    public static final int DIAMOND_CHESTPLATE_MAX_DAMAGE = 528;
-    public static final int NETHERITE_CHESTPLATE_MAX_DAMAGE = 592;
-
-    // Leggings
-    public static final int LEATHER_LEGGINGS_MAX_DAMAGE = 75;
-    public static final int COPPER_LEGGINGS_MAX_DAMAGE = 165;
-    public static final int CHAINMAIL_LEGGINGS_MAX_DAMAGE = 225;
-    public static final int IRON_LEGGINGS_MAX_DAMAGE = 225;
-    public static final int GOLD_LEGGINGS_MAX_DAMAGE = 105;
-    public static final int DIAMOND_LEGGINGS_MAX_DAMAGE = 495;
-    public static final int NETHERITE_LEGGINGS_MAX_DAMAGE = 555;
-
-    // Boots
-    public static final int LEATHER_BOOTS_MAX_DAMAGE = 65;
-    public static final int COPPER_BOOTS_MAX_DAMAGE = 143;
-    public static final int CHAINMAIL_BOOTS_MAX_DAMAGE = 195;
-    public static final int IRON_BOOTS_MAX_DAMAGE = 195;
-    public static final int GOLD_BOOTS_MAX_DAMAGE = 91;
-    public static final int DIAMOND_BOOTS_MAX_DAMAGE = 429;
-    public static final int NETHERITE_BOOTS_MAX_DAMAGE = 481;
-
     public static Identifier getID(ResourceKey<?> resourceKey) {
         /*? if >= 1.21.11 { */
         return resourceKey.identifier();
