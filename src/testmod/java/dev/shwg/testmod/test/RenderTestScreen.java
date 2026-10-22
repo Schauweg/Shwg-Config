@@ -24,7 +24,7 @@ import net.minecraft.world.level.block.Blocks;
  * screenshots from different Minecraft versions can be compared side by side.
  * Controls: LEFT/RIGHT or PAGE UP/DOWN or 1-6 to switch pages, ESC to close.</p>
  *
- * <p>Needs the test sprites in {@code assets/<NS>/textures/gui/sprites/rendertest/}
+ * <p>Needs the test sprites in {@code assets/MOD_ID/textures/gui/sprites/rendertest/}
  * (nine_slice, tiled, stretch - each with a .png.mcmeta).</p>
  */
 public class RenderTestScreen extends GenericScreen {

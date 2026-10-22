@@ -42,7 +42,7 @@ LABEL_H = 22
 GAP = 8
 
 
-# ── Reading the screenshots ───────────────────────────────────────────────────────────────────
+# Reading the screenshots
 
 def version_key(identifier):
     """'1.21.11-fabric' -> sorted by loader first, then by numeric version (1.21.2 before 1.21.11)."""
@@ -71,7 +71,7 @@ def collect(root):
     return data
 
 
-# ── Comparing images ──────────────────────────────────────────────────────────────────────────
+# Comparing images
 
 def difference(a, b, page_name, tolerance):
     """Returns (fraction of pixels that differ, mask of them) or (None, None) if the sizes differ."""
@@ -92,7 +92,7 @@ def tint(image, mask):
     return Image.composite(Image.new("RGB", image.size, (255, 0, 0)), image.convert("RGB"), grown)
 
 
-# ── Drawing ───────────────────────────────────────────────────────────────────────────────────
+# Drawing
 
 def load_font(size=13):
     try:
@@ -130,7 +130,7 @@ def draw_grid(tiles, cols, scale, font):
     return sheet
 
 
-# ── Contact sheets ────────────────────────────────────────────────────────────────────────────
+# Contact sheets
 
 def build_sheet(ids, page, data, ref_id, args, font):
     """Returns (sheet image, {id: fraction different from ref or None})."""
@@ -195,7 +195,7 @@ def write_index(out, ids, pages, ref_id, all_stats):
         f"<h1>Autotest comparison</h1>{''.join(rows)}{sheets}", encoding="utf-8")
 
 
-# ── Regression check against an earlier run ───────────────────────────────────────────────────
+# Regression check against an earlier run
 
 def check_baseline(current, baseline_root, out, args, font):
     baseline = collect(baseline_root)
@@ -228,7 +228,7 @@ def check_baseline(current, baseline_root, out, args, font):
     return changed
 
 
-# ── Main ──────────────────────────────────────────────────────────────────────────────────────
+# Main
 
 def main():
     parser = argparse.ArgumentParser(description="Compare the autotest screenshots of all versions.")
