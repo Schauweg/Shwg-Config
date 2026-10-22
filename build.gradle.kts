@@ -169,7 +169,9 @@ dependencies {
 
     // Required by the testmod's ModMenu entrypoint on Fabric.
     if (mod.isFabric && mod.hasProp("modmenu_version")) {
-        add(apiConfiguration, "com.terraformersmc:modmenu:${mod.prop("modmenu_version")}")
+        add(apiConfiguration, "com.terraformersmc:modmenu:${mod.prop("modmenu_version")}"){
+            exclude(group = "net.fabricmc", module = "fabric-loader")
+        }
     }
 }
 

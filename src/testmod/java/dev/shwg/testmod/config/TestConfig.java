@@ -14,9 +14,13 @@ import dev.shwg.shwgconfig.api.values.numbervalues.DoubleValue;
 import dev.shwg.shwgconfig.api.values.numbervalues.FloatValue;
 import dev.shwg.shwgconfig.api.values.numbervalues.IntValue;
 import dev.shwg.shwgconfig.api.values.stringvalues.*;
+import dev.shwg.shwgconfig.gui.components.widget.button.GenericButton;
 import dev.shwg.shwgconfig.gui.components.widget.editbox.suggestioneditbox.SuggestionEditBox;
 import dev.shwg.shwgconfig.util.RegistryHelper;
+import dev.shwg.testmod.test.RenderTestScreen;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
@@ -174,10 +178,18 @@ public class TestConfig extends ConfigBase {
                 .centerPreviewWithControls()
                 .build();
 
+        ConfigCategory customScreenOpener = CategoryBuilder.create(Component.literal("Custom Screen for Render testing"))
+                .addCustomWidget(GenericButton.builder(Component.literal("Open Test Screen"), button -> {
+                    Screen currentScreen = Minecraft.getInstance().screen;
+                    Minecraft.getInstance().setScreen(new RenderTestScreen(currentScreen));
+                }).build())
+                .build();
+
         Tab layoutAndCustomWidgets = TabBuilder.create(Component.literal("Layout & Custom Widgets"))
                 .addCategory(defaultPreviewLayout)
                 .addCategory(noTitleCategory)
                 .addCategory(customWidgetLayout)
+                .addCategory(customScreenOpener)
                 .build();
 
         return Builder.create(Component.literal("Test Mod Config"))

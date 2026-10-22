@@ -1,5 +1,6 @@
 package dev.shwg.testmod;
 
+import dev.shwg.testmod.test.AutoTest;
 import net.minecraft.client.Minecraft;
 import dev.shwg.shwgconfig.api.ConfigManager;
 import dev.shwg.shwgconfig.api.ClientTickDispatcher;
@@ -59,6 +60,8 @@ public class TestMod implements ModInitializer {
     private void init(){
         configManager = ConfigManager.of(TEST_CONFIG, "shwgconfig-testmod.json");
         configManager.load();
+
+        AutoTest.start();
 
         ClientTickDispatcher.registerGUI(keyEvent ->  {
             if (keyEvent.matches(TEST_CONFIG.keybindValue)) {

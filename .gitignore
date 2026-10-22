@@ -5,6 +5,7 @@ run/
 prism-instances.py
 *.psd
 scripts/
+autotest-report/
 
 # gradle
 secrets.gradle
