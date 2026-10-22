@@ -210,11 +210,21 @@ public class RenderTestScreen extends GenericScreen {
         g.fillWH(cx + 110, cy, 100, 24, BAR);
         g.drawScrollingString(font, "Short, centered", cx + 110, cy, 100, 24, WHITE);
 
-        cell(g, font, 5, "text colors / alpha", "no-alpha line: differs by version?");
-        g.drawString(font, "Opaque 0xFFFF0000", cx, cy, 0xFFFF0000);
-        g.drawString(font, "Half alpha 0x80FF0000", cx, cy + 10, 0x80FF0000);
-        g.drawString(font, "No alpha 0x00FF0000", cx, cy + 20, 0x00FF0000);
-        g.drawString(font, "Opaque, no shadow", cx, cy + 30, WHITE, false);
+        cell(g, font, 5, "text alpha (label | sample)", "visible: FF 80 20 - invisible: 04 03 01 00");
+        alphaRow(g, font, cx, cy, 0xFF);
+        alphaRow(g, font, cx, cy + 10, 0x80);
+        alphaRow(g, font, cx, cy + 20, 0x20);
+        alphaRow(g, font, cx, cy + 30, 0x04);
+        alphaRow(g, font, cx + 110, cy, 0x03);
+        alphaRow(g, font, cx + 110, cy + 10, 0x01);
+        alphaRow(g, font, cx + 110, cy + 20, 0x00);
+        g.drawString(font, "Opaque, no shadow", cx + 110, cy + 30, 0xFFFFFFFF, false);
+    }
+
+    /** Gray label with the alpha value, then a red sample text drawn with exactly that alpha. */
+    private void alphaRow(GenericGraphics g, Font font, int x, int y, int alpha) {
+        g.drawString(font, String.format("%02X", alpha), x, y, HINT, false);
+        g.drawString(font, "Sample text", x + 16, y, (alpha << 24) | 0xFF0000);
     }
 
     // Page 3: clipping and pose 
