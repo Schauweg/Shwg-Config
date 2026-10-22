@@ -324,7 +324,10 @@ public class RenderTestScreen extends GenericScreen {
         cell(g, font, 2, "item vs later fill (z-order)", "green must cover the right half of the item");
         g.fillWH(cx, cy, 40, 20, RED);
         g.renderItem(sword, cx + 4, cy + 2);
+        g.pushPose();
+        g.translate(0, 0, 200);   // ignored on >=1.21.6, which draws in call order anyway
         g.fill(cx + 12, cy - 4, cx + 50, cy + 24, 0x8000FF00);
+        g.popPose();
 
         cell(g, font, 3, "item under pose", "rotated 20deg / scaled 1.5x");
         g.pushPose();
