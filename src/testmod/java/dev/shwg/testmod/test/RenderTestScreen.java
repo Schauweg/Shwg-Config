@@ -60,7 +60,7 @@ public class RenderTestScreen extends GenericScreen {
         // Sprites must be created after resources are loaded, so not in the constructor.
         appleTex = GenericTexture.fromItem(Items.APPLE);
         stoneTex = GenericTexture.fromBlock(Blocks.STONE);
-        inventoryTex = GenericTexture.vanillaTexture("textures/gui/container/inventory.png", 256, 256);
+        inventoryTex = GenericTexture.vanillaTexture("textures/gui/container/dispenser.png", 256, 256);
         spriteError = null;
         try {
             stretchSprite = GenericSprite.fromMcMeta(TestMod.MOD_ID, "rendertest/stretch");
