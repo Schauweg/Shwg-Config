@@ -1,4 +1,4 @@
-package dev.shwg.testmod.config;
+package dev.shwg.testmod.config.widgets;
 
 import net.minecraft.world.phys.Vec2;
 

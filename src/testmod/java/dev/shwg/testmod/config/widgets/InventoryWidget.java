@@ -1,10 +1,9 @@
-package dev.shwg.testmod.config;
+package dev.shwg.testmod.config.widgets;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import dev.shwg.shwgconfig.gui.components.widget.GenericAbstractWidget;
 import dev.shwg.shwgconfig.gui.input.events.GenericKeyEvent;
 import dev.shwg.shwgconfig.gui.input.events.GenericMouseButtonEvent;
-import dev.shwg.shwgconfig.gui.layout.RenderableElement;
 import dev.shwg.shwgconfig.render.GenericGraphics;
 import dev.shwg.shwgconfig.render.textures.GenericTexture;
 import dev.shwg.shwgconfig.util.DisplayItemStack;
@@ -12,13 +11,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

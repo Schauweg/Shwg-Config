@@ -1,4 +1,4 @@
-package dev.shwg.testmod.config;
+package dev.shwg.testmod.config.widgets;
 
 import dev.shwg.shwgconfig.gui.components.widget.GenericAbstractWidget;
 import dev.shwg.shwgconfig.gui.input.events.GenericMouseButtonEvent;

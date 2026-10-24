@@ -1,9 +1,10 @@
-package dev.shwg.testmod.config;
+package dev.shwg.testmod.config.values;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import dev.shwg.shwgconfig.api.values.ConfigValue;
 import dev.shwg.shwgconfig.api.values.CustomJsonSerializable;
+import dev.shwg.testmod.config.widgets.CatmullRomSpline;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec2;
 
