@@ -1,11 +1,9 @@
 package dev.shwg.shwgconfig.gui.components.widget;
 
 import dev.shwg.shwgconfig.gui.deferred.overlay.OverlayDispatch;
+import dev.shwg.shwgconfig.gui.input.events.GenericKeyEvent;
 import dev.shwg.shwgconfig.gui.input.events.GenericMouseButtonEvent;
-import dev.shwg.shwgconfig.gui.layout.Alignment;
-import dev.shwg.shwgconfig.gui.layout.GenericVerticalLayout;
-import dev.shwg.shwgconfig.gui.layout.LayoutElement;
-import dev.shwg.shwgconfig.gui.layout.RenderableElement;
+import dev.shwg.shwgconfig.gui.layout.*;
 import dev.shwg.shwgconfig.render.textures.GenericTexture;
 import dev.shwg.shwgconfig.render.GenericGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -208,6 +206,16 @@ public class GenericScrollableWidget extends GenericAbstractContainerWidget {
             scrollOffset = scrollBar.drag(event.getMouseY(), deltaY, scrollOffset);
             clampScroll();
             updateContentPosition();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    protected boolean onUnhandledKeyPressed(GenericKeyEvent keyEvent) {
+        if (getFocused() instanceof GenericAbstractWidget focused
+                && UnhandledKeyListener.dispatch(layout, focused, keyEvent)) {
+            scrollIntoView(focused); // the focused widget may have moved out of view
             return true;
         }
         return false;

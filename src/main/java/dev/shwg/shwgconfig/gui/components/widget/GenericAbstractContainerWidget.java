@@ -278,10 +278,18 @@ public abstract class GenericAbstractContainerWidget extends GenericAbstractWidg
         if (OverlayDispatch.keyPressed(this.children(), e)) return true;
 
         /*? if >= 1.21.9 { */
-        return ContainerEventHandler.super.keyPressed(keyEvent);
-         /*?} else {*/
-        //return ContainerEventHandler.super.keyPressed(keyCode, scanCode, modifiers);
+        boolean handled = ContainerEventHandler.super.keyPressed(keyEvent);
+        /*?} else {*/
+        //boolean handled = ContainerEventHandler.super.keyPressed(keyCode, scanCode, modifiers);
         /*?}*/
+        if (handled) return true;
+        // The focused child didn't use the key: let the container offer it elsewhere.
+        return onUnhandledKeyPressed(e);
+    }
+
+    /** Called when the focused child didn't handle a key. Returns true if the key was used. */
+    protected boolean onUnhandledKeyPressed(GenericKeyEvent keyEvent) {
+        return false;
     }
 
     @Override

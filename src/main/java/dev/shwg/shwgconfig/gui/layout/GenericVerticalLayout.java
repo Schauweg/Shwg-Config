@@ -48,10 +48,14 @@ public class GenericVerticalLayout extends GenericAbstractLayout {
             element.setX(xPos);
             element.setY(currentY);
 
+            // Arrange every nested layout first - also one that renders itself (e.g. a config
+            // category), whose height can depend on its children (e.g. a list that got a row).
+            if (element instanceof GenericLayout nestedLayout) {
+                nestedLayout.arrange();
+            }
             if (element instanceof RenderableElement renderable) {
                 currentY += renderable.getHeight();
             } else if (element instanceof GenericLayout nestedLayout) {
-                nestedLayout.arrange();
                 currentY += nestedLayout.getContentHeight();
             }
             if (iterator.hasNext()) {

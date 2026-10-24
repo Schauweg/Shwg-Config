@@ -1,5 +1,6 @@
 package dev.shwg.shwgconfig.gui.components.widget.editbox.suggestioneditbox;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import dev.shwg.shwgconfig.gui.components.widget.editbox.GenericAbstractEditBox;
 import dev.shwg.shwgconfig.gui.components.widget.OverlayWidget;
 import dev.shwg.shwgconfig.gui.deferred.overlay.ListWidgetOverlay;
@@ -19,6 +20,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -327,11 +330,15 @@ public class SuggestionEditBox extends GenericAbstractEditBox implements Overlay
 
     @Override
     protected boolean onKeyPressed(GenericKeyEvent keyEvent) {
+        //ignore just a shift press to not open the overlay on just a shift press
+        if (keyEvent.getKey().getValue() == InputConstants.KEY_LSHIFT || keyEvent.getKey().getValue() == InputConstants.KEY_RSHIFT)
+            return false;
+
         if (keyEvent.isEscape() && overlay.isOpen()) {
             revertToValidValue();
             return true;
         }
-        ensureSuggestionsLoaded();
+
         return super.onKeyPressed(keyEvent);
     }
 
