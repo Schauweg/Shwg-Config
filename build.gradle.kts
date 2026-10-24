@@ -119,6 +119,7 @@ tasks.jar {
 
     if (stonecutter.current.parsed >= "1.20.2") {
         exclude("assets/minecraft/textures/gui/sprites/widget/text_field**")
+        exclude("assets/minecraft/textures/gui/sprites/player_list/")
     }
 
     if (stonecutter.current.parsed >= "1.21.2") {

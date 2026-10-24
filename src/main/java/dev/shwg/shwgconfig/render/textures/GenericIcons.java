@@ -64,4 +64,19 @@ public final class GenericIcons {
         GenericSprite sprite = highlighted ? ARROW_RIGHT_HIGHLIGHTED : ARROW_RIGHT;
         graphics.drawSprite(sprite, glyphX - LARGE_ARROW_RIGHT_GLYPH_OFFSET_X, glyphY - LARGE_ARROW_GLYPH_OFFSET_Y);
     }
+
+    // Red cross from vanilla's Realms player list ("remove player", 8x7). From 1.20.2 it is the
+    // vanilla sprite minecraft:player_list/remove_player. Older versions use the copy of that
+    // sprite shipped in this mod's assets (like text_field), drawn as a plain 8x7 texture -
+    // the old realms cross_player_icon.png has stray pixels and is not used.
+    private static final GenericSprite CROSS = GenericSprite.plain("minecraft", "player_list/remove_player", 8, 7);
+
+    public static final int CROSS_WIDTH = 8;
+    public static final int CROSS_HEIGHT = 7;
+
+    /** Draws the small red cross from vanilla's Realms player list with its top left corner at (x, y). */
+    public static void drawCross(GenericGraphics graphics, int x, int y) {
+        graphics.drawSprite(CROSS, x, y);
+    }
+
 }
