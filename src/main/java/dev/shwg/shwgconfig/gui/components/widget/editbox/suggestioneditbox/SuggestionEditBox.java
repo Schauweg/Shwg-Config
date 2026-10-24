@@ -124,23 +124,40 @@ public class SuggestionEditBox extends GenericAbstractEditBox implements Overlay
         if (!autoSelectOnBlur) {
             return;
         }
+        // Nothing stored yet (e.g. a new list row): stay empty instead of picking a suggestion.
+        if (value == null || value.isEmpty()) {
+            return;
+        }
 
-        suggestionProvider.getSuggestions(value == null ? "" : value, overlay).thenAccept(suggestions ->
+        // "" matches every suggestion. Look the stored value up by what gets saved (the ID),
+        // not by the display name: two entries can share a name, but never an ID.
+        suggestionProvider.getSuggestions("", overlay).thenAccept(suggestions ->
                 Minecraft.getInstance().execute(() -> {
-                    if (suggestions == null || suggestions.isEmpty()) {
-                        return;
-                    }
-                    if (validEntry != null) {
+                    if (suggestions != null) {
                         for (SuggestionEntry entry : suggestions) {
-                            if (entry.sortingString().equalsIgnoreCase(value)) {
+                            if (entry.saveValue().equals(value)) {
                                 applySuggestion(entry);
+                                return;
                             }
                         }
-                    } else {
-                        applySuggestion(suggestions.get(0));
                     }
+                    // Not available right now (e.g. from a mod or server that isn't loaded):
+                    // show it, but don't save anything, so the stored value survives.
+                    showUnresolvedValue(value);
                 })
         );
+    }
+
+    private void showUnresolvedValue(String value) {
+        setValue(value);
+        requestGeneration++;          // cancels the fetch that setValue just triggered
+        currentEntry = null;
+        validValue = value;           // blur and Escape go back to this text
+        validEntry = null;
+        updateEditBoxInsets();
+        hasFetchedOnce = false;
+        overlay.setItems(List.of());
+        overlay.open(false);
     }
 
     @Override

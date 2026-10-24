@@ -128,12 +128,8 @@ public final class WidgetFactories {
     public static WidgetFactory<String> suggestionBox(SuggestionEditBox.SuggestionProvider provider) {
         return (width, height, font, configValue) ->
         {
-            String value = configValue.getValue();
-            if (configValue instanceof StringValue stringValue) {
-                value = stringValue.getDisplayName();
-            }
             return SuggestionEditBox.builder(font, Component.empty(), provider)
-                    .value(value)
+                    .value(configValue.getValue())
                     .applyValue(configValue::setValue)
                     .size(width, height)
                     .overlayAlignment(Alignment.Horizontal.RIGHT)
