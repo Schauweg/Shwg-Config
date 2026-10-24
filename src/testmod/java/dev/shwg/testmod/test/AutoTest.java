@@ -1,5 +1,6 @@
 package dev.shwg.testmod.test;
 
+import com.mojang.authlib.minecraft.client.MinecraftClient;
 import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Screenshot;
@@ -122,6 +123,7 @@ public final class AutoTest {
         }
 
         try {
+            Minecraft.getInstance().options.fullscreen().set(false);
             logWindow(mc);
             RenderTestScreen screen = new RenderTestScreen(currentScreen(mc));
             Run run = new Run(mc, screen);
