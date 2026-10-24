@@ -112,6 +112,15 @@ public final class AutoTest {
         if (++stableChecks < 4) return; // ~2 seconds without overlay, let the first screen settle
         opened = true;
 
+        // Still on the title screen with no world loaded: the state the registry checks need.
+        // Results go to a report file that Gradle checks; a failing check must not stop the screenshots.
+        try {
+            RegistryHelperAutotest.runOnce();
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            log("registry checks crashed: " + e);
+        }
+
         try {
             logWindow(mc);
             RenderTestScreen screen = new RenderTestScreen(currentScreen(mc));
@@ -125,7 +134,7 @@ public final class AutoTest {
         }
     }
 
-    // The actual run: driven by RenderTestScreen#tick, so it needs no loader specific tick event 
+    // The actual run: driven by RenderTestScreen#tick, so it needs no loader specific tick event
 
     private static final class Run {
         private enum Phase {WARMUP, SETTLE, WAIT_FOR_FILE}
@@ -200,7 +209,7 @@ public final class AutoTest {
         }
     }
 
-    // Version specific parts 
+    // Version specific parts
 
     /**
      * Takes a screenshot of the main render target and writes it to {@code file}.
@@ -239,7 +248,7 @@ public final class AutoTest {
         /*?} */
     }
 
-    // Helpers 
+    // Helpers
 
     private static String id() {
         String id = System.getenv(ENV_ID);

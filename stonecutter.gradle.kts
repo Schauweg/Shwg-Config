@@ -25,7 +25,12 @@ tasks.register("runActiveTestmod") {
 // Projects are discovered automatically: every subproject whose name ends in
 // -fabric, -forge or -neoforge and that has the run task above (e.g. 1.21.1-fabric).
 // Check `./gradlew projects` if nothing is found.
+//
+// Test reports: every run writes its reports to build/autotest/<project>/ in the root project
+// (e.g. build/autotest/1.21.1-fabric/registry-helper.txt). After each run, the project's
+// verifyAutotestReports task fails if a report is missing or contains a FAIL.
 val autotestRunTask = "runTestmodClient"
+val autotestVerifyTask = "verifyAutotestReports"
 
 val loaders = listOf("fabric", "neoforge", "forge")
 
@@ -90,6 +95,34 @@ gradle.projectsEvaluated {
 
     // Configure each run task.
     candidates.forEachIndexed { index, p ->
+        // One report folder per project, outside the run directory, so it doesn't matter
+        // whether Stonecraft gives each version its own run folder or shares one.
+        val reportDir = root.layout.buildDirectory.dir("autotest/${p.name}").get().asFile
+
+        // Checks the reports the game wrote. Only wired up during autotest runs (see below).
+        val verify = p.tasks.register(autotestVerifyTask) {
+            group = "autotest"
+            description = "Fails if an autotest report for ${p.name} is missing or contains a FAIL"
+            val projectName = p.name
+
+            doLast {
+                val reports = reportDir.listFiles { file -> file.extension == "txt" }.orEmpty().sortedBy { it.name }
+
+                if (reports.isEmpty()) {
+                    throw GradleException(
+                        "autotest [$projectName]: no reports in $reportDir (did the game reach the title screen?)"
+                    )
+                }
+
+                reports.forEach { logger.lifecycle("autotest [$projectName] ${it.name}:\n${it.readText().trimEnd()}") }
+
+                val failed = reports.filter { it.readLines().firstOrNull() != "RESULT PASS" }
+                if (failed.isNotEmpty()) {
+                    throw GradleException("autotest [$projectName]: failed: ${failed.joinToString { it.name }}")
+                }
+            }
+        }
+
         p.tasks.named<JavaExec>(autotestRunTask) {
             // Never treat a finished game as "up to date" - launch it every time.
             outputs.upToDateWhen { false }
@@ -98,8 +131,15 @@ gradle.projectsEvaluated {
                 // The game reads these on startup (System.getenv).
                 environment("SHWG_AUTOTEST", "1")
                 environment("SHWG_AUTOTEST_ID", p.name) // e.g. "1.21.1-fabric", use it for the screenshot folder
-                // Minecraft's own command line arguments for the window size.
-                doFirst { args("--width", autotestWidth, "--height", autotestHeight) }
+                environment("SHWG_AUTOTEST_REPORT_DIR", reportDir.absolutePath)
+                doFirst {
+                    // Old reports must not make a broken run look green.
+                    reportDir.deleteRecursively()
+                    // Minecraft's own command line arguments for the window size.
+                    args("--width", autotestWidth, "--height", autotestHeight)
+                }
+                // Runs after the game closes, also when the game crashed.
+                finalizedBy(verify)
             }
 
             // Run strictly one at a time, in version order, even when only a subset is selected:
