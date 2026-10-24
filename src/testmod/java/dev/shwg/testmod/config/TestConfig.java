@@ -3,6 +3,7 @@ package dev.shwg.testmod.config;
 import com.mojang.blaze3d.platform.InputConstants;
 import dev.shwg.shwgconfig.api.*;
 import dev.shwg.shwgconfig.api.entries.EntryOptions;
+import dev.shwg.shwgconfig.api.entries.ListOptions;
 import dev.shwg.shwgconfig.api.entries.display.EnumLabels;
 import dev.shwg.shwgconfig.api.entries.display.NumberDisplay;
 import dev.shwg.shwgconfig.api.model.ConfigCategory;
@@ -17,6 +18,11 @@ import dev.shwg.shwgconfig.api.values.stringvalues.*;
 import dev.shwg.shwgconfig.gui.components.widget.button.GenericButton;
 import dev.shwg.shwgconfig.gui.components.widget.editbox.suggestioneditbox.SuggestionEditBox;
 import dev.shwg.shwgconfig.util.RegistryHelper;
+import dev.shwg.testmod.config.values.CurveValue;
+import dev.shwg.testmod.config.values.StringListValue;
+import dev.shwg.testmod.config.widgets.CatmullRomWidget;
+import dev.shwg.testmod.config.widgets.InventoryWidget;
+import dev.shwg.testmod.config.widgets.ItemListPreview;
 import dev.shwg.testmod.test.RenderTestScreen;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -34,6 +40,9 @@ public class TestConfig extends ConfigBase {
             "minecraft:entity.pig.ambient", "minecraft:block.anvil.use", "minecraft:ui.button.click");
 
     public enum TestEnum {ENUM1, ENUM2, ENUM3, ENUM4, ENUM5}
+
+    // Tab 5: Lists
+    public final StringListValue itemList = new StringListValue(List.of("minecraft:diamond", "minecraft:emerald"));
 
     // Tab 1: Basic controllers
     public final BooleanValue enableFeature = BooleanValue.of(true);
@@ -192,11 +201,26 @@ public class TestConfig extends ConfigBase {
                 .addCategory(customScreenOpener)
                 .build();
 
+        // Tab 5: Lists
+        ItemListPreview itemListPreview = new ItemListPreview();
+        ConfigCategory items = CategoryBuilder.create(Component.literal("Item List (max 5)"))
+                .addList(itemList, ItemListRow::new, ListOptions.create()
+                        .maxSize(5)
+                        .onSelectionChanged(itemListPreview))
+                .preview(itemListPreview)
+                .useOwnControllerWidth()
+                .build();
+
+        Tab lists = TabBuilder.create(Component.literal("Lists"))
+                .addCategory(items)
+                .build();
+
         return Builder.create(Component.literal("Test Mod Config"))
                 .addTab(basicControllers)
                 .addTab(choiceControllers)
                 .addTab(suggestionsAndKeybinds)
                 .addTab(layoutAndCustomWidgets)
+                .addTab(lists)
                 .build();
     }
 }
