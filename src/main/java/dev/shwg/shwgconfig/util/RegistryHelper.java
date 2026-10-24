@@ -1,21 +1,28 @@
 package dev.shwg.shwgconfig.util;
 
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.Holder;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
 
 import net.minecraft.core.Registry;
+
+/*? if >= 1.21 { */
+import net.minecraft.core.registries.Registries;
+/*? } */
 
 /*? if >= 1.19.3 { */
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -93,9 +100,11 @@ public class RegistryHelper {
                     Registry<T> reg = (Registry<T>) registry;
                     Identifier key = reg.getKey((T) value);
                     if (key != null && reg.containsKey(key)) {
-                        if (reg.get(key) == value) {
-                            return reg;
-                        }
+                        /*? if >= 1.21.2 { */
+                        if (reg.getValue(key) == value) return reg;
+                        /*? } else { */
+                        //if (reg.get(key) == value) return reg;
+                        /*? } */
                     }
                 }
             } catch (IllegalAccessException | ClassCastException ignored) {}
@@ -103,10 +112,56 @@ public class RegistryHelper {
         return null;
     }
 
+    public static Set<Identifier> getEnchantments() {
+        /*? if >= 1.21 { */
+        Set<Identifier> result = new LinkedHashSet<>(getRegistryEntries(Enchantments.class));
+        Registry<Enchantment> registry = getClientEnchantmentRegistry();
+        if (registry != null) result.addAll(registry.keySet());
+        return result;
+        /*? } else if >= 1.19.3 { */
+        //return BuiltInRegistries.ENCHANTMENT.keySet();
+        /*? } else { */
+        //return Registry.ENCHANTMENT.keySet();
+        /*? } */
+    }
 
-    public static List<Identifier> getEnchantments() {
+    private static Registry<Enchantment> getClientEnchantmentRegistry() {
+        /*? if >= 1.21.2 { */
+        ClientLevel level = Minecraft.getInstance().level;
+        return level == null ? null : level.registryAccess().lookup(Registries.ENCHANTMENT).orElse(null);
+        /*? } else if >= 1.21 { */
+        //ClientLevel level = Minecraft.getInstance().level;
+        //return level == null ? null : level.registryAccess().registry(Registries.ENCHANTMENT).orElse(null);
+        /*? } else { */
+        //return null;
+        /*? } */
+    }
 
-        return null;
+    public static Component enchantmentComponent(Identifier id) {
+        Enchantment enchantment = getEnchantment(id);
+        if (enchantment != null) {
+            /*? if >= 1.21 { */
+            return enchantment.description();
+            /*? } else { */
+            //return Component.translatable(enchantment.getDescriptionId());
+            /*? } */
+        }
+        String key = "enchantment." + id.getNamespace() + "." + id.getPath().replace('/', '.');
+        return Language.getInstance().has(key) ? Component.translatable(key) : Component.literal(id.toString());
+    }
+
+    public static Enchantment getEnchantment(Identifier id) {
+        /*? if >= 1.21.2 { */
+        Registry<Enchantment> registry = getClientEnchantmentRegistry();
+        return registry == null ? null : registry.get(id).map(Holder.Reference::value).orElse(null);
+        /*? } else if >= 1.21 { */
+        //Registry<Enchantment> registry = getClientEnchantmentRegistry();
+        //return registry == null ? null : registry.get(id);
+        /*? } else if >= 1.19.3 { */
+        //return BuiltInRegistries.ENCHANTMENT.get(id);
+        /*? } else { */
+        //return Registry.ENCHANTMENT.get(id);
+        /*? } */
     }
 
     public static List<Identifier> getBiomes() {
@@ -258,9 +313,6 @@ public class RegistryHelper {
         /*? } */
     }
 
-    public static Component enchantmentComponent(Identifier enchantment) {
-        return component("enchantment", enchantment);
-    }
 
 
 
