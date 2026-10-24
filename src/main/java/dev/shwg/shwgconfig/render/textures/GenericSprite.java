@@ -54,6 +54,21 @@ public class GenericSprite extends GenericTexture {
     }
 
     /**
+     * A sprite that lives in {@code textures/gui/sprites/} on every version - a vanilla sprite
+     * backported into your mod's assets, or one of your own. Drawn as one plain image at its
+     * natural size; no .mcmeta is read, so it can be created before resources are loaded
+     * (e.g. as a static final field).
+     *
+     * @param path   the sprite path without "textures/gui/sprites/" and ".png", e.g. "player_list/remove_player"
+     * @param width  the image width in pixels
+     * @param height the image height in pixels
+     */
+    public static GenericSprite plain(String namespace, String path, int width, int height) {
+        return new GenericSprite(namespace, "textures/gui/sprites/" + path + ".png",
+                0, 0, width, height, width, height, path);
+    }
+
+    /**
      * Creates a sprite and automatically determines its scaling type by reading the
      * associated {@code .mcmeta} file.
      *
