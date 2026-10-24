@@ -3,7 +3,9 @@ package dev.shwg.shwgconfig.gui.components.controller;
 import dev.shwg.shwgconfig.api.entries.CategoryEntry;
 import dev.shwg.shwgconfig.api.entries.ControllerEntry;
 import dev.shwg.shwgconfig.api.entries.CustomWidgetEntry;
+import dev.shwg.shwgconfig.api.entries.ListEntry;
 import dev.shwg.shwgconfig.api.model.ConfigCategory;
+import dev.shwg.shwgconfig.gui.components.controller.list.ListController;
 import dev.shwg.shwgconfig.gui.layout.*;
 import dev.shwg.shwgconfig.render.GenericGraphics;
 import net.minecraft.client.gui.Font;
@@ -75,6 +77,8 @@ public class ConfigCategoryImpl extends GenericAbstractLayout implements Rendera
                 controllerContainer.add(controller);
             } else if (entry instanceof CustomWidgetEntry customEntry) {
                 controllerContainer.add(customEntry.getWidget());
+            } else if (entry instanceof ListEntry<?> listEntry) {
+                controllerContainer.add(new ListController<>(listEntry));
             }
         }
     }
@@ -135,6 +139,8 @@ public class ConfigCategoryImpl extends GenericAbstractLayout implements Rendera
                         + SimpleController.DEFAULT_CONTROLLER_WIDTH);
             } else if (entry instanceof CustomWidgetEntry customEntry) {
                 max = Math.max(max, customEntry.getWidget().getWidth());
+            } else if (entry instanceof ListEntry<?> listEntry) {
+                max = Math.max(max, ListController.preferredWidth(listEntry));
             }
         }
         return max;
@@ -151,6 +157,9 @@ public class ConfigCategoryImpl extends GenericAbstractLayout implements Rendera
     @Override
     public void arrange() {
         super.arrange();
+        // Entries can change their height after the category was built (e.g. a list getting
+        // a row), so the height is measured again on every arrange, not only in the constructor.
+        setHeight(calculateHeight());
         updateY();
     }
 

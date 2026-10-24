@@ -4,5 +4,8 @@
   "shwgconfig.number.min": "Min",
   "shwgconfig.number.max": "Max",
   "shwgconfig.keybind.listening": "Press Key",
-  "key.category.testmod.keybinds": "My Mod Keybinds"
+  "shwgconfig.list.add": "Add",
+  "shwgconfig.list.move_up": "Move up",
+  "shwgconfig.list.move_down": "Move down",
+  "shwgconfig.list.remove": "Remove"
 }

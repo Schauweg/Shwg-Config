@@ -8,6 +8,7 @@ import dev.shwg.shwgconfig.api.values.numbervalues.DoubleValue;
 import dev.shwg.shwgconfig.api.values.numbervalues.FloatValue;
 import dev.shwg.shwgconfig.api.values.numbervalues.IntValue;
 import dev.shwg.shwgconfig.api.values.stringvalues.*;
+import dev.shwg.shwgconfig.gui.components.controller.list.ListRow;
 import dev.shwg.shwgconfig.gui.components.widget.GenericAbstractWidget;
 import dev.shwg.shwgconfig.gui.components.widget.button.GenericKeyBindButton;
 import dev.shwg.shwgconfig.gui.components.widget.editbox.suggestioneditbox.SuggestionEditBox;
@@ -435,6 +436,22 @@ public class CategoryBuilder {
      */
     public CategoryBuilder addBlockSuggestionInput(BlockValue value, Component label, EntryOptions options) {
         return addSuggestionInput(value, label, SuggestionEditBox::getBlockSuggestions, options);
+    }
+
+    // --- List
+    /** @see #addList(ListValue, Function, ListOptions) */
+    public <E> CategoryBuilder addList(ListValue<E> value, Function<E, ListRow<E>> rowFactory) {
+        return addList(value, rowFactory, ListOptions.NONE);
+    }
+
+    /**
+     * Adds an editable list bound to {@code value}: one row per element, built by
+     * {@code rowFactory} (usually a {@link ListRow} constructor, e.g. {@code NameRow::new}).
+     * The factory gets {@code null} for a new, empty row. See {@link ListRow} for how to write one.
+     */
+    public <E> CategoryBuilder addList(ListValue<E> value, Function<E, ListRow<E>> rowFactory, ListOptions options) {
+        entries.add(new ListEntry<>(value, rowFactory, options));
+        return this;
     }
 
     //--- Custom Widget
