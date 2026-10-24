@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import dev.shwg.shwgconfig.gui.components.screens.GenericScreen;
 import dev.shwg.shwgconfig.gui.input.events.GenericKeyEvent;
 import dev.shwg.shwgconfig.render.GenericGraphics;
+import dev.shwg.shwgconfig.render.textures.GenericIcons;
 import dev.shwg.shwgconfig.render.textures.GenericSprite;
 import dev.shwg.shwgconfig.render.textures.GenericTexture;
 import dev.shwg.shwgconfig.render.textures.NineSlicedSprite;
@@ -22,14 +23,14 @@ import net.minecraft.world.level.block.Blocks;
  *
  * <p>Every cell has a title and an "expected" hint, so a wrong result is visible at a glance and
  * screenshots from different Minecraft versions can be compared side by side.
- * Controls: LEFT/RIGHT or PAGE UP/DOWN or 1-6 to switch pages, ESC to close.</p>
+ * Controls: LEFT/RIGHT or PAGE UP/DOWN or the number keys to switch pages, ESC to close.</p>
  *
  * <p>Needs the test sprites in {@code assets/MOD_ID/textures/gui/sprites/rendertest/}
  * (nine_slice, tiled, stretch - each with a .png.mcmeta).</p>
  */
 public class RenderTestScreen extends GenericScreen {
 
-    private static final String[] PAGES = {"Primitives", "Text", "Clip & pose", "Items", "Textures", "Sprites"};
+    private static final String[] PAGES = {"Primitives", "Text", "Clip & pose", "Items", "Textures", "Sprites", "Icons"};
 
     // grid layout: 2 columns x 3 rows of cells
     private static final int COLS = 2, CELL_W = 226, CELL_H = 76, GAP = 4, ORIGIN_X = 10, ORIGIN_Y = 24;
@@ -77,7 +78,7 @@ public class RenderTestScreen extends GenericScreen {
         if (tickHook != null) tickHook.run();
     }
 
-    // Input 
+    // Input
 
     @Override
     protected boolean onKeyPressed(GenericKeyEvent e) {
@@ -97,7 +98,7 @@ public class RenderTestScreen extends GenericScreen {
         return false;
     }
 
-    // Render 
+    // Render
 
     @Override
     public void render(GenericGraphics g, int mouseX, int mouseY, float partialTicks) {
@@ -117,6 +118,7 @@ public class RenderTestScreen extends GenericScreen {
             case 3 -> pageItems(g, font);
             case 4 -> pageTextures(g, font);
             case 5 -> pageSprites(g, font);
+            case 6 -> pageIcons(g, font);
         }
 
         if (spriteError != null) {
@@ -124,7 +126,7 @@ public class RenderTestScreen extends GenericScreen {
         }
     }
 
-    // Page 1: primitives 
+    // Page 1: primitives
 
     private void pagePrimitives(GenericGraphics g, Font font) {
         cell(g, font, 0, "fill / fillWH / alpha", "red = green size; tint over white and dark");
@@ -172,7 +174,7 @@ public class RenderTestScreen extends GenericScreen {
         g.fillWH(x + w - 1, y, 1, h, color);
     }
 
-    // Page 2: text 
+    // Page 2: text
 
     private void pageText(GenericGraphics g, Font font) {
         cell(g, font, 0, "String / Component / Sequence", "4 lines, the last one has no shadow");
@@ -227,7 +229,7 @@ public class RenderTestScreen extends GenericScreen {
         g.drawString(font, "Sample text", x + 16, y, (alpha << 24) | 0xFF0000);
     }
 
-    // Page 3: clipping and pose 
+    // Page 3: clipping and pose
 
     private void pageClipAndPose(GenericGraphics g, Font font) {
         cell(g, font, 0, "scissor (single)", "red only inside white box; blue visible");
@@ -301,7 +303,7 @@ public class RenderTestScreen extends GenericScreen {
         g.fillWH(cx + 45, cy, 10, 10, WHITE);
     }
 
-    // Page 4: items 
+    // Page 4: items
 
     private void pageItems(GenericGraphics g, Font font) {
         ItemStack sword = DisplayItemStack.getStackSimple(Items.DIAMOND_HELMET);
@@ -353,7 +355,7 @@ public class RenderTestScreen extends GenericScreen {
         return 34;
     }
 
-    // Page 5: plain textures 
+    // Page 5: plain textures
 
     private void pageTextures(GenericGraphics g, Font font) {
         cell(g, font, 0, "drawTexture (item/block)", "natural, 2x, 0.5x; stone natural, 40x40");
@@ -396,7 +398,7 @@ public class RenderTestScreen extends GenericScreen {
         g.drawTexture(appleTex, cx + 40, cy, 32, 32);  // after release: complete
     }
 
-    // Page 6: sprites 
+    // Page 6: sprites
 
     private void pageSprites(GenericGraphics g, Font font) {
         if (stretchSprite == null || tiledSprite == null || nineSliceSprite == null) {
@@ -451,7 +453,62 @@ public class RenderTestScreen extends GenericScreen {
         g.disableScissor();
     }
 
-    // Helpers 
+    // Page 7: icons (GenericIcons)
+
+    private void pageIcons(GenericGraphics g, Font font) {
+        int sw = GenericIcons.SMALL_ARROW_GLYPH_WIDTH, sh = GenericIcons.SMALL_ARROW_GLYPH_HEIGHT;
+        int lw = GenericIcons.LARGE_ARROW_GLYPH_WIDTH, lh = GenericIcons.LARGE_ARROW_GLYPH_HEIGHT;
+        int cw = GenericIcons.CROSS_WIDTH, ch = GenericIcons.CROSS_HEIGHT;
+
+        cell(g, font, 0, "small arrows (dropdown)", "up, down, then highlighted; fill frames");
+        for (int i = 0; i < 4; i++) {
+            int x = cx + 4 + i * (sw + 12), y = cy + 4;
+            frame(g, x, y, sw, sh);
+            if (i % 2 == 0) GenericIcons.drawArrowUp(g, x, y, i >= 2);
+            else GenericIcons.drawArrowDown(g, x, y, i >= 2);
+        }
+
+        cell(g, font, 1, "large arrows (cycle button)", "left, right, then highlighted; fill frames");
+        for (int i = 0; i < 4; i++) {
+            int x = cx + 4 + i * (lw + 12), y = cy + 4;
+            frame(g, x, y, lw, lh);
+            if (i % 2 == 0) GenericIcons.drawArrowLeft(g, x, y, i >= 2);
+            else GenericIcons.drawArrowRight(g, x, y, i >= 2);
+        }
+
+        cell(g, font, 2, "cross: natural, 2x, on white", "red cross in frame, no box around it on white");
+        frame(g, cx + 4, cy + 4, cw, ch);
+        GenericIcons.drawCross(g, cx + 4, cy + 4);
+        g.pushPose();
+        g.translate(cx + 30, cy + 4);
+        g.scale(2f, 2f);
+        GenericIcons.drawCross(g, 0, 0);
+        g.popPose();
+        g.fillWH(cx + 64, cy, 24, 24, WHITE);
+        GenericIcons.drawCross(g, cx + 64 + (24 - cw) / 2, cy + (24 - ch) / 2);
+
+        // Preview of a list controller line: 13x10 arrow areas, a 20px row, a 12x12 cross area.
+        cell(g, font, 3, "list row layout (hover icons)", "icons centered in frames, highlight on hover");
+        int rowY = cy + 4, rowX = cx + 13 + 4, rowW = 140, crossX = rowX + rowW + 4;
+        boolean upHover = hover(cx, rowY, 13, 10), downHover = hover(cx, rowY + 10, 13, 10);
+        frame(g, cx, rowY, 13, 10);
+        frame(g, cx, rowY + 10, 13, 10);
+        GenericIcons.drawArrowUp(g, cx + (13 - sw) / 2, rowY + (10 - sh) / 2, upHover);
+        GenericIcons.drawArrowDown(g, cx + (13 - sw) / 2, rowY + 10 + (10 - sh) / 2, downHover);
+        g.fillWH(rowX, rowY, rowW, 20, BAR);
+        g.drawString(font, "row content", rowX + 4, rowY + 6, WHITE, false);
+        int crossAreaY = rowY + (20 - 12) / 2;
+        frame(g, crossX, crossAreaY, 12, 12);
+        if (hover(crossX, crossAreaY, 12, 12)) g.fillWH(crossX, crossAreaY, 12, 12, 0x33FFFFFF);
+        GenericIcons.drawCross(g, crossX + (12 - cw) / 2, crossAreaY + (12 - ch) / 2);
+    }
+
+    /** 1px gray frame just outside the area (x, y, w, h), to check that an icon lands exactly inside it. */
+    private void frame(GenericGraphics g, int x, int y, int w, int h) {
+        g.outline(x - 1, y - 1, w + 2, h + 2, CELL_BORDER);
+    }
+
+    // Helpers
 
     /**
      * Draws the cell frame, title and expectation hint, and sets {@link #cx}/{@link #cy} to its content origin.
