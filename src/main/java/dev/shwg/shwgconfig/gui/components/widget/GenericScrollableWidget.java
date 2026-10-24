@@ -162,7 +162,19 @@ public class GenericScrollableWidget extends GenericAbstractContainerWidget {
     public void arrange() {
         layout.arrange();
         clampScroll();
-        updateScrollbar();
+        updateContentPosition(); // clamping may have changed the offset, so move the content too
+    }
+
+    public double getScrollOffset() {
+        return scrollOffset;
+    }
+
+    /**
+     * Sets the scroll position in pixels. It is clamped to the content on the next {@link #arrange()},
+     * so it can be set before the content has its final size (e.g. right after rebuilding a layout).
+     */
+    public void setScrollOffset(double scrollOffset) {
+        this.scrollOffset = Math.max(0, scrollOffset);
     }
 
     @Override

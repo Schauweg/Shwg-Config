@@ -12,7 +12,7 @@ public class SimpleTab implements ITab {
 
     private final Component title;
     private final Component extraNarration;
-    private final GenericLayout layout;
+    private GenericLayout layout;
 
     public SimpleTab(Component title, GenericLayout layout) {
         this(title, Component.empty(), layout);
@@ -37,5 +37,13 @@ public class SimpleTab implements ITab {
     @Override
     public GenericLayout getLayout() {
         return layout;
+    }
+
+    /**
+     * Replaces this tab's content, e.g. after the screen was resized and the layout was
+     * built again for the new width. The tab itself (and every button pointing at it) stays the same.
+     */
+    public void setLayout(GenericLayout layout) {
+        this.layout = layout;
     }
 }

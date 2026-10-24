@@ -23,7 +23,6 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -37,7 +36,13 @@ public class ShwgConfigScreen extends GenericScreen {
 
     private final GenericHeaderFooterLayout headerFooterLayout = new GenericHeaderFooterLayout(this);
     private final TabManager tabManager = new TabManager(this::addAndRegister, this::removeAndDeregister);
-    private final List<ITab> builtTabs = new ArrayList<>();
+    private final List<SimpleTab> builtTabs = new ArrayList<>();
+    private final List<GenericScrollableWidget> tabScrollables = new ArrayList<>(); // same order as builtTabs
+    private int layoutWidth = -1; // screen width the tab layouts were last built for
+
+    /** Ticks to wait after the last width change before rebuilding (dragging the window border resizes many times). */
+    private static final int REBUILD_DELAY_TICKS = 2;
+    private int rebuildCountdown = 0; // 0 = no rebuild pending
     private GenericTabNavigationBar navigationBar;
     private boolean firstRun = true;
 
@@ -53,8 +58,11 @@ public class ShwgConfigScreen extends GenericScreen {
             configBackup = manager.config().toJson();
 
             for (Tab tab : tabs) {
-                builtTabs.add(new SimpleTab(tab.getTitle(), buildTabLayout(tab)));
+                BuiltTab built = buildTabLayout(tab);
+                builtTabs.add(new SimpleTab(tab.getTitle(), built.layout()));
+                tabScrollables.add(built.scrollable());
             }
+            layoutWidth = width;
 
             LayoutElement titleElement = label(font, title, 0, 0, -1);
 
@@ -77,8 +85,18 @@ public class ShwgConfigScreen extends GenericScreen {
             headerFooterLayout.arrange();
             tabManager.setCurrentTab(builtTabs.get(0), false);
             firstRun = false;
-        } else if (tabManager.getCurrentTab() != null) {
-            tabManager.getCurrentTab().getLayout().visitChildren(this::add);
+        } else {
+            // Widths (controller column, label wrapping, dividers) are baked in when a layout is
+            // built, so a different screen width (resize, fullscreen, GUI scale) needs new layouts.
+            // Not rebuilt right away: while the window border is dragged this runs for every
+            // step, so the rebuild waits until the width stopped changing (see tick()).
+            // Until then the old layout is only re-arranged at the new size.
+            if (width != layoutWidth) {
+                rebuildCountdown = REBUILD_DELAY_TICKS;
+            }
+            if (tabManager.getCurrentTab() != null) {
+                tabManager.getCurrentTab().getLayout().visitChildren(this::add);
+            }
         }
 
         add(headerFooterLayout);
@@ -86,7 +104,36 @@ public class ShwgConfigScreen extends GenericScreen {
         arrange();
     }
 
-    private void arrange() {
+    @Override
+    public void tick() {
+        super.tick();
+        if (rebuildCountdown > 0 && --rebuildCountdown == 0) {
+            ITab current = tabManager.getCurrentTab();
+            if (current != null) current.visitChildren(this::removeAndDeregister);
+            rebuildTabLayouts();
+            if (current != null) current.visitChildren(this::addAndRegister);
+            arrange();
+        }
+    }
+
+    /**
+     * Builds every tab's layout again for the current screen width. Keeps the tabs themselves
+     * (so the navigation bar and the current tab stay valid) and each tab's scroll position.
+     * Like vanilla on resize, focus and unsaved text in widgets are not kept.
+     */
+    private void rebuildTabLayouts() {
+        for (int i = 0; i < tabs.size(); i++) {
+            double scrollOffset = tabScrollables.get(i).getScrollOffset();
+            BuiltTab built = buildTabLayout(tabs.get(i));
+            built.scrollable().setScrollOffset(scrollOffset); // clamped by the next arrange()
+            builtTabs.get(i).setLayout(built.layout());
+            tabScrollables.set(i, built.scrollable());
+        }
+        layoutWidth = width;
+    }
+
+    @Override
+    protected void arrange() {
         if (navigationBar != null) {
             navigationBar.arrangeButtons(headerFooterLayout.getWidth(), navigationBar.getHeight());
         }
@@ -104,14 +151,18 @@ public class ShwgConfigScreen extends GenericScreen {
         WidgetOverlay.bottomBoundary = headerFooterLayout.footer().getY();
     }
 
-    private GenericLayout buildTabLayout(Tab tab) {
+    private record BuiltTab(GenericLayout layout, GenericScrollableWidget scrollable) {}
+
+    private BuiltTab buildTabLayout(Tab tab) {
         int rawControllerWidth = calculateControllerWidth(font, tab);
         int maxPreviewWidth = calculateMaxPreviewWidth(tab);
 
         int scrollbarAllowance = 20;
         int availableWidth = width - scrollbarAllowance * 2 - maxPreviewWidth * 2 - (maxPreviewWidth > 0 ? ConfigCategoryImpl.CONTROLLER_PREVIEW_SPACING : 0);
 
-        int controllerWidth = Mth.clamp(rawControllerWidth, SimpleController.DEFAULT_CONTROLLER_WIDTH + 40, availableWidth);
+        // At least the minimum width, but never more than the window offers - on a very narrow
+        // window the available width wins (clamping would return the minimum and overflow).
+        int controllerWidth = Math.min(Math.max(rawControllerWidth, SimpleController.DEFAULT_CONTROLLER_WIDTH + 40), availableWidth);
 
         int dividerWidth = controllerWidth + (maxPreviewWidth == 0 ? 0 : maxPreviewWidth + ConfigCategoryImpl.CONTROLLER_PREVIEW_SPACING);
         dividerWidth = Math.min(width, (int) (dividerWidth * 1.2f));
@@ -123,7 +174,7 @@ public class ShwgConfigScreen extends GenericScreen {
 
         List<ConfigCategory> categories = tab.getCategories();
         for (int i = 0; i < categories.size(); i++) {
-            ConfigCategoryImpl categoryImpl = new ConfigCategoryImpl(controllerWidth, font, categories.get(i));
+            ConfigCategoryImpl categoryImpl = new ConfigCategoryImpl(controllerWidth, availableWidth, font, categories.get(i));
             scrollable.add(categoryImpl);
 
             if (i < categories.size() - 1) {
@@ -141,7 +192,7 @@ public class ShwgConfigScreen extends GenericScreen {
             }
         };
         layout.add(scrollable);
-        return layout;
+        return new BuiltTab(layout, scrollable);
     }
 
     private GenericTabNavigationBar buildNavigationBar() {

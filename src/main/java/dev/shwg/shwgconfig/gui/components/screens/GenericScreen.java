@@ -58,6 +58,7 @@ public class GenericScreen extends Screen {
     protected final List<LayoutElement> elements = new ArrayList<>();
     private final Screen parent;
     private boolean closeOnEsc = true;
+    private boolean layoutRequested = false;
 
     public GenericScreen(Component title, Screen parent) {
         super(title);
@@ -476,4 +477,21 @@ public class GenericScreen extends Screen {
     public void resize(int width, int height) {
     }
     *//*? }  */
+
+    /** Re-arranges this screen on the next tick, e.g. after an element changed its size. */
+    public void requestLayout() {
+        if (layoutRequested) return;          // several requests in one tick → one arrange
+        layoutRequested = true;
+        Minecraft.getInstance().execute(() -> {
+            layoutRequested = false;
+            arrange();
+        });
+    }
+
+    /** Positions and sizes everything on this screen. By default arranges every layout added with add(). */
+    protected void arrange() {
+        for (LayoutElement element : elements) {
+            if (element instanceof GenericLayout layout) layout.arrange();
+        }
+    }
 }

@@ -30,10 +30,11 @@ public class ConfigCategoryImpl extends GenericAbstractLayout implements Rendera
     /**
      *
      * @param sharedControllerWidth  width of the vertical layout housing the controllers, calculated from all controllers for equal spacing
+     * @param maxControllerWidth     the most width the controllers may take; also caps a category using {@code useOwnControllerWidth()}
      * @param font                   Font used for all kinds of rendering
      * @param configCategory         ConfigCategory used to build the actual category
      */
-    public ConfigCategoryImpl(int sharedControllerWidth, Font font, ConfigCategory configCategory) {
+    public ConfigCategoryImpl(int sharedControllerWidth, int maxControllerWidth, Font font, ConfigCategory configCategory) {
         super(0, 0, 0, 0);
         this.font = font;
         this.previewWidget = configCategory.getPreviewWidget();
@@ -41,7 +42,7 @@ public class ConfigCategoryImpl extends GenericAbstractLayout implements Rendera
         this.centerPreviewWithControls = configCategory.centerPreviewWithControls();
 
         int controllerWidth = configCategory.useOwnControllerWidth()
-                ? calculateEntryWidth(font, configCategory.getEntries())
+                ? Math.min(calculateEntryWidth(font, configCategory.getEntries()), maxControllerWidth)
                 : sharedControllerWidth;
 
         this.controllerWidth = controllerWidth;
