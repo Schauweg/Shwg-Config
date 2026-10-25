@@ -37,6 +37,11 @@ import net.minecraft.client.gui.GuiGraphics;
 //import com.mojang.blaze3d.vertex.PoseStack;
 /*?} */
 
+/*? if >= 1.19.4 { */
+import net.minecraft.client.gui.ComponentPath;
+import net.minecraft.client.gui.components.events.ContainerEventHandler;
+/*?} */
+
 /*? if < 1.19.4 { */
 /*import dev.shwg.shwgconfig.gui.navigation.Rect;
 import dev.shwg.shwgconfig.gui.navigation.SpatialDirection;
@@ -442,6 +447,63 @@ public class GenericScreen extends Screen {
         Minecraft.getInstance().setScreen(screen);
         /*? } */
     }
+
+    /*? if >= 1.19.4 { */
+    /**
+     * Vanilla clears the whole focus path and applies the new one from the top on every keyboard
+     * navigation step, so every container on the way "loses" and "gains" focus even when the focus
+     * only moves between two of its own children. Here only the part of the path that changes is
+     * updated: containers that keep the focus get no onFocusLost / onFocusGained.
+     */
+    @Override
+    protected void changeFocus(@NotNull ComponentPath path) {
+        ComponentPath current = getCurrentFocusPath();
+        if (current == null) {
+            path.applyFocus(true);
+            return;
+        }
+
+        List<ComponentPath> oldNodes = nodes(current);
+        List<ComponentPath> newNodes = nodes(path);
+
+        // How many components both paths share from the top (screen, bar, ...).
+        int shared = 0;
+        while (shared < oldNodes.size() && shared < newNodes.size()
+                && oldNodes.get(shared).component() == newNodes.get(shared).component()) {
+            shared++;
+        }
+        if (shared == oldNodes.size() && shared == newNodes.size()) {
+            return; // same path, nothing changes
+        }
+
+        // Unfocus only the old branch below the shared part ...
+        if (shared < oldNodes.size()) {
+            oldNodes.get(shared).applyFocus(false);
+        }
+        if (shared == 0) {
+            path.applyFocus(true);
+        } else if (shared < newNodes.size()) {
+            // ... and focus the new branch, starting at the last shared container.
+            newNodes.get(shared - 1).applyFocus(true);
+        } else if (newNodes.get(shared - 1).component() instanceof ContainerEventHandler container) {
+            // The new path ends at a container that was already focused: it just has no focused child anymore.
+            container.setFocused(null);
+        }
+    }
+
+    /** The path as a list: [screen, container, ..., leaf]. */
+    private static List<ComponentPath> nodes(ComponentPath path) {
+        List<ComponentPath> nodes = new ArrayList<>();
+        while (true) {
+            nodes.add(path);
+            if (path instanceof ComponentPath.Path node) {
+                path = node.childPath();
+            } else {
+                return nodes;
+            }
+        }
+    }
+/*? } */
 
     @Override
     public void setFocused(@Nullable GuiEventListener guiEventListener) {

@@ -104,7 +104,7 @@ public class GenericScrollableWidget extends GenericAbstractContainerWidget {
     }
 
     @Override
-    protected void onChildFocusChanged(@Nullable GuiEventListener newFocused) {
+    protected void onChildFocusChanged(@Nullable GuiEventListener old, @Nullable GuiEventListener newFocused) {
         scrollIntoView(newFocused);
     }
 

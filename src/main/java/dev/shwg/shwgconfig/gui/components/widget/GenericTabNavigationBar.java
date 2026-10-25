@@ -2,6 +2,7 @@ package dev.shwg.shwgconfig.gui.components.widget;
 
 import dev.shwg.shwgconfig.gui.components.tabs.TabManager;
 import dev.shwg.shwgconfig.gui.components.widget.button.TabButton;
+import dev.shwg.shwgconfig.gui.input.KeyboardFocusEntryPoint;
 import dev.shwg.shwgconfig.gui.layout.Alignment;
 import dev.shwg.shwgconfig.gui.layout.GenericHorizontalLayout;
 import dev.shwg.shwgconfig.gui.layout.GenericLayout;
@@ -15,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GenericTabNavigationBar extends GenericAbstractContainerWidget {
+public class GenericTabNavigationBar extends GenericAbstractContainerWidget implements KeyboardFocusEntryPoint {
 
     private final TabManager tabManager;
     private final List<TabButton> tabButtons;
@@ -103,8 +104,15 @@ public class GenericTabNavigationBar extends GenericAbstractContainerWidget {
         }
     }
 
+
     @Override
-    protected void onChildFocusChanged(@Nullable GuiEventListener newFocused) {
+    public @Nullable GuiEventListener keyboardEntryFocus() {
+        int index = currentTabIndex();
+        return index < 0 ? null : tabButtons.get(index);
+    }
+
+    @Override
+    protected void onChildFocusChanged(@Nullable GuiEventListener oldFocused, @Nullable GuiEventListener newFocused) {
         if (newFocused instanceof TabButton button && button.isActive()) {
             tabManager.setCurrentTab(button.tab(), true);
         }

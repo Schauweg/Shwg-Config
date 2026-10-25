@@ -1,8 +1,7 @@
 package dev.shwg.shwgconfig.gui.components.widget;
 
-import com.mojang.blaze3d.platform.InputConstants;
-import dev.shwg.shwgconfig.gui.components.screens.GenericScreen;
 import dev.shwg.shwgconfig.gui.deferred.overlay.OverlayDispatch;
+import dev.shwg.shwgconfig.gui.input.KeyboardFocusEntryPoint;
 import dev.shwg.shwgconfig.gui.input.events.GenericCharacterEvent;
 import dev.shwg.shwgconfig.gui.input.events.GenericKeyEvent;
 import dev.shwg.shwgconfig.gui.input.events.GenericMouseButtonEvent;
@@ -27,7 +26,10 @@ import net.minecraft.client.input.CharacterEvent;
 /*? if >= 1.19.4 { */
 import net.minecraft.client.gui.ComponentPath;
 import net.minecraft.client.gui.navigation.FocusNavigationEvent;
-/*? } */
+/*? } else {*/
+/*import com.mojang.blaze3d.platform.InputConstants;
+import dev.shwg.shwgconfig.gui.components.screens.GenericScreen;
+*//*? } */
 
 /**
  * Base for widgets that host and delegate to child {@link GuiEventListener}s
@@ -64,6 +66,7 @@ public abstract class GenericAbstractContainerWidget extends GenericAbstractWidg
         if (this.focused != null && this.focused.equals(guiEventListener)) {
             return;
         }
+        GuiEventListener oldFocused = this.focused;
         if (this.focused != null) {
             setFocus(this.focused, false);
         }
@@ -71,10 +74,10 @@ public abstract class GenericAbstractContainerWidget extends GenericAbstractWidg
             setFocus(guiEventListener, true);
         }
         this.focused = guiEventListener;
-        onChildFocusChanged(guiEventListener);
+        onChildFocusChanged(oldFocused, guiEventListener);
     }
 
-    private static void setFocus(GuiEventListener listener, boolean focused) {
+    protected static void setFocus(GuiEventListener listener, boolean focused) {
         /*? if >= 1.19.4 { */
         listener.setFocused(focused);
         /*? } else { */
@@ -89,7 +92,7 @@ public abstract class GenericAbstractContainerWidget extends GenericAbstractWidg
      * No-op by default. Override to react to a child gaining focus - e.g. scrolling it
      * into view, or (for a tab bar) treating focus as an implicit selection.
      */
-    protected void onChildFocusChanged(@Nullable GuiEventListener newFocused) {
+    protected void onChildFocusChanged(@Nullable GuiEventListener oldFocused, @Nullable GuiEventListener newFocused) {
     }
 
     @Override
@@ -109,13 +112,26 @@ public abstract class GenericAbstractContainerWidget extends GenericAbstractWidg
 
     @Override
     /*? if >= 1.19.4 { */
-    public ComponentPath nextFocusPath(@NotNull FocusNavigationEvent event) {
+    public @Nullable ComponentPath nextFocusPath(@NotNull FocusNavigationEvent event) {
+        // Keyboard navigation entering this container from outside: let it choose its entry child.
+        // Vanilla asks for the new path before it changes any focus, so isFocused() is still accurate here.
+        if (!isFocused() && this instanceof KeyboardFocusEntryPoint entryPoint) {
+            GuiEventListener entry = entryPoint.keyboardEntryFocus();
+            if (entry != null) {
+                ComponentPath inner = entry instanceof ContainerEventHandler
+                        ? entry.nextFocusPath(event)     // the entry is a container: continue into it
+                        : ComponentPath.leaf(entry);
+                if (inner != null) {
+                    return ComponentPath.path(this, inner);
+                }
+            }
+        }
         return ContainerEventHandler.super.nextFocusPath(event);
     }
     /*?} else {*/
-    /*public boolean changeFocus(boolean forward) {
-        return ContainerEventHandler.super.changeFocus(forward);
-    }
+        /*public boolean changeFocus(boolean forward) {
+            return ContainerEventHandler.super.changeFocus(forward);
+        }
     *//*?}*/
 
     // --- mouse click ---
