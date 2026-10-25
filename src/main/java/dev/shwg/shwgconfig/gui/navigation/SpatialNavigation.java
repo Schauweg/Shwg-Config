@@ -181,7 +181,7 @@ public final class SpatialNavigation {
      * Focuses {@code path} below {@code root}. Only the part that changes is touched: containers
      * that keep the focus get no focus lost / gained, like the 1.19.4+ fix in GenericScreen.
      */
-    private static void applyPath(ContainerEventHandler root, List<GuiEventListener> path) {
+    public static void applyPath(ContainerEventHandler root, List<GuiEventListener> path) {
         List<GuiEventListener> old = currentPath(root);
         int shared = 0;
         while (shared < old.size() && shared < path.size() && old.get(shared) == path.get(shared)) {
@@ -203,6 +203,11 @@ public final class SpatialNavigation {
             if (listener instanceof GenericAbstractWidget widget) widget.setFocused(true);
             if (listener instanceof ContainerEventHandler container) parent = container;
         }
+    }
+
+    /** The path [child, ..., leaf] keyboard navigation would focus when entering {@code child} moving {@code direction}. */
+    public static @Nullable List<GuiEventListener> entryPath(GuiEventListener child, SpatialDirection direction) {
+        return enter(child, direction);
     }
 
     /** The currently focused chain below {@code root}: [container, ..., leaf]. */

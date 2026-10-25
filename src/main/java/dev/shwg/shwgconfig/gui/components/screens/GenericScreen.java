@@ -16,6 +16,7 @@ import dev.shwg.shwgconfig.gui.input.LastInput;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.components.events.ContainerEventHandler;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +40,8 @@ import net.minecraft.client.gui.GuiGraphics;
 
 /*? if >= 1.19.4 { */
 import net.minecraft.client.gui.ComponentPath;
-import net.minecraft.client.gui.components.events.ContainerEventHandler;
+import net.minecraft.client.gui.navigation.FocusNavigationEvent;
+import net.minecraft.client.gui.navigation.ScreenDirection;
 /*?} */
 
 /*? if < 1.19.4 { */
@@ -64,6 +66,7 @@ public class GenericScreen extends Screen {
     private final Screen parent;
     private boolean closeOnEsc = true;
     private boolean layoutRequested = false;
+    private boolean initialFocusDone = false;
 
     public GenericScreen(Component title, Screen parent) {
         super(title);
@@ -447,6 +450,60 @@ public class GenericScreen extends Screen {
         Minecraft.getInstance().setScreen(screen);
         /*? } */
     }
+
+    /**
+     * Focuses {@code target} the first time this screen is initialized - call it at the end of init().
+     * Later calls (e.g. when init() runs again after a resize) do nothing.
+     * {@code target} can be a widget or a container (e.g. a scroll area); for a container, its first
+     * widget gets focus, as if the user had arrowed down into it.
+     */
+    protected void focusOnFirstOpen(@Nullable GuiEventListener target) {
+        if (initialFocusDone) return;
+        initialFocusDone = true;
+        if (target == null) return;
+
+        List<ContainerEventHandler> parents = parentsOf(this, target);
+        if (parents == null) return; // target isn't on this screen
+
+        /*? if >= 1.19.4 { */
+        ComponentPath path = target instanceof ContainerEventHandler
+                ? target.nextFocusPath(new FocusNavigationEvent.ArrowNavigation(ScreenDirection.DOWN))
+                : ComponentPath.leaf(target);
+        if (path == null) return;
+        for (int i = parents.size() - 1; i >= 0; i--) {
+            path = ComponentPath.path(parents.get(i), path);
+        }
+        changeFocus(path);
+        /*? } else { */
+        /*List<GuiEventListener> path = target instanceof ContainerEventHandler
+                ? SpatialNavigation.entryPath(target, SpatialDirection.DOWN)
+                : List.of(target);
+        if (path == null) return;
+        List<GuiEventListener> full = new ArrayList<>(parents.subList(1, parents.size()));
+        full.addAll(path);
+        SpatialNavigation.applyPath(this, full);
+        *//*? } */
+    }
+
+    /** The containers from {@code from} down to {@code target}'s parent, starting with {@code from}; {@code null} if target isn't inside. */
+    private static @Nullable List<ContainerEventHandler> parentsOf(ContainerEventHandler from, GuiEventListener target) {
+        for (GuiEventListener child : from.children()) {
+            if (child == target) {
+                List<ContainerEventHandler> parents = new ArrayList<>();
+                parents.add(from);
+                return parents;
+            }
+            if (child instanceof ContainerEventHandler container) {
+                List<ContainerEventHandler> parents = parentsOf(container, target);
+                if (parents != null) {
+                    parents.add(0, from);
+                    return parents;
+                }
+            }
+        }
+        return null;
+    }
+
 
     /*? if >= 1.19.4 { */
     /**

@@ -102,6 +102,7 @@ public class ShwgConfigScreen extends GenericScreen {
         add(headerFooterLayout);
         registerElements();
         arrange();
+        focusOnFirstOpen(tabScrollables.get(builtTabs.indexOf(tabManager.getCurrentTab())));
     }
 
     @Override
