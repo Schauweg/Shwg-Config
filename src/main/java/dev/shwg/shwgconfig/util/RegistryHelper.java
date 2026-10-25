@@ -313,7 +313,13 @@ public class RegistryHelper {
         /*? } */
     }
 
-
-
-
+    /*? if < 1.21 { */
+    /*public static Identifier getID(Enchantment enchantment) {
+        /^? if >= 1.19.3 { ^/
+        return BuiltInRegistries.ENCHANTMENT.getKey(enchantment);
+        /^? } else { ^/
+        //return Registry.ENCHANTMENT.getKey(enchantment);
+        /^? } ^/
+    }
+    *//*? } */
 }
