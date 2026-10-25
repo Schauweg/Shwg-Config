@@ -106,7 +106,6 @@ public final class ListController<E> implements RenderableElement, GenericLayout
     private final int rowWidth;
 
     private @Nullable Line selected;
-    // What the listener was last told, so it is only called when something changed.
     private boolean selectionNotified = false;
     private @Nullable ListRow<E> notifiedRow;
     private @Nullable E notifiedValue;
@@ -167,7 +166,7 @@ public final class ListController<E> implements RenderableElement, GenericLayout
         return row;
     }
 
-    // --- Row actions
+    // Row actions
 
     private void addRow() {
         if (!canAdd()) return;
@@ -177,7 +176,6 @@ public final class ListController<E> implements RenderableElement, GenericLayout
         layoutChildren();
         notifySelection();
         requestScreenLayout();
-        // Nothing to save: a new row is empty until it commits its first element.
     }
 
     private void move(Line line, int direction) {
@@ -195,8 +193,6 @@ public final class ListController<E> implements RenderableElement, GenericLayout
     private void remove(Line line) {
         int index = lines.indexOf(line);
         if (index < 0) return;
-        // The clicked button (or a box of this row) has focus - drop it, so the screen
-        // doesn't keep sending input to a widget that is no longer in the list.
         line.remove.setFocused(false);
         line.row.visitWidgets(widget -> widget.setFocused(false));
         lines.remove(index);
@@ -223,7 +219,7 @@ public final class ListController<E> implements RenderableElement, GenericLayout
         return enabledCondition == null || enabledCondition.get();
     }
 
-    // --- Keyboard
+    // Keyboard
 
     @Override
     public boolean onUnhandledKeyPressed(GenericKeyEvent keyEvent, GenericAbstractWidget focused) {
@@ -232,8 +228,6 @@ public final class ListController<E> implements RenderableElement, GenericLayout
         }
         for (Line line : lines) {
             if (line.contains(focused)) {
-                // Used even on the first / last row, where nothing moves - otherwise Shift + Up
-                // on the first row would jump the focus to whatever is above the list.
                 move(line, keyEvent.isUp() ? -1 : 1);
                 return true;
             }
@@ -241,7 +235,7 @@ public final class ListController<E> implements RenderableElement, GenericLayout
         return false;
     }
 
-    // --- Saving
+    // Saving
 
     /** Writes the committed element of every row, in order, to the value (which autosaves). */
     private void save() {
@@ -270,7 +264,7 @@ public final class ListController<E> implements RenderableElement, GenericLayout
         return elements;
     }
 
-    // --- Selection
+    // Selection
 
     /** The row the user is working in becomes the selected one. */
     private void updateSelectionFromFocus() {
@@ -302,7 +296,7 @@ public final class ListController<E> implements RenderableElement, GenericLayout
         }
     }
 
-    // --- Layout
+    // Layout
 
     /** Positions every line and the "Add" button below them, and updates this list's height. */
     private void layoutChildren() {
@@ -341,7 +335,7 @@ public final class ListController<E> implements RenderableElement, GenericLayout
         layoutChildren();
     }
 
-    // --- Rendering
+    // Rendering
 
     @Override
     public void render(GenericGraphics graphics, int mouseX, int mouseY, float partialTicks) {
@@ -351,17 +345,14 @@ public final class ListController<E> implements RenderableElement, GenericLayout
 
         for (int i = 0; i < lines.size(); i++) {
             Line line = lines.get(i);
-
-            // Hovered row in blue; otherwise the selected row (with a single row that would only be noise).
+            
             if (line == selected && lines.size() > 1) {
                 int color = line.hasFocus() ? SELECTED_FOCUSED : SELECTED_UNFOCUSED;
                 graphics.outline(x - 2, line.y - 1, width + 4, line.height + 2, color);
             } else if (isMouseOverLine(line, mouseX, mouseY)) {
                 graphics.fillWH(x - 2, line.y - 1, width + 4, line.height + 2, HOVERED_BACKGROUND);
             }
-
-            // An arrow that can't move is not drawn (like vanilla's resource pack list);
-            // a disabled list shows no buttons at all.
+            
             line.up.visible = enabled && i > 0;
             line.down.visible = enabled && i < lines.size() - 1;
             line.remove.visible = enabled;
@@ -404,7 +395,7 @@ public final class ListController<E> implements RenderableElement, GenericLayout
                 y + (height - GenericIcons.CROSS_HEIGHT) / 2);
     }
 
-    // --- GenericLayout / LayoutElement
+    // GenericLayout / LayoutElement
 
     @Override
     public void visitChildren(Consumer<LayoutElement> consumer) {
@@ -486,7 +477,7 @@ public final class ListController<E> implements RenderableElement, GenericLayout
         addButton.setVisible(visible);
     }
 
-    // --- Icon button
+    // Icon button
 
     /** Frameless icon button for move up / move down / remove. Only used by this list. */
     private static final class IconButton extends GenericAbstractButton {
