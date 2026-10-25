@@ -16,7 +16,8 @@ import dev.shwg.shwgconfig.api.values.numbervalues.FloatValue;
 import dev.shwg.shwgconfig.api.values.numbervalues.IntValue;
 import dev.shwg.shwgconfig.api.values.stringvalues.*;
 import dev.shwg.shwgconfig.gui.components.widget.button.GenericButton;
-import dev.shwg.shwgconfig.gui.components.widget.editbox.suggestioneditbox.SuggestionEditBox;
+import dev.shwg.shwgconfig.gui.components.widget.editbox.suggestioneditbox.SuggestionProviders;
+import dev.shwg.shwgconfig.util.DisplayItemStack;
 import dev.shwg.shwgconfig.util.RegistryHelper;
 import dev.shwg.testmod.config.values.CurveValue;
 import dev.shwg.testmod.config.values.StringListValue;
@@ -28,21 +29,18 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class TestConfig extends ConfigBase {
 
     private static final List<String> strings = List.of("String 1", "String 2", "String 3", "String 4", "String 5");
-    private static final List<String> fakeSoundIds = List.of(
-            "minecraft:entity.pig.ambient", "minecraft:block.anvil.use", "minecraft:ui.button.click");
 
     public enum TestEnum {ENUM1, ENUM2, ENUM3, ENUM4, ENUM5}
-
-    // Tab 5: Lists
-    public final StringListValue itemList = new StringListValue(List.of("minecraft:diamond", "minecraft:emerald"));
 
     // Tab 1: Basic controllers
     public final BooleanValue enableFeature = BooleanValue.of(true);
@@ -68,6 +66,11 @@ public class TestConfig extends ConfigBase {
     public final StringValue customProviderSuggestion = StringValue.of("");
     public final ItemValue itemValue = ItemValue.of(Items.DIAMOND);
     public final BlockValue blockValue = BlockValue.of(Blocks.DIRT);
+    public final StringValue colorSuggestion = StringValue.of("minecraft:red");
+    public final StringValue enchantmentSuggestion = StringValue.of("minecraft:sharpness");
+    public final StringValue biomeSuggestion = StringValue.of("minecraft:plains");
+    public final StringValue soundSuggestion = StringValue.of("minecraft:block.note_block.pling");
+    public final StringValue entitySuggestion = StringValue.of("minecraft:pig");
     public final KeybindValue keybindValue = KeybindValue.ofKeyboard(
             "shwgconfig.keybind.test", RegistryHelper.build("shwgconfig", "test_category"), InputConstants.KEY_E);
     public final KeybindValue mouseKeybindValue = KeybindValue.ofMouse(
@@ -79,6 +82,9 @@ public class TestConfig extends ConfigBase {
     public final BooleanValue noTitleToggle = BooleanValue.of(true);
     public final IntValue noTitleSlider = IntValue.of(5, 0, 10);
     public final CurveValue curveValue = CurveValue.empty();
+
+    // Tab 5: Lists
+    public final StringListValue itemList = new StringListValue(List.of("minecraft:diamond", "minecraft:emerald"));
 
     @Override
     public ConfigManager.ScreenManager buildScreen() {
@@ -142,8 +148,19 @@ public class TestConfig extends ConfigBase {
                 .addSuggestionInput(fixedListSuggestion, Component.literal("Fixed List"), strings)
                 .addItemSuggestionInput(itemValue, Component.literal("Item Search"))
                 .addBlockSuggestionInput(blockValue, Component.literal("Block Search"))
-                .addSuggestionInput(customProviderSuggestion, Component.literal("Custom Provider"),
-                        (query, overlay) -> SuggestionEditBox.getStringSuggestions(query, fakeSoundIds, overlay))
+                .addSuggestionInput(enchantmentSuggestion, Component.literal("Enchantment Search"), SuggestionProviders.ENCHANTMENTS)
+                .addSuggestionInput(biomeSuggestion, Component.literal("Biome Search"), SuggestionProviders.BIOMES)
+                .addSuggestionInput(soundSuggestion, Component.literal("Sound Search"), SuggestionProviders.SOUNDS)
+                .addSuggestionInput(entitySuggestion, Component.literal("Entity Search"), SuggestionProviders.ENTITIES)
+                .addSuggestionInput(colorSuggestion, Component.literal("Custom Provider (Dye Colors)"),
+                        // Custom provider: dye colors - shows the translated color with its wool as icon,
+                        // saves the ID ("minecraft:red")
+                        SuggestionProviders.registry(
+                                () -> Arrays.stream(DyeColor.values())
+                                        .map(color -> RegistryHelper.build("minecraft", color.getSerializedName()))
+                                        .toList(),
+                                id -> Component.translatable("color.minecraft." + id.getPath()),
+                                id -> DisplayItemStack.getStackSimple(RegistryHelper.build("minecraft", id.getPath() + "_wool"))))
                 .build();
 
         ConfigCategory keybinds = CategoryBuilder.create(Component.literal("Keybinds"))
