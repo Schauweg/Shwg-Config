@@ -61,8 +61,9 @@ public final class ListController<E> implements RenderableElement, GenericLayout
     public static final int MIN_LINE_HEIGHT = 2 * ARROW_HEIGHT;
     public static final int ADD_BUTTON_HEIGHT = 20;
 
-    private static final int SELECTED_BACKGROUND = 0x26FFFFFF;
-    private static final int HOVERED_BACKGROUND = 0x805865F2;
+    private static final int SELECTED_FOCUSED = 0x80FFFFFF;
+    private static final int SELECTED_UNFOCUSED = 0xFF808080;
+    private static final int HOVERED_BACKGROUND = 0x2AC8C8C8;
 
     /** One line: the row and its three buttons. */
     private final class Line {
@@ -352,10 +353,11 @@ public final class ListController<E> implements RenderableElement, GenericLayout
             Line line = lines.get(i);
 
             // Hovered row in blue; otherwise the selected row (with a single row that would only be noise).
-            if (isMouseOverLine(line, mouseX, mouseY)) {
+            if (line == selected && lines.size() > 1) {
+                int color = line.hasFocus() ? SELECTED_FOCUSED : SELECTED_UNFOCUSED;
+                graphics.outline(x - 2, line.y - 1, width + 4, line.height + 2, color);
+            } else if (isMouseOverLine(line, mouseX, mouseY)) {
                 graphics.fillWH(x - 2, line.y - 1, width + 4, line.height + 2, HOVERED_BACKGROUND);
-            } else if (line == selected && lines.size() > 1) {
-                graphics.fillWH(x - 2, line.y - 1, width + 4, line.height + 2, SELECTED_BACKGROUND);
             }
 
             // An arrow that can't move is not drawn (like vanilla's resource pack list);
