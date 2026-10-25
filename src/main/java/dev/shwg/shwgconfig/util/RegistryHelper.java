@@ -130,9 +130,9 @@ public class RegistryHelper {
         ClientLevel level = Minecraft.getInstance().level;
         return level == null ? null : level.registryAccess().lookup(Registries.ENCHANTMENT).orElse(null);
         /*? } else if >= 1.21 { */
-        //ClientLevel level = Minecraft.getInstance().level;
-        //return level == null ? null : level.registryAccess().registry(Registries.ENCHANTMENT).orElse(null);
-        /*? } else { */
+        /*ClientLevel level = Minecraft.getInstance().level;
+        return level == null ? null : level.registryAccess().registry(Registries.ENCHANTMENT).orElse(null);
+        *//*? } else { */
         //return null;
         /*? } */
     }
@@ -155,9 +155,9 @@ public class RegistryHelper {
         Registry<Enchantment> registry = getClientEnchantmentRegistry();
         return registry == null ? null : registry.get(id).map(Holder.Reference::value).orElse(null);
         /*? } else if >= 1.21 { */
-        //Registry<Enchantment> registry = getClientEnchantmentRegistry();
-        //return registry == null ? null : registry.get(id);
-        /*? } else if >= 1.19.3 { */
+        /*Registry<Enchantment> registry = getClientEnchantmentRegistry();
+        return registry == null ? null : registry.get(id);
+        *//*? } else if >= 1.19.3 { */
         //return BuiltInRegistries.ENCHANTMENT.get(id);
         /*? } else { */
         //return Registry.ENCHANTMENT.get(id);
