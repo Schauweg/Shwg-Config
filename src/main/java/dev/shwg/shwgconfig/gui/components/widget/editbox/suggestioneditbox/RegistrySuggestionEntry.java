@@ -16,6 +16,8 @@ public class RegistrySuggestionEntry extends SuggestionEntry {
     private final Function<Identifier, Component> displayComponent;
     private final @Nullable Function<Identifier, ItemStack> iconProvider;
 
+    private @Nullable String sortingString;
+
     public RegistrySuggestionEntry(ListWidgetOverlay<?> owner, Identifier identifier,
                                    Function<Identifier, Component> displayComponent) {
         this(owner, identifier, displayComponent, null);
@@ -52,6 +54,13 @@ public class RegistrySuggestionEntry extends SuggestionEntry {
         }
     }
 
+    @Override
+    public String sortingString() {
+        if (sortingString == null) {
+            sortingString = displayComponent().getString();
+        }
+        return sortingString;
+    }
     @Override
     protected void renderContent(GenericGraphics graphics, int mouseX, int mouseY, float partialTicks, int contentWidth) {
         boolean hovered = isHovered(mouseX, mouseY);

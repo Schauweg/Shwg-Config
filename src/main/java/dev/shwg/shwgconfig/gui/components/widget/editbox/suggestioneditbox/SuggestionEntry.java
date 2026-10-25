@@ -91,7 +91,8 @@ public abstract class SuggestionEntry implements OverlayEntry {
     }
 
     public boolean matchesQuery(String lowerCaseQuery) {
-        return sortingString().toLowerCase(Locale.ROOT).contains(lowerCaseQuery);
+        return saveValue().toLowerCase(Locale.ROOT).contains(lowerCaseQuery)
+                || sortingString().toLowerCase(Locale.ROOT).contains(lowerCaseQuery);
     }
 
     public int relevanceTier(String query) {

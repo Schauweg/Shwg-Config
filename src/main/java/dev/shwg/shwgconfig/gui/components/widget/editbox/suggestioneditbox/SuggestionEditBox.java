@@ -134,7 +134,7 @@ public class SuggestionEditBox extends GenericAbstractEditBox implements Overlay
 
         // "" matches every suggestion. Look the stored value up by what gets saved (the ID),
         // not by the display name: two entries can share a name, but never an ID.
-        suggestionProvider.getSuggestions("", overlay).thenAccept(suggestions ->
+        suggestionProvider.getSuggestions(value, overlay).thenAccept(suggestions ->
                 Minecraft.getInstance().execute(() -> {
                     if (suggestions != null) {
                         for (SuggestionEntry entry : suggestions) {
