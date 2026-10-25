@@ -42,6 +42,17 @@ public final class EnumLabels {
     }
 
     /**
+     * Labels each constant with a translation key built from the given prefix
+     * and the constant's lowercase name.
+     * <p>
+     * {@code translated("mymod.option.mode")} → {@code mymod.option.mode.fast_mode} for {@code FAST_MODE}
+     */
+    public static <E extends Enum<E>> Function<E, Component> translated(String key) {
+        String prefix = key.endsWith(".") ? key : key + ".";
+        return value -> Component.translatable(prefix + value.name().toLowerCase(Locale.ROOT));
+    }
+
+    /**
      * Fully custom formatting - use when none of the above fit.
      */
     public static <E extends Enum<E>> Function<E, Component> custom(Function<E, Component> fn) {
