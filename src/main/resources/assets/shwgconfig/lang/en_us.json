@@ -7,5 +7,18 @@
   "shwgconfig.list.add": "Add",
   "shwgconfig.list.move_up": "Move up",
   "shwgconfig.list.move_down": "Move down",
-  "shwgconfig.list.remove": "Remove"
+  "shwgconfig.list.remove": "Remove",
+  "shwgconfig.alignment.top": "Top",
+  "shwgconfig.alignment.bottom": "Bottom",
+  "shwgconfig.alignment.left": "Left",
+  "shwgconfig.alignment.right": "Right",
+  "shwgconfig.alignment.center": "Center",
+  "shwgconfig.alignment.top_left": "Top Left",
+  "shwgconfig.alignment.top_right": "Top Right",
+  "shwgconfig.alignment.bottom_left": "Bottom Left",
+  "shwgconfig.alignment.bottom_right": "Bottom Right",
+  "shwgconfig.alignment.above": "Above",
+  "shwgconfig.alignment.below": "Below",
+  "shwgconfig.alignment.vertical": "Vertical",
+  "shwgconfig.alignment.horizontal": "Horizontal"
 }
