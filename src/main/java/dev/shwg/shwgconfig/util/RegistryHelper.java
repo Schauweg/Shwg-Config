@@ -8,6 +8,7 @@ import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -16,15 +17,14 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Block;
 
 import net.minecraft.core.Registry;
 
-/*? if >= 1.21 { */
-import net.minecraft.core.registries.Registries;
-/*? } */
-
 /*? if >= 1.19.3 { */
+import net.minecraft.core.registries.Registries;
 import net.minecraft.core.registries.BuiltInRegistries;
 /*? } else { */
 //import net.minecraft.data.BuiltinRegistries;
@@ -37,7 +37,7 @@ public class RegistryHelper {
         return resourceKey.identifier();
         /*? } else { */
         //return resourceKey.location();
-         /*? } */
+        /*? } */
     }
 
     public static Identifier build(String namespace, String path) {
@@ -45,7 +45,7 @@ public class RegistryHelper {
         return Identifier.fromNamespaceAndPath(namespace, path);
         /*? } else {*/
         //return Identifier.tryBuild(namespace, path);
-         /*? } */
+        /*? } */
     }
 
     public static Identifier tryBuild(String id) {
@@ -112,28 +112,39 @@ public class RegistryHelper {
         return null;
     }
 
+    /**
+     * A registry from the loaded world - it includes entries added by datapacks or the server.
+     * {@code null} without a world (e.g. on the title screen).
+     */
+    private static <T> @Nullable Registry<T> clientRegistry(ResourceKey<? extends Registry<? extends T>> key) {
+        ClientLevel level = Minecraft.getInstance().level;
+        if (level == null) return null;
+        /*? if >= 1.21.2 { */
+        return level.registryAccess().lookup(key).orElse(null);
+        /*? } else { */
+        //return level.registryAccess().registry(key).orElse(null);
+        /*? } */
+    }
+
+    /** The translation of "{prefix}.{namespace}.{path}", or the plain ID if there is none. */
+    private static Component translatedOrId(String prefix, Identifier id) {
+        String key = prefix + "." + id.getNamespace() + "." + id.getPath().replace('/', '.');
+        return Language.getInstance().has(key) ? Component.translatable(key) : Component.literal(id.toString());
+    }
+
+    // --- Enchantments
+
     public static Set<Identifier> getEnchantments() {
         /*? if >= 1.21 { */
+        // Vanilla enchantments are always known; with a world loaded, datapack / server ones are added.
         Set<Identifier> result = new LinkedHashSet<>(getRegistryEntries(Enchantments.class));
-        Registry<Enchantment> registry = getClientEnchantmentRegistry();
+        Registry<Enchantment> registry = clientRegistry(Registries.ENCHANTMENT);
         if (registry != null) result.addAll(registry.keySet());
         return result;
         /*? } else if >= 1.19.3 { */
         //return BuiltInRegistries.ENCHANTMENT.keySet();
         /*? } else { */
         //return Registry.ENCHANTMENT.keySet();
-        /*? } */
-    }
-
-    private static Registry<Enchantment> getClientEnchantmentRegistry() {
-        /*? if >= 1.21.2 { */
-        ClientLevel level = Minecraft.getInstance().level;
-        return level == null ? null : level.registryAccess().lookup(Registries.ENCHANTMENT).orElse(null);
-        /*? } else if >= 1.21 { */
-        /*ClientLevel level = Minecraft.getInstance().level;
-        return level == null ? null : level.registryAccess().registry(Registries.ENCHANTMENT).orElse(null);
-        *//*? } else { */
-        //return null;
         /*? } */
     }
 
@@ -146,16 +157,15 @@ public class RegistryHelper {
             //return Component.translatable(enchantment.getDescriptionId());
             /*? } */
         }
-        String key = "enchantment." + id.getNamespace() + "." + id.getPath().replace('/', '.');
-        return Language.getInstance().has(key) ? Component.translatable(key) : Component.literal(id.toString());
+        return translatedOrId("enchantment", id);
     }
 
     public static Enchantment getEnchantment(Identifier id) {
         /*? if >= 1.21.2 { */
-        Registry<Enchantment> registry = getClientEnchantmentRegistry();
+        Registry<Enchantment> registry = clientRegistry(Registries.ENCHANTMENT);
         return registry == null ? null : registry.get(id).map(Holder.Reference::value).orElse(null);
         /*? } else if >= 1.21 { */
-        /*Registry<Enchantment> registry = getClientEnchantmentRegistry();
+        /*Registry<Enchantment> registry = clientRegistry(Registries.ENCHANTMENT);
         return registry == null ? null : registry.get(id);
         *//*? } else if >= 1.19.3 { */
         //return BuiltInRegistries.ENCHANTMENT.get(id);
@@ -164,10 +174,39 @@ public class RegistryHelper {
         /*? } */
     }
 
-    public static List<Identifier> getBiomes() {
+    // --- Biomes
 
-        return null;
+    /*? if >= 1.19.3 { */
+    private static final ResourceKey<Registry<Biome>> BIOME_REGISTRY = Registries.BIOME;
+    /*? } else { */
+    //private static final ResourceKey<Registry<Biome>> BIOME_REGISTRY = Registry.BIOME_REGISTRY;
+    /*? } */
+
+    public static Set<Identifier> getBiomes() {
+        // Vanilla biomes are always known; with a world loaded, datapack / server biomes are added.
+        Set<Identifier> result = new LinkedHashSet<>(getRegistryEntries(Biomes.class));
+        Registry<Biome> registry = clientRegistry(BIOME_REGISTRY);
+        if (registry != null) result.addAll(registry.keySet());
+        return result;
     }
+
+    public static Component biomeComponent(Identifier biome) {
+        return translatedOrId("biome", biome);
+    }
+
+    // --- Sounds
+
+    /** Every sound the sound manager knows, including sounds added by resource packs. */
+    public static Set<Identifier> getSounds() {
+        return new LinkedHashSet<>(Minecraft.getInstance().getSoundManager().getAvailableSounds());
+    }
+
+    /** Sounds have no translated names, so this is the plain ID. */
+    public static Component soundComponent(Identifier sound) {
+        return Component.literal(sound.toString());
+    }
+
+    // --- Items, blocks, entities
 
     public static Set<Identifier> getItems() {
         /*? if >= 1.19.3 { */
@@ -182,7 +221,7 @@ public class RegistryHelper {
         return BuiltInRegistries.BLOCK.keySet();
         /*? } else { */
         //return Registry.BLOCK.keySet();
-         /*? } */
+        /*? } */
     }
 
     public static Set<Identifier> getEntityTypes() {
@@ -190,7 +229,7 @@ public class RegistryHelper {
         return BuiltInRegistries.ENTITY_TYPE.keySet();
         /*? } else { */
         //return Registry.ENTITY_TYPE.keySet();
-         /*? } */
+        /*? } */
     }
 
     public static Component component(String prefix, Identifier identifier) {
@@ -224,7 +263,7 @@ public class RegistryHelper {
         return Component.translatable(i.getDescriptionId());
         /*? } else { */
         //return i.getName();
-         /*? } */
+        /*? } */
     }
 
     public static Component entityComponent(EntityType<?> entityType) {
@@ -239,11 +278,9 @@ public class RegistryHelper {
         return Component.translatable(i.getDescriptionId());
         /*? } else { */
         //return i.getDescription();
-         /*? } */
+        /*? } */
     }
-
-
-
+    
     public static Item getItem(Identifier item) {
         /*? if >= 1.21.2 { */
         Optional<Holder.Reference<Item>> i = BuiltInRegistries.ITEM.get(item);
@@ -254,7 +291,7 @@ public class RegistryHelper {
         return null;
         /*? } else if >= 1.19.3 { */
         //return BuiltInRegistries.ITEM.get(item);
-         /*? } else { */
+        /*? } else { */
         //return Registry.ITEM.get(item);
         /*? } */
     }
@@ -269,7 +306,7 @@ public class RegistryHelper {
         return null;
         /*? } else if >= 1.19.3 { */
         //return BuiltInRegistries.BLOCK.get(block);
-         /*? } else { */
+        /*? } else { */
         //return Registry.BLOCK.get(block);
         /*? } */
     }
@@ -284,7 +321,7 @@ public class RegistryHelper {
         return null;
         /*? } else if >= 1.19.3 { */
         //return BuiltInRegistries.ENTITY_TYPE.get(entityType);
-         /*? } else { */
+        /*? } else { */
         //return Registry.ENTITY_TYPE.get(entityType);
         /*? } */
     }

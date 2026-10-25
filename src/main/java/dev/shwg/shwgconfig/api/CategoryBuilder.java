@@ -12,6 +12,7 @@ import dev.shwg.shwgconfig.gui.components.controller.list.ListRow;
 import dev.shwg.shwgconfig.gui.components.widget.GenericAbstractWidget;
 import dev.shwg.shwgconfig.gui.components.widget.button.GenericKeyBindButton;
 import dev.shwg.shwgconfig.gui.components.widget.editbox.suggestioneditbox.SuggestionEditBox;
+import dev.shwg.shwgconfig.gui.components.widget.editbox.suggestioneditbox.SuggestionProviders;
 import dev.shwg.shwgconfig.gui.components.widget.slider.NumberSlider;
 import dev.shwg.shwgconfig.gui.layout.RenderableElement;
 import net.minecraft.ChatFormatting;
@@ -411,7 +412,7 @@ public class CategoryBuilder {
      * Adds a text field with autocomplete suggestions from a fixed {@code options} list.
      */
     public CategoryBuilder addSuggestionInput(StringValue value, Component label, List<String> options, EntryOptions entryOptions) {
-        return addSuggestionInput(value, label, (query, overlay) -> SuggestionEditBox.getStringSuggestions(query, options, overlay), entryOptions);
+        return addSuggestionInput(value, label, SuggestionProviders.strings(options), entryOptions);
     }
 
     /** @see #addItemSuggestionInput(ItemValue, Component, EntryOptions) */
@@ -423,7 +424,7 @@ public class CategoryBuilder {
      * Adds a text field with autocomplete suggestions from the item registry.
      */
     public CategoryBuilder addItemSuggestionInput(ItemValue value, Component label, EntryOptions options) {
-        return addSuggestionInput(value, label, SuggestionEditBox::getItemSuggestions, options);
+        return addSuggestionInput(value, label, SuggestionProviders.ITEMS, options);
     }
 
     /** @see #addBlockSuggestionInput(BlockValue, Component, EntryOptions) */
@@ -435,7 +436,7 @@ public class CategoryBuilder {
      * Adds a text field with autocomplete suggestions from the block registry.
      */
     public CategoryBuilder addBlockSuggestionInput(BlockValue value, Component label, EntryOptions options) {
-        return addSuggestionInput(value, label, SuggestionEditBox::getBlockSuggestions, options);
+        return addSuggestionInput(value, label, SuggestionProviders.BLOCKS, options);
     }
 
     // --- List

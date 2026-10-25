@@ -42,44 +42,6 @@ public class SuggestionEditBox extends GenericAbstractEditBox implements Overlay
     private static final Alignment.OverlayDirection DEFAULT_OVERLAY_DIRECTION = Alignment.OverlayDirection.ABOVE;
     private static final Alignment.HorizontalIconPosition DEFAULT_ICON_POSITION = Alignment.HorizontalIconPosition.LEFT;
 
-    public static CompletableFuture<List<SuggestionEntry>> getStringSuggestions (String query, List<String> strings, ListWidgetOverlay<? extends SuggestionEntry> overlay) {
-        List<SuggestionEntry> results = new ArrayList<>();
-        for (String candidate : strings) {
-            results.add(new StringSuggestionEntry(overlay, candidate));
-        }
-        SuggestionSorting.filterByQuery(results, query);
-        SuggestionSorting.sortByRelevance(results, query);
-        return CompletableFuture.completedFuture(results);
-    }
-
-    public static CompletableFuture<List<SuggestionEntry>> getItemSuggestions(String query, ListWidgetOverlay<? extends SuggestionEntry> overlay) {
-        List<SuggestionEntry> results = new ArrayList<>();
-
-        for (Identifier id : RegistryHelper.getItems()) {
-            results.add(new RegistrySuggestionEntry(
-                    overlay, id, RegistryHelper::itemComponent, DisplayItemStack::getStackSimple
-            ));
-        }
-
-        SuggestionSorting.filterByQuery(results, query);
-        SuggestionSorting.sortByRelevance(results, query);
-        return CompletableFuture.completedFuture(results);
-    }
-
-    public static CompletableFuture<List<SuggestionEntry>> getBlockSuggestions(String query, ListWidgetOverlay<? extends SuggestionEntry> overlay) {
-        List<SuggestionEntry> results = new ArrayList<>();
-
-        for (Identifier id : RegistryHelper.getBlocks()) {
-            results.add(new RegistrySuggestionEntry(
-                    overlay, id, RegistryHelper::itemComponent, DisplayItemStack::getStackSimple
-            ));
-        }
-
-        SuggestionSorting.filterByQuery(results, query);
-        SuggestionSorting.sortByRelevance(results, query);
-        return CompletableFuture.completedFuture(results);
-    }
-
     private final Overlay overlay;
 
     private boolean hasFetchedOnce = false;
