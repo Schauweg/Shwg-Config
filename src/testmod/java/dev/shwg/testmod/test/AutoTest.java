@@ -1,6 +1,5 @@
 package dev.shwg.testmod.test;
 
-import com.mojang.authlib.minecraft.client.MinecraftClient;
 import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Screenshot;
@@ -9,19 +8,18 @@ import net.minecraft.client.gui.screens.Screen;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 /**
- * Unattended run of the {@link RenderTestScreen}: opens it once the game has finished loading, shows
- * every page, saves a screenshot of each and quits the game.
+ * Unattended test run: once the game has finished loading, runs the selected {@link CheckSuite}s on the
+ * title screen, then (if selected) shows every page of the {@link RenderTestScreen} and saves a
+ * screenshot of each, then quits the game.
  *
  * <p>Only active when the environment variable {@code SHWG_AUTOTEST=1} is set (the Gradle autotest
- * tasks do that). Screenshots go to {@code autotest/<SHWG_AUTOTEST_ID>/page-N-name.png}, relative to
- * the game's working directory (the run directory in dev). The id is the Gradle project name,
- * e.g. {@code 1.21.1-fabric}.</p>
+ * tasks do that, see gradle/autotest.gradle.kts). Reports and screenshots go to
+ * {@code SHWG_AUTOTEST_REPORT_DIR} ({@code autotest-report/<project>/} in the project root).
+ * {@code SHWG_AUTOTEST_SUITES} selects what runs, see {@link AutoTestSelection}.</p>
  *
  * <p>Call {@link #start()} once from the testmod's CLIENT initialisation (on every loader).
  * Never call it on a dedicated server - this class touches client-only classes.</p>
@@ -72,13 +70,13 @@ public final class AutoTest {
      */
     public static void start() {
         if (!enabled() || !STARTED.compareAndSet(false, true)) return;
-        log("enabled, id=" + id() + ", output=" + outputDir().toAbsolutePath());
+        log("enabled, id=" + id() + ", output=" + AutoTestReport.reportDir().toAbsolutePath());
         Thread supervisor = new Thread(AutoTest::supervise, "shwg-autotest");
         supervisor.setDaemon(true);
         supervisor.start();
     }
 
-    // Supervisor thread: waits for the game to finish loading, enforces the timeout 
+    // Supervisor thread: waits for the game to finish loading, enforces the timeout
 
     private static void supervise() {
         long deadline = System.currentTimeMillis() + TIMEOUT_MS;
@@ -112,18 +110,27 @@ public final class AutoTest {
         }
         if (++stableChecks < 4) return; // ~2 seconds without overlay, let the first screen settle
         opened = true;
+        prepareWindow(mc);
 
-        // Still on the title screen with no world loaded: the state the registry checks need.
-        // Results go to a report file that Gradle checks; a failing check must not stop the screenshots.
+        // Still on the title screen with no world loaded: the state the checks need.
+        // Results go to report files that Gradle checks; a failing check must not stop the screenshots.
+        AutoTestSelection selection = AutoTestSelection.fromEnvironment();
+        log("selection: " + selection);
         try {
-            RegistryHelperAutotest.runOnce();
+            CheckSuites.run(selection);
         } catch (RuntimeException e) {
             e.printStackTrace();
-            log("registry checks crashed: " + e);
+            log("checks crashed: " + e);
+        }
+
+        if (!selection.screenshots()) {
+            log("done: no screenshots selected");
+            finished = true;
+            mc.stop();
+            return;
         }
 
         try {
-            Minecraft.getInstance().options.fullscreen().set(false);
             logWindow(mc);
             RenderTestScreen screen = new RenderTestScreen(currentScreen(mc));
             Run run = new Run(mc, screen);
@@ -133,6 +140,24 @@ public final class AutoTest {
         } catch (RuntimeException e) {
             e.printStackTrace();
             fail("could not open the test screen: " + e);
+        }
+    }
+
+    /**
+     * Windowed at the size from the Gradle task, GUI scale 1 - whatever the run directory's options.txt
+     * says (e.g. fullscreen left on from development). Only changed in memory, options.txt isn't saved.
+     */
+    private static void prepareWindow(Minecraft mc) {
+        /*~ if >=26.3 '.isFullscreen()' -> '.isExclusiveFullscreen()'*/
+        if (mc.getWindow().isFullscreen()) {
+            /*~ if >=26.3 '.toggleFullScreen()' -> '.setFullscreen(false)'*/
+            mc.getWindow().toggleFullScreen(); // back to the windowed size from --width / --height
+        }
+        mc.options.fullscreen().set(false);
+        if (mc.options.guiScale().get() != 1) {
+            mc.options.guiScale().set(1);
+            /*~ if >=26 'mc.resizeDisplay()' -> 'mc.resizeGui()'*/
+            mc.resizeDisplay();
         }
     }
 
@@ -189,7 +214,7 @@ public final class AutoTest {
         }
 
         private void capture() {
-            File file = outputDir().resolve("page-" + (page + 1) + "-" + screen.pageSlug(page) + ".png").toFile();
+            File file = AutoTestReport.reportDir().resolve("page-" + (page + 1) + "-" + screen.pageSlug(page) + ".png").toFile();
             shotPending = true;
             try {
                 Files.createDirectories(file.getParentFile().toPath());
@@ -205,7 +230,7 @@ public final class AutoTest {
         }
 
         private void finish() {
-            log("done: " + screen.pageCount() + " screenshots in " + outputDir().toAbsolutePath());
+            log("done: " + screen.pageCount() + " screenshots in " + AutoTestReport.reportDir().toAbsolutePath());
             finished = true;
             mc.stop();
         }
@@ -257,9 +282,6 @@ public final class AutoTest {
         return id == null || id.isBlank() ? "unknown" : id;
     }
 
-    private static Path outputDir() {
-        return Paths.get("autotest", id());
-    }
 
     private static void logWindow(Minecraft mc) {
         int guiWidth = mc.getWindow().getGuiScaledWidth();

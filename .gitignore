@@ -6,6 +6,7 @@ prism-instances.py
 *.psd
 scripts/
 autotest-report/
+autotest-comparison/
 
 # gradle
 secrets.gradle

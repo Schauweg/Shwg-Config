@@ -1,18 +1,26 @@
 #!/usr/bin/env python3
 """
-Compares the screenshots written by AutoTest (autotest/<id>/page-N-name.png) across all versions.
+Summarises an autotest run across all versions: autotest-report/<id>/ (written by the Gradle autotest tasks)
+holds the check reports (<suite>.txt) and the screenshots (page-N-name.png) of every version.
 
-Makes one contact sheet per page (every version side by side, labelled) plus an index.html, and can
-  * show how much each version differs from a reference version (--ref, optionally --highlight), and
-  * check for regressions against the screenshots of an earlier run (--baseline).
+Writes an index.html with
+  * a table of every check suite per version (PASS / FAIL), and the failing checks with their messages,
+  * the lists the reports contain (enchantments, biomes, ...): their size per version, what changed from
+    one version to the next, and where loaders of the same version disagree,
+  * one contact sheet per screenshot page (every version side by side, labelled), which can
+      - show how much each version differs from a reference version (--ref, optionally --highlight),
+      - check for regressions against the screenshots of an earlier run (--baseline).
+A run without screenshots (autotestChecks) or without reports (autotestScreenshots) works too.
 
 Needs Pillow:  pip install pillow
 
 Examples:
-    ./compare_autotest.py run/autotest
-    ./compare_autotest.py run/autotest --ref 1.21.1-fabric --highlight
-    ./compare_autotest.py run/autotest --only "fabric$" --cols 2 --scale 2
-    ./compare_autotest.py run/autotest --baseline old-run/autotest      (exit code 1 if anything changed)
+    ./autotest.py
+    ./autotest.py autotest-report --ref 1.21.1-fabric --highlight
+    ./autotest.py --only "fabric$" --cols 2 --scale 2
+    ./autotest.py --baseline old-autotest-report
+
+Exit code 1 if a check failed or (with --baseline) a screenshot changed.
 """
 
 import argparse
@@ -25,6 +33,7 @@ from pathlib import Path
 from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageFont
 
 PAGE_RE = re.compile(r"^page-(\d+)-(.+)\.png$")
+SECTION_RE = re.compile(r"^(.*?) \((\d+|could not be listed: .*)\)$")
 
 # Regions (x, y, w, h in GUI pixels) that legitimately change from run to run, per page name.
 # These are the two always-scrolling text rows on the "text" page of RenderTestScreen:
@@ -69,6 +78,68 @@ def collect(root):
         if pages:
             data[folder.name] = pages
     return data
+
+
+# Reading the check reports
+
+class Report:
+    """One <suite>.txt: RESULT line, PASS / FAIL check lines, then sections (title, entry lines)."""
+
+    def __init__(self, path):
+        self.suite = path.stem
+        self.passed = False
+        self.checks = []      # (passed, text)
+        self.sections = {}    # title -> [entry lines]
+        lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
+        if lines and lines[0].startswith("RESULT "):
+            self.passed = lines[0] == "RESULT PASS"
+            lines = lines[1:]
+        section = None
+        for line in lines:
+            if not line.strip():
+                section = None
+            elif line.startswith("PASS ") and section is None:
+                self.checks.append((True, line[5:]))
+            elif line.startswith("FAIL ") and section is None:
+                self.checks.append((False, line[5:]))
+            elif line.startswith("  ") and section is not None:
+                self.sections[section].append(line.strip())
+            else:
+                match = SECTION_RE.match(line)
+                section = match.group(1) if match else line.strip()
+                self.sections.setdefault(section, [])
+
+    @property
+    def failures(self):
+        return [text for passed, text in self.checks if not passed]
+
+
+def collect_reports(root):
+    """{id: {suite: Report}} - every version folder with at least one report."""
+    reports = {}
+    for folder in root.iterdir():
+        if folder.is_dir():
+            found = {path.stem: Report(path) for path in sorted(folder.glob("*.txt"))}
+            if found:
+                reports[folder.name] = found
+    return reports
+
+
+def is_value_line(line):
+    """'items   1234' - a name and a number."""
+    words = line.split()
+    return len(words) == 2 and words[1].isdigit()
+
+
+def entry_key(line):
+    """The first word of an entry line - the ID in lists like 'minecraft:fortune   Fortune'."""
+    return line.split()[0] if line.split() else line
+
+
+def split_id(identifier):
+    """'1.21.11-fabric' -> ('1.21.11', 'fabric')"""
+    version, _, loader = identifier.rpartition("-")
+    return (version, loader) if version else (identifier, "")
 
 
 # Comparing images
@@ -163,8 +234,114 @@ def build_sheet(ids, page, data, ref_id, args, font):
     return draw_grid(tiles, args.cols, args.scale, font), stats
 
 
-def write_index(out, ids, pages, ref_id, all_stats):
-    rows = []
+def check_tables(reports):
+    """HTML: PASS / FAIL per suite and version, then every failing check."""
+    if not reports:
+        return ""
+    ids = sorted(reports, key=version_key)
+    suites = sorted({suite for found in reports.values() for suite in found})
+    head = "".join(f"<th>{html.escape(suite)}</th>" for suite in suites)
+    body = []
+    for identifier in ids:
+        cells = []
+        for suite in suites:
+            report = reports[identifier].get(suite)
+            if report is None:
+                cells.append("<td class='na'>-</td>")
+            elif report.passed:
+                cells.append(f"<td class='good'>PASS {len(report.checks)}</td>")
+            else:
+                cells.append(f"<td class='bad'>FAIL {len(report.failures)}/{len(report.checks)}</td>")
+        body.append(f"<tr><th>{html.escape(identifier)}</th>{''.join(cells)}</tr>")
+    table = f"<h2>Checks</h2><table><tr><th></th>{head}</tr>{''.join(body)}</table>"
+
+    failures = []
+    for identifier in ids:
+        for suite, report in sorted(reports[identifier].items()):
+            if not report.passed:
+                items = "".join(f"<li>{html.escape(text)}</li>" for text in report.failures) \
+                        or "<li>no FAIL line - the report doesn't start with RESULT PASS</li>"
+                failures.append(f"<h3 class='bad'>{html.escape(identifier)} / {html.escape(suite)}</h3><ul>{items}</ul>")
+    return table + (f"<h2>Failed checks</h2>{''.join(failures)}" if failures else "<p class='good'>Every check passed.</p>")
+
+
+def list_tables(reports):
+    """HTML: every list section - size per version, changes from version to version, loader differences."""
+    sections = sorted({(suite, title) for found in reports.values()
+                       for suite, report in found.items() for title in report.sections})
+    if not sections:
+        return ""
+    ids = sorted(reports, key=version_key)
+    parts = ["<h2>Lists</h2>"]
+    for suite, title in sections:
+        def entries(identifier):
+            report = reports[identifier].get(suite)
+            return None if report is None or title not in report.sections else report.sections[title]
+
+        present = [i for i in ids if entries(i) is not None]
+
+        # "name number" lines (e.g. SUGGESTION COUNTS): a table of the values instead of lists.
+        if present and all(is_value_line(line) for i in present for line in entries(i)):
+            names = sorted({line.split()[0] for i in present for line in entries(i)})
+            head = "".join(f"<th>{html.escape(n)}</th>" for n in names)
+            body = []
+            for i in present:
+                values = {line.split()[0]: line.split()[1] for line in entries(i)}
+                body.append(f"<tr><th>{html.escape(i)}</th>"
+                            + "".join(f"<td>{html.escape(values.get(n, '-'))}</td>" for n in names) + "</tr>")
+            parts.append(f"<details><summary><b>{html.escape(title)}</b> <span class='na'>({html.escape(suite)})</span>"
+                         f"</summary><table style='margin:8px 0 16px 16px'><tr><th></th>{head}</tr>{''.join(body)}</table>"
+                         "</details>")
+            continue
+
+        sizes = "".join(f"<tr><th>{html.escape(i)}</th><td>{len(entries(i))}</td></tr>" for i in present)
+
+        # Changes from one version to the next, per loader (ids are sorted by loader, then version).
+        changes = []
+        previous = {}
+        for identifier in present:
+            _, loader = split_id(identifier)
+            keys = {entry_key(line) for line in entries(identifier)}
+            if loader in previous:
+                before_id, before = previous[loader]
+                added, removed = sorted(keys - before), sorted(before - keys)
+                if added or removed:
+                    text = "".join(f"<div class='good'>+ {html.escape(k)}</div>" for k in added) \
+                           + "".join(f"<div class='bad'>- {html.escape(k)}</div>" for k in removed)
+                    changes.append(f"<h4>{html.escape(before_id)} &rarr; {html.escape(identifier)}</h4>{text}")
+            previous[loader] = (identifier, keys)
+
+        # Loaders of the same version that list different entries.
+        differences = []
+        by_version = {}
+        for identifier in present:
+            by_version.setdefault(split_id(identifier)[0], []).append(identifier)
+        for version, same in by_version.items():
+            first = {entry_key(line) for line in entries(same[0])}
+            for other in same[1:]:
+                keys = {entry_key(line) for line in entries(other)}
+                if keys != first:
+                    only_first, only_other = sorted(first - keys), sorted(keys - first)
+                    differences.append(
+                        f"<h4 class='bad'>{html.escape(same[0])} vs {html.escape(other)}</h4>"
+                        + "".join(f"<div>only {html.escape(same[0])}: {html.escape(k)}</div>" for k in only_first)
+                        + "".join(f"<div>only {html.escape(other)}: {html.escape(k)}</div>" for k in only_other))
+
+        parts.append(
+            f"<details><summary><b>{html.escape(title)}</b> <span class='na'>({html.escape(suite)})</span>"
+            + (" <span class='bad'>loaders differ</span>" if differences else "") + "</summary>"
+            f"<div class='cols'><div><h4>Size</h4><table>{sizes}</table></div>"
+            f"<div><h4>Changes between versions</h4>{''.join(changes) or '<p class=na>none</p>'}</div>"
+            f"<div><h4>Loader differences</h4>{''.join(differences) or '<p class=na>none</p>'}</div></div>"
+            "</details>")
+    return "".join(parts)
+
+
+def screenshot_section(ids, pages, ref_id, all_stats):
+    """HTML: the difference table to the reference version, then one collapsible block per page."""
+    if not pages:
+        return ""
+    parts = ["<h2>Screenshots</h2>"]
     if ref_id:
         head = "".join(f"<th>{n}. {html.escape(name)}</th>" for n, name in pages)
         body = []
@@ -182,17 +359,35 @@ def write_index(out, ids, pages, ref_id, all_stats):
                     else:
                         cells.append(f"<td class='{'good' if fraction == 0 else 'bad'}'>{fraction * 100:.2f}%</td>")
             body.append(f"<tr><th>{html.escape(identifier)}</th>{''.join(cells)}</tr>")
-        rows.append(f"<h2>Difference to {html.escape(ref_id)}</h2>"
-                    f"<table><tr><th></th>{head}</tr>{''.join(body)}</table>")
+        parts.append(f"<h3>Difference to {html.escape(ref_id)}</h3>"
+                     f"<table><tr><th></th>{head}</tr>{''.join(body)}</table>")
 
-    sheets = "".join(
-        f"<h2>{n}. {html.escape(name)}</h2><img src='page-{n}-{html.escape(name)}.png'>" for n, name in pages)
+    for page in pages:
+        number, name = page
+        stats = [f for f in all_stats.get(page, {}).values()]
+        if not ref_id:
+            note = ""
+        elif any(f is None for f in stats):
+            note = " <span class='bad'>size differs</span>"
+        elif stats and max(stats) > 0:
+            note = f" <span class='bad'>up to {max(stats) * 100:.2f}% different</span>"
+        else:
+            note = " <span class='good'>identical</span>"
+        parts.append(f"<details><summary><b>{number}. {html.escape(name)}</b>{note}</summary>"
+                     f"<img src='page-{number}-{html.escape(name)}.png'></details>")
+    return "".join(parts)
+
+
+def write_index(out, ids, pages, ref_id, all_stats, reports):
+    body = check_tables(reports) + list_tables(reports) + screenshot_section(ids, pages, ref_id, all_stats)
     (out / "index.html").write_text(
         "<!doctype html><meta charset='utf-8'><title>Autotest comparison</title>"
         "<style>body{background:#181818;color:#ddd;font-family:sans-serif;margin:20px}"
         "table{border-collapse:collapse}td,th{border:1px solid #444;padding:4px 10px;text-align:center}"
-        ".good{color:#78dc78}.bad{color:#f06e6e}.na,.ref{color:#888}img{max-width:100%}</style>"
-        f"<h1>Autotest comparison</h1>{''.join(rows)}{sheets}", encoding="utf-8")
+        ".good{color:#78dc78}.bad{color:#f06e6e}.na,.ref{color:#888}img{max-width:100%;margin:8px 0 16px 16px}"
+        "details{margin:6px 0}summary{cursor:pointer}.cols{display:flex;gap:40px;align-items:flex-start;"
+        "margin:8px 0 16px 16px}.cols div{font-family:monospace}h4{margin:10px 0 4px}</style>"
+        f"<h1>Autotest comparison</h1>{body}", encoding="utf-8")
 
 
 # Regression check against an earlier run
@@ -230,13 +425,22 @@ def check_baseline(current, baseline_root, out, args, font):
 
 # Main
 
+def default_reference(ids):
+    """The newest Fabric version, or the newest version of whatever loader there is."""
+    fabric = [i for i in ids if split_id(i)[1] == "fabric"]
+    candidates = fabric or ids
+    return max(candidates, key=lambda i: version_key(i)[1])
+
+
 def main():
     parser = argparse.ArgumentParser(description="Compare the autotest screenshots of all versions.")
-    parser.add_argument("root", nargs="?", default="run/autotest",
-                        help="folder that contains one sub folder per version (default: run/autotest)")
-    parser.add_argument("-o", "--out", default="autotest-report", help="output folder (default: autotest-report)")
-    parser.add_argument("--ref", help="id of a reference version, e.g. 1.21.1-fabric: every other tile shows "
-                                      "how much it differs from it")
+    parser.add_argument("root", nargs="?", default="autotest-report",
+                        help="folder that contains one sub folder per version (default: autotest-report)")
+    parser.add_argument("-o", "--out", default="autotest-comparison",
+                        help="output folder (default: autotest-comparison) - not inside root")
+    parser.add_argument("--ref", help="id of the reference version, e.g. 1.21.1-fabric: every other tile shows "
+                                      "how much it differs from it (default: the newest Fabric version)")
+    parser.add_argument("--no-ref", action="store_true", help="don't compare against a reference version at all")
     parser.add_argument("--highlight", action="store_true", help="paint the pixels that differ from --ref red")
     parser.add_argument("--only", help="regex: only use versions whose id matches")
     parser.add_argument("--cols", type=int, default=3, help="tiles per row (default: 3)")
@@ -247,17 +451,25 @@ def main():
                                            "(exit code 1 if any did)")
     args = parser.parse_args()
 
-    data = collect(Path(args.root))
+    root = Path(args.root)
+    out = Path(args.out)
+    if out.resolve() == root.resolve() or root.resolve() in out.resolve().parents:
+        sys.exit(f"error: the output folder {out} must not be inside {root} - it would be read as a version")
+
+    data = collect(root)
+    reports = collect_reports(root)
     if args.only:
         data = {i: p for i, p in data.items() if re.search(args.only, i)}
-    if not data:
-        sys.exit("error: no screenshots found (expected <folder>/<id>/page-N-name.png)")
+        reports = {i: r for i, r in reports.items() if re.search(args.only, i)}
+    if not data and not reports:
+        sys.exit(f"error: nothing found in {root} (expected <id>/<suite>.txt or <id>/page-N-name.png)")
     if args.ref and args.ref not in data:
-        sys.exit(f"error: reference '{args.ref}' not found, available: {', '.join(sorted(data, key=version_key))}")
+        sys.exit(f"error: reference '{args.ref}' has no screenshots, available: {', '.join(sorted(data, key=version_key))}")
 
     ids = sorted(data, key=version_key)
+    if not args.ref and ids and not args.no_ref:
+        args.ref = default_reference(ids)
     pages = sorted({page for pages in data.values() for page in pages})
-    out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
     font = load_font()
 
@@ -266,12 +478,24 @@ def main():
         sheet, stats = build_sheet(ids, page, data, args.ref, args, font)
         all_stats[page] = stats
         sheet.save(out / f"page-{page[0]}-{page[1]}.png")
-    write_index(out, ids, pages, args.ref, all_stats)
-    print(f"{len(ids)} version(s), {len(pages)} page(s) -> {out / 'index.html'}")
+    write_index(out, ids, pages, args.ref, all_stats, reports)
 
+    # Console summary of the checks.
+    failed = [(i, report) for i in sorted(reports, key=version_key)
+              for report in reports[i].values() if not report.passed]
+    report_count = sum(len(found) for found in reports.values())
+    print(f"{len(reports)} version(s) with {report_count} report(s), {len(failed)} failed; "
+          f"{len(ids)} version(s) with screenshots, {len(pages)} page(s) -> {out / 'index.html'}")
+    for identifier, report in failed:
+        print(f"  FAIL {identifier} / {report.suite}")
+        for text in report.failures:
+            print(f"       {text}")
+
+    changed = 0
     if args.baseline:
         print()
-        sys.exit(1 if check_baseline(data, Path(args.baseline), out, args, font) else 0)
+        changed = check_baseline(data, Path(args.baseline), out, args, font)
+    sys.exit(1 if failed or changed else 0)
 
 
 if __name__ == "__main__":

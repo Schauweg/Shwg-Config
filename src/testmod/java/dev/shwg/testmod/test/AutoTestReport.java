@@ -69,8 +69,38 @@ public final class AutoTestReport {
         List<String> lines() throws Exception;
     }
 
+    /** Records a failure that happened outside {@link #check}, e.g. a suite crashing between checks. */
+    public void fail(String checkName, Throwable t) {
+        failed = true;
+        lines.add("FAIL " + checkName + ": threw " + t);
+    }
+
     public boolean hasFailed() {
         return failed;
+    }
+
+    /**
+     * Where reports and screenshots go: {@code autotest-report/<project>/} in the project root, set by
+     * gradle/autotest.gradle.kts. The fallback (relative to the run directory) is only for runs started
+     * some other way.
+     */
+    public static Path reportDir() {
+        String reportDir = System.getenv("SHWG_AUTOTEST_REPORT_DIR");
+        return reportDir != null && !reportDir.isBlank() ? Path.of(reportDir) : Path.of("autotest-report");
+    }
+
+    /**
+     * Writes plain data next to the reports, e.g. a list of IDs other Gradle tasks read.
+     * Use an extension other than .txt - every .txt file there is checked as a report.
+     */
+    public static void writeData(String fileName, List<String> lines) {
+        Path dir = reportDir();
+        try {
+            Files.createDirectories(dir);
+            Files.write(dir.resolve(fileName), lines);
+        } catch (IOException e) {
+            System.err.println("[autotest] could not write " + fileName + ": " + e);
+        }
     }
 
     public void write() {
@@ -79,12 +109,7 @@ public final class AutoTestReport {
         out.addAll(lines);
         out.addAll(sections);
 
-        // Set by stonecutter.gradle.kts during autotest runs. The fallback (relative to the run
-        // directory, like AutoTest's screenshots) is only for runs started some other way.
-        String reportDir = System.getenv("SHWG_AUTOTEST_REPORT_DIR");
-        Path dir = reportDir != null && !reportDir.isBlank()
-                ? Path.of(reportDir)
-                : Path.of("autotest", "reports");
+        Path dir = reportDir();
         try {
             Files.createDirectories(dir);
             Files.write(dir.resolve(name + ".txt"), out);

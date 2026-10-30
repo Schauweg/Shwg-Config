@@ -1,0 +1,51 @@
+package dev.shwg.testmod.test;
+
+import dev.shwg.shwgconfig.gui.components.widget.editbox.suggestioneditbox.SuggestionEditBox.SuggestionProvider;
+import dev.shwg.shwgconfig.gui.components.widget.editbox.suggestioneditbox.SuggestionEntry;
+import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+import java.util.regex.Pattern;
+
+import static dev.shwg.testmod.test.AutoTestReport.require;
+
+/** Small helpers shared by the {@link CheckSuite}s. */
+public final class CheckHelpers {
+
+    /** A translation key that wasn't resolved, e.g. "biome.minecraft.plains". */
+    private static final Pattern RAW_TRANSLATION_KEY = Pattern.compile("^[a-z0-9_]+\\.minecraft\\.[a-z0-9_./]+$");
+
+    private CheckHelpers() {}
+
+    /**
+     * Fails unless {@code name} is a real, translated name for {@code id}: not the raw ID, not an
+     * unresolved translation key, not blank. Doesn't compare against English text, so it works in any language.
+     */
+    public static void requireTranslated(Component name, String id) {
+        String text = name.getString();
+        require(!text.isBlank(), "name is blank");
+        require(!text.equals(id), "fell back to the raw id");
+        require(!RAW_TRANSLATION_KEY.matcher(text).matches(), "translation key not resolved: " + text);
+    }
+
+    /** The provider's suggestions for {@code query}. The overlay is only needed for drawing, so null is fine. */
+    public static List<SuggestionEntry> suggest(SuggestionProvider provider, String query) {
+        return provider.getSuggestions(query, null).join();
+    }
+
+    /** The entry saving {@code id}, or null. */
+    public static @Nullable SuggestionEntry find(List<SuggestionEntry> entries, String id) {
+        for (SuggestionEntry entry : entries) {
+            if (entry.saveValue().equals(id)) return entry;
+        }
+        return null;
+    }
+
+    /** The entry saving {@code id}; fails the check if there is none. */
+    public static SuggestionEntry requireEntry(List<SuggestionEntry> entries, String id) {
+        SuggestionEntry entry = find(entries, id);
+        require(entry != null, id + " is missing");
+        return entry;
+    }
+}
