@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 public abstract class WidgetOverlay implements DeferredElement {
 
     public static int topBoundary, bottomBoundary;
+    protected int backgroundColor = 0xFF000000;
 
     private final GenericAbstractWidget carrierWidget;
 
@@ -35,6 +36,14 @@ public abstract class WidgetOverlay implements DeferredElement {
 
         updateXOffset();
         updateDirection();
+    }
+
+    public void setBackgroundColor(int backgroundColor) {
+        this.backgroundColor = backgroundColor;
+    }
+
+    public int getBackgroundColor() {
+        return backgroundColor;
     }
 
     public Alignment.OverlayDirection getDirection() {

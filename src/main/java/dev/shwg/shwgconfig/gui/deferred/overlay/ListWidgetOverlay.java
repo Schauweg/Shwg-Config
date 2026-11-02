@@ -11,6 +11,7 @@ import java.util.List;
 
 public abstract class ListWidgetOverlay<E extends OverlayEntry> extends ScrollableWidgetOverlay {
 
+
     private final int maxVisibleEntries;
     private List<E> items = List.of();
     private int selectedIndex = -1;
@@ -68,7 +69,7 @@ public abstract class ListWidgetOverlay<E extends OverlayEntry> extends Scrollab
 
     @Override
     public void render(GenericGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        graphics.fillWH(x, y, width, height, 0xC9000000);
+        graphics.fillWH(x, y, width, height, backgroundColor);
         graphics.enableScissorWH(getX(), getY(), getWidth(), getHeight());
         for (E entry : items) {
             if (entry.getY() + entry.getHeight() >= getY() && entry.getY() <= getY() + getHeight()) {
