@@ -112,7 +112,11 @@ public class DropdownWidget<T> extends GenericAbstractButton implements OverlayW
 
     @Override
     protected void onPress() {
-        overlay.open(!overlay.isOpen());
+        boolean opening = !overlay.isOpen();
+        if (opening) {
+            overlay.setSelected(currentEntry);
+        }
+        overlay.open(opening);
     }
 
     @Override

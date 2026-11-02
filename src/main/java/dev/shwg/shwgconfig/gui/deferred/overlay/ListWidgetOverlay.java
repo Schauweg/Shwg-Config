@@ -106,15 +106,41 @@ public abstract class ListWidgetOverlay<E extends OverlayEntry> extends Scrollab
         return false;
     }
 
-    private void moveSelection(int direction) {
-        if (selectedIndex >= 0) items.get(selectedIndex).setSelected(false);
-        selectedIndex = Math.floorMod(selectedIndex + direction, items.size());
-        items.get(selectedIndex).setSelected(true);
+    /**
+     * Highlights {@code entry} and scrolls so it sits in the middle of the list
+     * (as far as the list can scroll). Meant for opening the overlay onto an
+     * existing value. Does nothing if the entry isn't in this list.
+     */
+    public void setSelected(@Nullable E entry) {
+        int index = entry != null ? items.indexOf(entry) : -1;
+        if (index < 0) return;
+        applySelection(index);
 
-        int top = 0;
-        for (int i = 0; i < selectedIndex; i++) top += items.get(i).getHeight();
+        int top = getEntryTop(index);
+        int entryHeight = items.get(index).getHeight();
+        setScrollOffset(top - (getHeight() - entryHeight) / 2.0);
+    }
+
+    private void moveSelection(int direction) {
+        applySelection(Math.floorMod(selectedIndex + direction, items.size()));
+
+        int top = getEntryTop(selectedIndex);
         int bottom = top + items.get(selectedIndex).getHeight();
         if (top < getScrollOffset()) setScrollOffset(top);
         else if (bottom > getScrollOffset() + getHeight()) setScrollOffset(bottom - getHeight());
+    }
+
+    /** Moves the highlight flag from the old row to the row at {@code index}. */
+    private void applySelection(int index) {
+        if (selectedIndex >= 0 && selectedIndex < items.size()) items.get(selectedIndex).setSelected(false);
+        selectedIndex = index;
+        items.get(selectedIndex).setSelected(true);
+    }
+
+    /** Distance from the top of the list content to the top of the row at {@code index}. */
+    private int getEntryTop(int index) {
+        int top = 0;
+        for (int i = 0; i < index; i++) top += items.get(i).getHeight();
+        return top;
     }
 }
