@@ -297,7 +297,8 @@ public class GenericScrollableWidget extends GenericAbstractContainerWidget {
             return self();
         }
 
-        public GenericScrollableWidget build() {
+        @Override
+        protected GenericScrollableWidget create() {
             return new GenericScrollableWidget(x, y, width, height, backgroundColor, scrollbarWidth, knobWidth, scrollbarColor, knobColor, knobHoverColor, scrollbarTexture, knobTexture, knobHoverTexture, spacing, padding, alignment);
         }
     }

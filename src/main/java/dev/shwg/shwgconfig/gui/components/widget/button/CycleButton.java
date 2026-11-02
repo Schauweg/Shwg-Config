@@ -66,13 +66,13 @@ public class CycleButton<T> extends GenericAbstractButton {
     public void renderWidget(@NotNull GenericGraphics graphics, int mouseX, int mouseY, float partialTick) {
         graphics.drawTexture(currentButtonTexture(), getX(), getY(), width, height);
         Font font = Minecraft.getInstance().font;
-        graphics.drawCenteredString(font, getMessage(), getX() + getWidth() / 2, getY() + (getHeight() - 8) / 2, 0xFFFFFFFF);
+        graphics.drawCenteredString(font, getMessage(), getX() + getWidth() / 2, getY() + (getHeight() - 8) / 2, getTextColor());
 
         graphics.pushPose();
         graphics.scale(ARROW_SCALE, ARROW_SCALE);
 
-        GenericIcons.drawArrowLeft(graphics, Math.round(getLeftArrowX() / ARROW_SCALE), Math.round(getArrowY() / ARROW_SCALE), isMouseOverLeftArrow(mouseX, mouseY));
-        GenericIcons.drawArrowRight(graphics, Math.round(getRightArrowX() / ARROW_SCALE), Math.round(getArrowY() / ARROW_SCALE), isMouseOverRightArrow(mouseX, mouseY));
+        GenericIcons.drawArrowLeft(graphics, Math.round(getLeftArrowX() / ARROW_SCALE), Math.round(getArrowY() / ARROW_SCALE), isActive() && isMouseOverLeftArrow(mouseX, mouseY));
+        GenericIcons.drawArrowRight(graphics, Math.round(getRightArrowX() / ARROW_SCALE), Math.round(getArrowY() / ARROW_SCALE), isActive() && isMouseOverRightArrow(mouseX, mouseY));
 
         graphics.popPose();
 
@@ -134,7 +134,7 @@ public class CycleButton<T> extends GenericAbstractButton {
         }
 
         @Override
-        public CycleButton<T> build() {
+        protected CycleButton<T> create() {
             return new CycleButton<>(x, y, width, height, options, labelFn, value, applyValue, button, buttonHighlighted, buttonDisabled);
         }
     }

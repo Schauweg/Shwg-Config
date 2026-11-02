@@ -60,7 +60,7 @@ public class GenericKeyBindButton extends GenericAbstractButton{
         graphics.drawTexture(currentButtonTexture(), this.getX(), this.getY(), this.width, this.height);
 
         Font font = Minecraft.getInstance().font;
-        graphics.drawCenteredString(font, this.getMessage(), this.getX() + this.getWidth() / 2, this.getY() + (this.getHeight() - 8) / 2, 0xFFFFFFFF);
+        graphics.drawCenteredString(font, this.getMessage(), this.getX() + this.getWidth() / 2, this.getY() + (this.getHeight() - 8) / 2, getTextColor());
         if (this.isHovered) {
             renderDeferredTooltip(graphics, mouseX, mouseY);
             graphics.requestCursor(GenericCursors.POINTING_HAND);
@@ -90,7 +90,8 @@ public class GenericKeyBindButton extends GenericAbstractButton{
             this.mapping = mapping;
         }
 
-        public GenericKeyBindButton build() {
+        @Override
+        protected GenericKeyBindButton create() {
             return new GenericKeyBindButton(x, y, width, height, mapping, message);
         }
     }

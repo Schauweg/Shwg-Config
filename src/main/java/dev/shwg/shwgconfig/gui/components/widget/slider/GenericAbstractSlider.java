@@ -12,6 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
@@ -80,6 +81,7 @@ public abstract class GenericAbstractSlider<T> extends GenericAbstractWidget {
     protected T fromDouble(double value) {
         return fromDoubleFn.apply(value);
     }
+
     /** The inverse of {@link #fromDouble(double)} - where does this T value sit on the
      *  same double-space track position axis. This is the one hook that replaces the
      *  old {@code T extends Number} assumption; a non-numeric T just needs a sensible
@@ -218,20 +220,18 @@ public abstract class GenericAbstractSlider<T> extends GenericAbstractWidget {
 
     protected void drawString(GenericGraphics graphics) {
         Font font = Minecraft.getInstance().font;
-        graphics.drawCenteredString(font, valueToText.apply(value), getX() + getWidth() / 2, getY() + (getHeight() - 8) / 2, 0xFFFFFFFF);
+        graphics.drawCenteredString(font, valueToText.apply(value), getX() + getWidth() / 2, getY() + (getHeight() - 8) / 2, getTextColor());
     }
 
     @Override
-    public void renderWidget(@org.jetbrains.annotations.NotNull GenericGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        // Identical across all three old subclasses - belongs here now that only one
-        // concrete numeric subclass remains, rather than re-declared per subclass.
+    public void renderWidget(@NotNull GenericGraphics graphics, int mouseX, int mouseY, float partialTick) {
         drawSlider(graphics);
         drawHandler(graphics);
         drawString(graphics);
         handleCursor(graphics);
     }
 
-    public abstract static class Builder<T, B extends Builder<T, B>> extends GenericAbstractWidget.Builder<GenericAbstractSlider<T>, B> {
+    public abstract static class Builder<T, W extends GenericAbstractSlider<T>, B extends Builder<T, W, B>> extends GenericAbstractWidget.Builder<W, B> {
 
         protected GenericTexture slider = SLIDER;
         protected GenericTexture sliderHighlighted = SLIDER_HIGHLIGHTED;

@@ -402,7 +402,7 @@ public class SuggestionEditBox extends GenericAbstractEditBox implements Overlay
         }
 
         @Override
-        public SuggestionEditBox build() {
+        protected SuggestionEditBox create() {
             if (overlayWidth == -1) {
                 overlayWidth = width;
             }

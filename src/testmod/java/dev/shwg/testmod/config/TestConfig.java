@@ -55,6 +55,8 @@ public class TestConfig extends ConfigBase {
     public final ColorValue rgbColor = ColorValue.rgb(0x00AAFF);
     public final StringValue stringInputValue = StringValue.of("Edit me");
 
+    public final BooleanValue controlsEnabled = BooleanValue.of(true);
+
     // Tab 2: Choice controllers
     public final StringValue cycleStringValue = StringValue.of(strings.get(0));
     public final EnumValue<TestEnum> cycleEnumValue = EnumValue.of(TestEnum.ENUM1);
@@ -117,10 +119,29 @@ public class TestConfig extends ConfigBase {
                 .addStringInput(stringInputValue, Component.literal("Plain Text Input"))
                 .build();
 
+        // shared by every entry below - EntryOptions is reusable
+        EntryOptions disabledTest = EntryOptions.create()
+                .enabledWhen(controlsEnabled::getValue)
+                .tooltip(Component.literal("Turn on \"Controls Enabled\" to edit"));
+
+        ConfigCategory disabledState = CategoryBuilder.create(Component.literal("Disabled State"))
+                .addToggle(controlsEnabled, Component.literal("Controls Enabled"))
+                .addToggle(difficultyToggle, Component.literal("Toggle"), disabledTest)
+                .addNumberSlider(intValue, Component.literal("Slider"), NumberDisplay.percentage(), disabledTest)
+                .addNumberInput(floatValue, Component.literal("Number Input"), disabledTest)
+                .addColor(argbColor, Component.literal("Color"), disabledTest)
+                .addStringInput(stringInputValue, Component.literal("Text Input"), disabledTest)
+                .addCycleButton(cycleStringValue, Component.literal("Cycle Button"), strings, disabledTest)
+                .addDropdown(dropdownStringValue, Component.literal("Dropdown"), strings, disabledTest)
+                .addSuggestionInput(fixedListSuggestion, Component.literal("Suggestion Input"), strings, disabledTest)
+                .addKeybind(keybindValue, disabledTest)
+                .build();
+
         Tab basicControllers = TabBuilder.create(Component.literal("Basic Controllers"))
                 .addCategory(toggles)
                 .addCategory(numbers)
                 .addCategory(colorAndText)
+                .addCategory(disabledState)
                 .build();
 
         // Tab 2: Choice controllers

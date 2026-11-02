@@ -94,20 +94,14 @@ public class DropdownWidget<T> extends GenericAbstractButton implements OverlayW
 
     @Override
     public void renderWidget(@NotNull GenericGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        if (this.isHoveredOrFocused()) {
-            graphics.drawTexture(this.buttonHighlighted, this.getX(), this.getY(), this.width, this.height);
-        } else if (this.isActive()) {
-            graphics.drawTexture(this.button, this.getX(), this.getY(), this.width, this.height);
-        } else {
-            graphics.drawTexture(this.buttonDisabled, this.getX(), this.getY(), this.width, this.height);
-        }
+        graphics.drawTexture(currentButtonTexture(), this.getX(), this.getY(), this.width, this.height);
         Component label = currentEntry != null ? currentEntry.displayComponent() : getMessage();
         graphics.drawString(Minecraft.getInstance().font, label,
-                getX() + 4, getY() + (getHeight() - 8) / 2, 0xFFFFFFFF);
+                getX() + 4, getY() + (getHeight() - 8) / 2, getTextColor());
 
         int arrowX = getX() + width - EDITBOX_ICON_PADDING - GenericIcons.SMALL_ARROW_GLYPH_WIDTH;
         int arrowY = getY() + (height - GenericIcons.SMALL_ARROW_GLYPH_HEIGHT) / 2;
-        boolean highlighted = isHoveredOrFocused();
+        boolean highlighted = isActive() && isHoveredOrFocused();
         if (overlay.isOpen()) {
             graphics.addDeferred(overlay);
             GenericIcons.drawArrowUp(graphics, arrowX, arrowY, highlighted);
@@ -234,7 +228,7 @@ public class DropdownWidget<T> extends GenericAbstractButton implements OverlayW
         }
 
         @Override
-        public DropdownWidget<T> build() {
+        protected DropdownWidget<T> create() {
             if (overlayWidth < 1){
                 overlayWidth = width;
             }

@@ -52,7 +52,7 @@ public class NumberSlider<N extends Number> extends GenericAbstractSlider<N> {
                 d -> d, n -> Component.literal(String.format("%.2f", n)));
     }
 
-    public static class Builder<N extends Number> extends GenericAbstractSlider.Builder<N, Builder<N>> {
+    public static class Builder<N extends Number> extends GenericAbstractSlider.Builder<N, NumberSlider<N>, Builder<N>> {
 
         private final Function<Double, N> fromDoubleFn;
         private Consumer<N> applyValue = v -> {};
@@ -70,7 +70,7 @@ public class NumberSlider<N extends Number> extends GenericAbstractSlider<N> {
         }
 
         @Override
-        public NumberSlider<N> build() {
+        protected NumberSlider<N> create() {
             return new NumberSlider<>(x, y, width, height, message, minValue, maxValue, initialValue, stepSize,
                     fromDoubleFn, valueToText, applyValue, slider, sliderHighlighted, sliderHandle, sliderHandleHighlighted);
         }

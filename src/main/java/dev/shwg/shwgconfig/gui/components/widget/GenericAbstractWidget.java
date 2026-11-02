@@ -43,6 +43,14 @@ import com.mojang.blaze3d.platform.InputConstants;
 
 public abstract class GenericAbstractWidget extends AbstractWidget implements RenderableElement {
 
+    /** Default text color of an active widget. */
+    public static final int DEFAULT_TEXT_COLOR = 0xFFFFFFFF;
+    /** Default text color of an inactive widget - the gray vanilla uses for disabled buttons. */
+    public static final int DEFAULT_DISABLED_TEXT_COLOR = 0xFFA0A0A0;
+
+    private int textColor = DEFAULT_TEXT_COLOR;
+    private int disabledTextColor = DEFAULT_DISABLED_TEXT_COLOR;
+
     @Nullable
     private GenericTooltip tooltip;
     private Consumer<Integer> onXChanged;
@@ -399,6 +407,30 @@ public abstract class GenericAbstractWidget extends AbstractWidget implements Re
         }
     }
 
+    /**
+     * The color to draw this widget's text in: {@link #getDisabledTextColor()}
+     * while the widget is inactive, {@link #getEnabledTextColor()} otherwise.
+     */
+    public int getTextColor() {
+        return this.isActive() ? textColor : disabledTextColor;
+    }
+
+    public int getEnabledTextColor() {
+        return textColor;
+    }
+
+    public void setEnabledTextColor(int textColor) {
+        this.textColor = textColor;
+    }
+
+    public int getDisabledTextColor() {
+        return disabledTextColor;
+    }
+
+    public void setDisabledTextColor(int disabledTextColor) {
+        this.disabledTextColor = disabledTextColor;
+    }
+
     @Override
     public int getHeight() {
         return height;
@@ -442,6 +474,8 @@ public abstract class GenericAbstractWidget extends AbstractWidget implements Re
         protected int y = 0;
         protected int width = 150;
         protected int height = 20;
+        protected @Nullable Integer textColor = null;
+        protected @Nullable Integer disabledTextColor = null;
 
         protected GenericTooltip tooltip;
 
@@ -490,7 +524,31 @@ public abstract class GenericAbstractWidget extends AbstractWidget implements Re
             return self();
         }
 
-        public abstract T build();
+        public B enabledTextColor(int textColor) {
+            this.textColor = textColor;
+            return self();
+        }
+
+        public B disabledTextColor(int disabledTextColor) {
+            this.disabledTextColor = disabledTextColor;
+            return self();
+        }
+
+
+        /**
+         * Creates the widget from the subclass-specific options. Options shared by
+         * every widget (tooltip, text colors) are applied afterwards by
+         * {@link #build()}, so implementations don't need to handle them.
+         */
+        protected abstract T create();
+
+        public final T build() {
+            T widget = create();
+            widget.setTooltip(tooltip);
+            if (textColor != null) widget.setEnabledTextColor(textColor);
+            if (disabledTextColor != null) widget.setDisabledTextColor(disabledTextColor);
+            return widget;
+        }
     }
     
 

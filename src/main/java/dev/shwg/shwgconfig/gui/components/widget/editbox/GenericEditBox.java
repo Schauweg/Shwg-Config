@@ -18,7 +18,8 @@ public class GenericEditBox extends GenericAbstractEditBox {
             super(font, message);
         }
 
-        public GenericEditBox build() {
+        @Override
+        protected GenericEditBox create() {
             GenericEditBox editBox = new GenericEditBox(font, x, y, width, height, message);
             editBox.setMaxLength(maxLength);
             if (hint != null) {

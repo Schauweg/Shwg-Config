@@ -41,6 +41,7 @@ public abstract class GenericAbstractEditBox extends GenericAbstractWidget {
 
     protected final CustomEditBox editBox;
     protected final Font font;
+    private boolean editable = true;
 
     public GenericAbstractEditBox(Font font, int x, int y, int width, int height, Component message) {
         super(x, y, width, height, message);
@@ -56,6 +57,7 @@ public abstract class GenericAbstractEditBox extends GenericAbstractWidget {
 
     @Override
     public void renderWidget(@NotNull GenericGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        syncEditBoxState();
         /*? if >= 26 { */
         //editBox.extractRenderState(graphics.getGraphics(),  mouseX, mouseY, partialTick);
         /*? } else if >= 1.19.4 { */
@@ -90,7 +92,12 @@ public abstract class GenericAbstractEditBox extends GenericAbstractWidget {
     }
 
     public void setEditable(boolean editable) {
-        editBox.setEditable(editable);
+        this.editable = editable;
+        syncEditBoxState();
+    }
+
+    public boolean isEditable() {
+        return editable;
     }
 
     public void setResponder(Consumer<String> responder) {
@@ -135,6 +142,12 @@ public abstract class GenericAbstractEditBox extends GenericAbstractWidget {
 
     public void setBordered(boolean bordered) {
         editBox.setBordered(bordered);
+    }
+
+    private void syncEditBoxState() {
+        editBox.setEditable(editable && isActive());
+        editBox.setTextColor(getEnabledTextColor());
+        editBox.setTextColorUneditable(getDisabledTextColor());
     }
 
     @Override

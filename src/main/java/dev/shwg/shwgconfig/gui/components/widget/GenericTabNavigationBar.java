@@ -235,7 +235,8 @@ public class GenericTabNavigationBar extends GenericAbstractContainerWidget impl
             return max;
         }
 
-        public GenericTabNavigationBar build() {
+        @Override
+        protected GenericTabNavigationBar create() {
             if (equalButtonWidth && !stretchWidth) {
                 int max = maxButtonWidth();
                 tabButtons.forEach(b -> b.setWidth(max));

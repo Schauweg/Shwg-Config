@@ -136,6 +136,10 @@ public class NumberEditBox<N extends Number> extends GenericAbstractEditBox {
                 && mouseY >= getY() + getArrowHalfHeight() && mouseY < getY() + getArrowHalfHeight() + GenericIcons.SMALL_ARROW_GLYPH_HEIGHT;
     }
 
+    private boolean canAdjust() {
+        return isActive() && isEditable();
+    }
+
     @Override
     protected boolean onMouseClicked(GenericMouseButtonEvent event) {
         if (isOverUpArrow(event.getMouseX(), event.getMouseY())) {
@@ -151,6 +155,9 @@ public class NumberEditBox<N extends Number> extends GenericAbstractEditBox {
 
     @Override
     protected boolean onMouseScrolled(double mouseX, double mouseY, double horizontal, double vertical) {
+        if (!canAdjust()) {
+            return super.onMouseScrolled(mouseX, mouseY, horizontal, vertical);
+        }
         if (isOverUpArrow(mouseX, mouseY) || isOverDownArrow(mouseX, mouseY)) {
             adjustValue((int) vertical);
             return true;
@@ -160,6 +167,9 @@ public class NumberEditBox<N extends Number> extends GenericAbstractEditBox {
 
     @Override
     protected boolean onKeyPressed(GenericKeyEvent keyEvent) {
+        if (!canAdjust()) {
+            return super.onKeyPressed(keyEvent);
+        }
         if (keyEvent.isUp()) {
             adjustValue(1);
             return true;
@@ -186,8 +196,8 @@ public class NumberEditBox<N extends Number> extends GenericAbstractEditBox {
         int zoneX = getArrowZoneX();
         int halfHeight = getArrowHalfHeight();
 
-        boolean overUp = isOverUpArrow(mouseX, mouseY);
-        boolean overDown = isOverDownArrow(mouseX, mouseY);
+        boolean overUp = canAdjust() && isOverUpArrow(mouseX, mouseY);
+        boolean overDown = canAdjust() && isOverDownArrow(mouseX, mouseY);
 
         if (overUp || overDown) {
             graphics.requestCursor(GenericCursors.POINTING_HAND);
@@ -313,7 +323,7 @@ public class NumberEditBox<N extends Number> extends GenericAbstractEditBox {
         }
 
         @Override
-        public NumberEditBox<N> build() {
+        protected NumberEditBox<N> create() {
             NumberEditBox<N> editBox = new NumberEditBox<>(font, x, y, width, height, message,
                     min, max, step, initialValue, allowDecimals, fromDouble, formatter, applyValue);
             editBox.setMaxLength(maxLength);

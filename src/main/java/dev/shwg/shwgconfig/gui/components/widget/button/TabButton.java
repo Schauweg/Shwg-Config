@@ -69,18 +69,17 @@ public class TabButton extends GenericAbstractButton {
         graphics.drawTexture(currentButtonTexture(), getX(), getY(), getWidth(), getHeight());
 
         Font font = Minecraft.getInstance().font;
-        int color = this.active ? 0xFFFFFFFF : 0xFF808080;
         int availableWidth = getWidth() - UNDERLINE_MARGIN_X * 2;
 
         if (font.width(getMessage()) <= availableWidth) {
-            graphics.drawCenteredString(font, getMessage(), getX() + getWidth() / 2, getY() + (getHeight() - 8) / 2, color);
+            graphics.drawCenteredString(font, getMessage(), getX() + getWidth() / 2, getY() + (getHeight() - 8) / 2, getTextColor());
         } else {
             boolean scrollActive = isHoveredOrFocused() || isSelected();
-            graphics.drawScrollingString(font, getMessage(), getX() + UNDERLINE_MARGIN_X, getY() + (getHeight() - 8) / 2, availableWidth, scrollActive, color);
+            graphics.drawScrollingString(font, getMessage(), getX() + UNDERLINE_MARGIN_X, getY() + (getHeight() - 8) / 2, availableWidth, scrollActive, getTextColor());
         }
 
         if (isSelected()) {
-            renderUnderline(graphics, font, color);
+            renderUnderline(graphics, font, getTextColor());
         }
         if (this.isHovered) {
             renderDeferredTooltip(graphics, mouseX, mouseY);
@@ -142,7 +141,7 @@ public class TabButton extends GenericAbstractButton {
         }
 
         @Override
-        public TabButton build() {
+        protected TabButton create() {
             return new TabButton(tabManager, tab, x, y, width, height,
                     tabTexture, tabHighlighted, tabSelected, tabSelectedHighlighted);
         }

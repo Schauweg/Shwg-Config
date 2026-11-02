@@ -569,14 +569,14 @@ public class InventoryWidget extends GenericAbstractWidget {
         }
 
         @Override
-        public InventoryWidget build() {
+        protected InventoryWidget create() {
             int maxSlots = rows * columns - 1;
             items.forEach((slot, stack) -> {
                 if (slot > maxSlots) {
                     throw new IllegalArgumentException("Can't put items into slot: " + slot + " highest slot is: " + maxSlots);
                 }
             });
-            return new  InventoryWidget(x, y, rows, columns, message, items);
+            return new InventoryWidget(x, y, rows, columns, message, items);
         }
     }
 }

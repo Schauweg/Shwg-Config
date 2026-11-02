@@ -152,7 +152,7 @@ public class HexColorEditBox extends GenericAbstractEditBox {
         }
 
         @Override
-        public HexColorEditBox build() {
+        protected HexColorEditBox create() {
             HexColorEditBox editBox = new HexColorEditBox(font, x, y, width, height, alpha, applyValue);
             editBox.setColorValue(color);
             return editBox;
