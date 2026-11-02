@@ -49,7 +49,7 @@ public class TestConfig extends ConfigBase {
     public final BooleanValue difficultyToggle = BooleanValue.of(true);
 
     public final IntValue intValue = IntValue.of(0, 0, 100);
-    public final FloatValue floatValue = FloatValue.of(1.0f, 0f, 2f);
+    public final FloatValue floatValue = FloatValue.of(1.0f, 0f, 2f, 0.03f);
     public final DoubleValue doubleValue = DoubleValue.of(50.0, 0.0, 200.0);
 
     public final ColorValue argbColor = ColorValue.argb(0xAAFF000F);
