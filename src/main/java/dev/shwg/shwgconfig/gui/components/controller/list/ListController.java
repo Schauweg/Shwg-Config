@@ -235,9 +235,6 @@ public final class ListController<E> implements RenderableElement, GenericLayout
         return false;
     }
 
-    // Saving
-
-    /** Writes the committed element of every row, in order, to the value (which autosaves). */
     private void save() {
         List<E> elements = new ArrayList<>();
         for (Line line : lines) {
@@ -264,9 +261,6 @@ public final class ListController<E> implements RenderableElement, GenericLayout
         return elements;
     }
 
-    // Selection
-
-    /** The row the user is working in becomes the selected one. */
     private void updateSelectionFromFocus() {
         for (Line line : lines) {
             if (line != selected && line.hasFocus()) {
@@ -277,7 +271,6 @@ public final class ListController<E> implements RenderableElement, GenericLayout
         }
     }
 
-    /** Tells the listener about the selection, if the selected row or its element changed since the last call. */
     private void notifySelection() {
         if (selectionListener == null) return;
         ListRow<E> row = selected == null ? null : selected.row;
@@ -289,16 +282,12 @@ public final class ListController<E> implements RenderableElement, GenericLayout
         selectionListener.onSelectionChanged(element, row);
     }
 
-    /** The height changed: the category and the scroll area around this list need to be re-arranged. */
     private static void requestScreenLayout() {
         if (Minecraft.getInstance().screen instanceof GenericScreen screen) {
             screen.requestLayout();
         }
     }
 
-    // Layout
-
-    /** Positions every line and the "Add" button below them, and updates this list's height. */
     private void layoutChildren() {
         int currentY = y;
         int rowX = x + ARROW_WIDTH + SPACING;
@@ -335,8 +324,6 @@ public final class ListController<E> implements RenderableElement, GenericLayout
         layoutChildren();
     }
 
-    // Rendering
-
     @Override
     public void render(GenericGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         if (!visible) return;
@@ -368,7 +355,6 @@ public final class ListController<E> implements RenderableElement, GenericLayout
         addButton.render(graphics, mouseX, mouseY, partialTicks);
     }
 
-    /** Same area as the row background: the whole line plus the margin around it. */
     private boolean isMouseOverLine(Line line, int mouseX, int mouseY) {
         return mouseX >= x - 2 && mouseX < x + width + 2
                 && mouseY >= line.y - 1 && mouseY < line.y + line.height + 1;
@@ -394,8 +380,6 @@ public final class ListController<E> implements RenderableElement, GenericLayout
                 x + (width - GenericIcons.CROSS_WIDTH) / 2,
                 y + (height - GenericIcons.CROSS_HEIGHT) / 2);
     }
-
-    // GenericLayout / LayoutElement
 
     @Override
     public void visitChildren(Consumer<LayoutElement> consumer) {
@@ -440,12 +424,10 @@ public final class ListController<E> implements RenderableElement, GenericLayout
         layoutChildren();
     }
 
-    /** The width comes from the rows; the category may still try to set it. */
     @Override
     public void setWidth(int width) {
     }
 
-    /** The height comes from the rows; the category may still try to set it. */
     @Override
     public void setHeight(int height) {
     }
@@ -477,14 +459,11 @@ public final class ListController<E> implements RenderableElement, GenericLayout
         addButton.setVisible(visible);
     }
 
-    // Icon button
 
-    /** Frameless icon button for move up / move down / remove. Only used by this list. */
     private static final class IconButton extends GenericAbstractButton {
 
         @FunctionalInterface
         interface IconPainter {
-            /** Draws the icon centered in the button area; {@code highlighted} while hovered or focused. */
             void paint(GenericGraphics graphics, int x, int y, int width, int height, boolean highlighted);
         }
 
