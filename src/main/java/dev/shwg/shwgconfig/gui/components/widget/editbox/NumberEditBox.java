@@ -7,12 +7,14 @@ import dev.shwg.shwgconfig.gui.input.events.GenericMouseButtonEvent;
 import dev.shwg.shwgconfig.render.GenericCursors;
 import dev.shwg.shwgconfig.render.GenericGraphics;
 import dev.shwg.shwgconfig.render.textures.GenericIcons;
+import dev.shwg.shwgconfig.util.NumberUtil;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -33,7 +35,7 @@ public class NumberEditBox<N extends Number> extends GenericAbstractEditBox {
 
     private final double min;
     private final double max;
-    private final double step;
+    private final N step;
     private final boolean allowDecimals;
     private final Function<Double, N> fromDouble;
     private final Function<N, String> formatter;
@@ -43,7 +45,7 @@ public class NumberEditBox<N extends Number> extends GenericAbstractEditBox {
     private Violation violation = Violation.NONE;
 
     public NumberEditBox(Font font, int x, int y, int width, int height, Component message,
-                         double min, double max, double step, N initialValue, boolean allowDecimals,
+                         double min, double max, N step, N initialValue, boolean allowDecimals,
                          Function<Double, N> fromDouble, Function<N, String> formatter, Consumer<N> applyValue) {
         super(font, x, y, width, height, message);
         this.min = min;
@@ -100,7 +102,10 @@ public class NumberEditBox<N extends Number> extends GenericAbstractEditBox {
     }
 
     private void adjustValue(int direction) {
-        double newRaw = Mth.clamp(validRaw + direction * step, min, max);
+        // step in decimal, so 1.2 + 0.1 is exactly 1.3 instead of 1.3000001
+        BigDecimal current = NumberUtil.toDecimal(fromDouble.apply(validRaw));
+        BigDecimal change = NumberUtil.toDecimal(step).multiply(BigDecimal.valueOf(direction));
+        double newRaw = Mth.clamp(current.add(change).doubleValue(), min, max);
         N value = fromDouble.apply(newRaw);
         setValue(formatter.apply(value));
     }
@@ -256,7 +261,7 @@ public class NumberEditBox<N extends Number> extends GenericAbstractEditBox {
         private final Function<Double, N> fromDouble;
         private double min = -Double.MAX_VALUE;
         private double max = Double.MAX_VALUE;
-        private double step;
+        private N step;
         private N initialValue;
         private Function<N, String> formatter;
         private Consumer<N> applyValue = v -> {};
@@ -267,7 +272,7 @@ public class NumberEditBox<N extends Number> extends GenericAbstractEditBox {
             this.allowDecimals = allowDecimals;
             this.fromDouble = fromDouble;
             this.formatter = defaultFormatter;
-            this.step = defaultStep;
+            this.step = fromDouble.apply(defaultStep);
             this.initialValue = fromDouble.apply(0.0);
         }
 
@@ -288,7 +293,7 @@ public class NumberEditBox<N extends Number> extends GenericAbstractEditBox {
         }
 
         public Builder<N> step(N step) {
-            this.step = step.doubleValue();
+            this.step = step;
             return self();
         }
 

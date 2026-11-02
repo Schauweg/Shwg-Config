@@ -1,8 +1,10 @@
 package dev.shwg.shwgconfig.gui.components.widget.slider;
 
 import dev.shwg.shwgconfig.render.textures.GenericTexture;
+import dev.shwg.shwgconfig.util.NumberUtil;
 import net.minecraft.network.chat.Component;
 
+import java.math.BigDecimal;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -32,6 +34,18 @@ public class NumberSlider<N extends Number> extends GenericAbstractSlider<N> {
     @Override
     protected double toDouble(N value) {
         return value.doubleValue();
+    }
+
+    @Override
+    protected N snapToStep(N val) {
+        if (stepSize.doubleValue() <= 0) return val;
+
+        long count = Math.round((val.doubleValue() - minValue.doubleValue()) / stepSize.doubleValue());
+
+        BigDecimal snapped = NumberUtil.toDecimal(minValue)
+                .add(NumberUtil.toDecimal(stepSize).multiply(BigDecimal.valueOf(count)));
+        N result = fromDouble(snapped.doubleValue());
+        return result.doubleValue() > maxValue.doubleValue() ? maxValue : result;
     }
 
     public static Builder<Integer> intSlider(Component message, int min, int max, int initialValue) {
