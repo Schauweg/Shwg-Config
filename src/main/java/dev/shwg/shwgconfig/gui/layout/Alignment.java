@@ -19,6 +19,10 @@ public class Alignment {
         ABOVE, BELOW
     }
 
+    public enum IconPosition {
+        TOP_LEFT, TOP_RIGHT, CENTER, BOTTOM_LEFT, BOTTOM_RIGHT
+    }
+
     public enum HorizontalIconPosition {
         LEFT, RIGHT
     }
