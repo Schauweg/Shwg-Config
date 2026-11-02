@@ -126,17 +126,17 @@ public class GenericGraphics {
         if (tooltip == null || tooltip.isEmpty()) return;
 
         Optional<TooltipComponent> image = tooltip.hasIcon() ? tooltip.getIcon().getTooltipImage() : Optional.empty();
+        Font font = Minecraft.getInstance().font;
+        List<Component> lines = tooltip.getLines(font);
 
         /*? if >=1.21.6 { */
-        Font font = Minecraft.getInstance().font;
-        graphics.setTooltipForNextFrame(font, tooltip.getLines(), image, mouseX, mouseY);
+        graphics.setTooltipForNextFrame(font, lines, image, mouseX, mouseY);
         /*?} else if >=1.20 { */
-        /*Font font = Minecraft.getInstance().font;
-        graphics.renderTooltip(font, tooltip.getLines(), image, mouseX, mouseY);
+        /*graphics.renderTooltip(font, lines, image, mouseX, mouseY);
         *//*?} else { */
         /*Screen screen = Minecraft.getInstance().screen;
         if (screen != null) {
-            screen.renderTooltip(poseStack, tooltip.getLines(), image, mouseX, mouseY);
+            screen.renderTooltip(poseStack, lines, image, mouseX, mouseY);
         }
         *//*?}*/
     }

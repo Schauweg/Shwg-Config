@@ -42,7 +42,7 @@ public final class SimpleController implements RenderableElement, GenericLayout 
         this.labelLines = font.split(entry.getLabel(), maxLabelWidth);
 
         EntryOptions options = entry.getEntryOptions();
-        this.labelTooltip = options.getLabelTooltip() != null ? GenericTooltip.of(options.getLabelTooltip()) : null;
+        this.labelTooltip = options.getLabelTooltip();
         this.enabledCondition = options.getEnabledCondition();
 
         this.widget = buildWidget(entry, DEFAULT_CONTROLLER_HEIGHT, font);
@@ -51,7 +51,7 @@ public final class SimpleController implements RenderableElement, GenericLayout 
         this.height = Math.max(minRowHeight, Math.max(textBlockHeight, widget.getHeight()));
 
         if (options.getTooltip() != null) {
-            widget.setTooltip(GenericTooltip.of(options.getTooltip()));
+            widget.setTooltip(options.getTooltip());
         }
     }
 

@@ -1,6 +1,7 @@
 package dev.shwg.shwgconfig.api.entries;
 
 import dev.shwg.shwgconfig.api.CategoryBuilder;
+import dev.shwg.shwgconfig.gui.deferred.GenericTooltip;
 import net.minecraft.network.chat.Component;
 
 import java.util.function.Supplier;
@@ -24,8 +25,8 @@ public final class EntryOptions {
      */
     public static final EntryOptions NONE = new EntryOptions();
 
-    private Component tooltip;
-    private Component labelTooltip;
+    private GenericTooltip tooltip;
+    private GenericTooltip labelTooltip;
     private Supplier<Boolean> enabledCondition;
 
     /**
@@ -39,6 +40,14 @@ public final class EntryOptions {
      * Sets the tooltip shown when hovering the entry's control (the widget itself).
      */
     public EntryOptions tooltip(Component tooltip) {
+        return tooltip(tooltip != null ? GenericTooltip.of(tooltip) : null);
+    }
+
+    /**
+     * Sets the tooltip shown when hovering the entry's control, built with
+     * {@link GenericTooltip#builder()} for bullet points, several lines, etc.
+     */
+    public EntryOptions tooltip(GenericTooltip tooltip) {
         this.tooltip = tooltip;
         return this;
     }
@@ -48,6 +57,14 @@ public final class EntryOptions {
      * the control's own tooltip set via {@link #tooltip(Component)}.
      */
     public EntryOptions labelTooltip(Component labelTooltip) {
+        return labelTooltip(labelTooltip != null ? GenericTooltip.of(labelTooltip) : null);
+    }
+
+    /**
+     * Sets the tooltip shown when hovering the entry's label text, built with
+     * {@link GenericTooltip#builder()} for bullet points, several lines, etc.
+     */
+    public EntryOptions labelTooltip(GenericTooltip labelTooltip) {
         this.labelTooltip = labelTooltip;
         return this;
     }
@@ -62,11 +79,11 @@ public final class EntryOptions {
         return this;
     }
 
-    public Component getLabelTooltip() {
+    public GenericTooltip getLabelTooltip() {
         return labelTooltip;
     }
 
-    public Component getTooltip() {
+    public GenericTooltip getTooltip() {
         return tooltip;
     }
 
