@@ -48,7 +48,8 @@ import java.util.function.Supplier;
  *
  * <p>Selection: the row the user last worked in (any of its widgets got focus), or the first
  * row at the start. It follows its row when rows move, and is reported to a
- * {@link ListSelectionListener} set with {@link ListOptions#onSelectionChanged}.</p>
+ * {@link ListSelectionListener} set with {@link ListOptions#onSelectionChanged}. The
+ * selection outline is only drawn while something in the list has focus.</p>
  */
 public final class ListController<E> implements RenderableElement, GenericLayout, ListRowOwner<E>, UnhandledKeyListener {
 
