@@ -16,7 +16,7 @@ public abstract class ScrollableWidgetOverlay extends WidgetOverlay {
 
     protected ScrollableWidgetOverlay(int width, int height, int contentHeight, Alignment.Horizontal alignment, GenericAbstractWidget carrierWidget) {
         super(width, height, alignment, carrierWidget);
-        scrollBar = new ScrollBar(x + width - BAR_WIDTH, y, BAR_WIDTH, BAR_WIDTH, height, contentHeight);
+        scrollBar = new ScrollBar(x + width, y, BAR_WIDTH, BAR_WIDTH, height, contentHeight);
         updateScrollbarGeometry();
     }
 
@@ -60,7 +60,7 @@ public abstract class ScrollableWidgetOverlay extends WidgetOverlay {
     public void setX(int x) {
         super.setX(x);
         if (scrollBar != null) {
-            scrollBar.setX(x + width - scrollBar.getActualBarWidth(), true);
+            scrollBar.setX(x + width, true);
         }
     }
 
@@ -73,7 +73,7 @@ public abstract class ScrollableWidgetOverlay extends WidgetOverlay {
     }
 
     private void updateScrollbarGeometry() {
-        scrollBar.updateScrollbar(getX() + getWidth() - BAR_WIDTH, getY(), getHeight(), getContentHeight(), getMaxScroll(), true);
+        scrollBar.updateScrollbar(getX() + getWidth(), getY(), getHeight(), getContentHeight(), getMaxScroll(), true);
         clampScroll();
     }
 
