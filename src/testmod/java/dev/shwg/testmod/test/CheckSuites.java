@@ -1,11 +1,6 @@
 package dev.shwg.testmod.test;
 
-import dev.shwg.testmod.test.checks.BiomeRegistryChecks;
-import dev.shwg.testmod.test.checks.EnchantmentRegistryChecks;
-import dev.shwg.testmod.test.checks.EntityRegistryChecks;
-import dev.shwg.testmod.test.checks.SoundRegistryChecks;
-import dev.shwg.testmod.test.checks.SuggestionHelperChecks;
-import dev.shwg.testmod.test.checks.SuggestionProviderChecks;
+import dev.shwg.testmod.test.checks.*;
 
 import java.util.List;
 
@@ -18,7 +13,8 @@ public final class CheckSuites {
             new SoundRegistryChecks(),
             new EntityRegistryChecks(),
             new SuggestionProviderChecks(),
-            new SuggestionHelperChecks()
+            new SuggestionHelperChecks(),
+            new MobEffectTextureChecks()
     );
 
     private CheckSuites() {}

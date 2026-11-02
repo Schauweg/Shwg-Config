@@ -4,19 +4,20 @@ import com.mojang.blaze3d.platform.InputConstants;
 import dev.shwg.shwgconfig.gui.components.screens.GenericScreen;
 import dev.shwg.shwgconfig.gui.input.events.GenericKeyEvent;
 import dev.shwg.shwgconfig.render.GenericGraphics;
-import dev.shwg.shwgconfig.render.textures.GenericIcons;
-import dev.shwg.shwgconfig.render.textures.GenericSprite;
-import dev.shwg.shwgconfig.render.textures.GenericTexture;
-import dev.shwg.shwgconfig.render.textures.NineSlicedSprite;
+import dev.shwg.shwgconfig.render.textures.*;
 import dev.shwg.shwgconfig.util.DisplayItemStack;
 import dev.shwg.testmod.TestMod;
+import dev.shwg.testmod.test.checks.MobEffectTextureChecks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
+
+import java.util.List;
 
 /**
  * Visual smoke test for {@link GenericGraphics} and the texture/sprite classes.
@@ -30,7 +31,7 @@ import net.minecraft.world.level.block.Blocks;
  */
 public class RenderTestScreen extends GenericScreen {
 
-    private static final String[] PAGES = {"Primitives", "Text", "Clip & pose", "Items", "Textures", "Sprites", "Icons"};
+    private static final String[] PAGES = {"Primitives", "Text", "Clip & pose", "Items", "Textures", "Sprites", "Icons", "Effects"};
 
     // grid layout: 2 columns x 3 rows of cells
     private static final int COLS = 2, CELL_W = 226, CELL_H = 76, GAP = 4, ORIGIN_X = 10, ORIGIN_Y = 24;
@@ -51,6 +52,8 @@ public class RenderTestScreen extends GenericScreen {
     private GenericSprite stretchSprite, tiledSprite, nineSliceSprite;
     private String spriteError;
 
+    private List<MobEffect> effects = List.of();
+
     public RenderTestScreen(Screen parent) {
         super(Component.literal("Render Test"), parent);
     }
@@ -70,6 +73,7 @@ public class RenderTestScreen extends GenericScreen {
         } catch (RuntimeException e) {
             spriteError = e.toString();
         }
+        effects = MobEffectTextureChecks.registeredEffects();
     }
 
     @Override
@@ -119,6 +123,7 @@ public class RenderTestScreen extends GenericScreen {
             case 4 -> pageTextures(g, font);
             case 5 -> pageSprites(g, font);
             case 6 -> pageIcons(g, font);
+            case 7 -> pageEffects(g, font);
         }
 
         if (spriteError != null) {
@@ -502,6 +507,54 @@ public class RenderTestScreen extends GenericScreen {
         if (hover(crossX, crossAreaY, 12, 12)) g.fillWH(crossX, crossAreaY, 12, 12, 0x33FFFFFF);
         GenericIcons.drawCross(g, crossX + (12 - cw) / 2, crossAreaY + (12 - ch) / 2);
     }
+
+    // Page 8: mob effect icons (MobEffectTextures)
+
+    private void pageEffects(GenericGraphics g, Font font) {
+        MobEffect first = effects.isEmpty() ? null : effects.get(0);
+
+        // 12px so every vanilla effect fits into one cell (16 per row, 3 rows = 48)
+        cell(g, font, 0, "every effect, 12px", "all icons, no missing (purple/black) texture");
+        int perRow = 16, step = 13;
+        for (int i = 0; i < effects.size() && i < perRow * 3; i++) {
+            GenericTexture texture = MobEffectTextures.get(effects.get(i));
+            if (texture != null) g.drawTexture(texture, cx + (i % perRow) * step, cy + (i / perRow) * step, 12, 12);
+        }
+        if (effects.size() > perRow * 3) {
+            g.drawString(font, "+" + (effects.size() - perRow * 3), cx + 200, cy + 40, YELLOW, false);
+        }
+
+        if (first == null) return;
+        GenericTexture texture = MobEffectTextures.get(first);
+        if (texture == null) return;
+
+        cell(g, font, 1, "natural 18, 2x, 0.5x, 16 (overlay size)", "same icon, sharp edges, fills frames");
+        frame(g, cx, cy, 18, 18);
+        g.drawTexture(texture, cx, cy);
+        frame(g, cx + 26, cy, 36, 36);
+        g.drawTexture(texture, cx + 26, cy, 36, 36);
+        frame(g, cx + 70, cy, 9, 9);
+        g.drawTexture(texture, cx + 70, cy, 9, 9);
+        frame(g, cx + 88, cy, 16, 16);
+        g.drawTexture(texture, cx + 88, cy, 16, 16);
+
+        // like BetterItemOverlay: pose translate + scale, then drawn at (0, 0)
+        cell(g, font, 2, "pose-scaled 0.5 / 0.75 over an item", "icons in front of the sword, top-left corner");
+        ItemStack sword = DisplayItemStack.getStackSimple(Items.DIAMOND_SWORD);
+        for (int i = 0; i < 2; i++) {
+            float scale = i == 0 ? 0.5f : 0.75f;
+            int x = cx + i * 30;
+            g.renderItem(sword, x, cy);
+            g.pushPose();
+            g.translate(x, cy);
+            /*? if < 1.21.6 */
+            //g.translate(0, 0, 200); // in front of the item: items render at a higher z before 1.21.6
+            g.scale(scale, scale);
+            g.drawTexture(texture, 0, 0, 16, 16);
+            g.popPose();
+        }
+    }
+
 
     /** 1px gray frame just outside the area (x, y, w, h), to check that an icon lands exactly inside it. */
     private void frame(GenericGraphics g, int x, int y, int w, int h) {
