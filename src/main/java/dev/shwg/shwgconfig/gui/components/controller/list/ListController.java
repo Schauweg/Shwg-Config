@@ -219,7 +219,13 @@ public final class ListController<E> implements RenderableElement, GenericLayout
         return enabledCondition == null || enabledCondition.get();
     }
 
-    // Keyboard
+    private boolean hasFocus() {
+        if (addButton.isFocused()) return true;
+        for (Line line : lines) {
+            if (line.hasFocus()) return true;
+        }
+        return false;
+    }
 
     @Override
     public boolean onUnhandledKeyPressed(GenericKeyEvent keyEvent, GenericAbstractWidget focused) {
@@ -329,11 +335,12 @@ public final class ListController<E> implements RenderableElement, GenericLayout
         if (!visible) return;
         updateSelectionFromFocus();
         boolean enabled = isEnabled();
+        boolean showSelection = hasFocus() && lines.size() > 1;
 
         for (int i = 0; i < lines.size(); i++) {
             Line line = lines.get(i);
             
-            if (line == selected && lines.size() > 1) {
+            if (line == selected && showSelection) {
                 int color = line.hasFocus() ? SELECTED_FOCUSED : SELECTED_UNFOCUSED;
                 graphics.outline(x - 2, line.y - 1, width + 4, line.height + 2, color);
             } else if (isMouseOverLine(line, mouseX, mouseY)) {
