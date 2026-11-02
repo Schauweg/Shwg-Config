@@ -17,6 +17,7 @@ import dev.shwg.shwgconfig.api.values.numbervalues.IntValue;
 import dev.shwg.shwgconfig.api.values.stringvalues.*;
 import dev.shwg.shwgconfig.gui.components.widget.button.GenericButton;
 import dev.shwg.shwgconfig.gui.components.widget.editbox.suggestioneditbox.SuggestionProviders;
+import dev.shwg.shwgconfig.gui.deferred.GenericTooltip;
 import dev.shwg.shwgconfig.util.DisplayItemStack;
 import dev.shwg.shwgconfig.util.RegistryHelper;
 import dev.shwg.testmod.config.values.CurveValue;
@@ -38,7 +39,7 @@ import java.util.List;
 
 public class TestConfig extends ConfigBase {
 
-    private static final List<String> strings = List.of("String 1", "String 2", "String 3", "String 4", "String 5", "String 6", "String 7", "String 8", "String 9", "String 10",  "String 11", "String 12", "String 13", "String 14", "String 15", "String 16");
+    private static final List<String> strings = List.of("String 1", "String 2", "String 3", "String 4", "String 5", "String 6", "String 7", "String 8", "String 9", "String 10", "String 11", "String 12", "String 13", "String 14", "String 15", "String 16");
 
     public enum TestEnum {ENUM1, ENUM2, ENUM3, ENUM4, ENUM5}
 
@@ -93,15 +94,25 @@ public class TestConfig extends ConfigBase {
 
         // Tab 1: Basic controllers
         ConfigCategory toggles = CategoryBuilder.create(Component.literal("Toggles"))
-                .addToggle(enableFeature, Component.literal("Enable Feature"))
+                .addToggle(enableFeature, Component.literal("Enable Feature"),
+                        EntryOptions.create().tooltip(GenericTooltip.builder()
+                                .line(Component.literal("Offsets the damage number by -1"))
+                                .bullet(Component.literal("ON").withStyle(ChatFormatting.GREEN)
+                                        .append(" subtract -1 from the damage to display 0 when no final hit is left"))
+                                .bullet(Component.literal("OFF").withStyle(ChatFormatting.RED)
+                                        .append(" Vanilla behavior and displays 1 when no final hit is left"))
+                                .build())
+                )
                 .addToggle(dependentOption, Component.literal("Dependent Option"),
                         EntryOptions.create()
                                 .enabledWhen(enableFeature::getValue)
                                 .labelTooltip(Component.literal("Enabled when \"Enable Feature\" is on"))
-                                .tooltip(Component.literal("Grayed out otherwise")))
+                                .tooltip(Component.literal("Grayed out otherwise"))
+                )
                 .addToggle(difficultyToggle, Component.literal("Difficulty"),
                         Component.literal("Hard").withStyle(ChatFormatting.RED),
-                        Component.literal("Easy").withStyle(ChatFormatting.GREEN))
+                        Component.literal("Easy").withStyle(ChatFormatting.GREEN)
+                )
                 .build();
 
         ConfigCategory numbers = CategoryBuilder.create(Component.literal("Numbers"))
