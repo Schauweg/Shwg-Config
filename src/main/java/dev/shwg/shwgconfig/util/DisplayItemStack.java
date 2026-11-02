@@ -1,11 +1,12 @@
 package dev.shwg.shwgconfig.util;
 
-
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import net.minecraft.world.item.enchantment.Enchantment;
+import java.util.ArrayList;
+import java.util.List;
 
 /*? if >=26 { */
 //import net.minecraft.core.component.DataComponentPatch;
@@ -18,13 +19,12 @@ import net.minecraft.core.Holder;
 /*? if >=1.21 { */
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.resources.ResourceKey;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 /*?} */
 
@@ -35,6 +35,8 @@ import net.minecraft.core.registries.BuiltInRegistries;
 /*?} */
 
 public class DisplayItemStack {
+
+    public static final String FAKE_ENCHANTMENTS_KEY = "shwgconfig:fake_enchantments";
 
     /*? if >=1.21 */
     private final List<Identifier> fakeEnchantments = new ArrayList<>();
@@ -85,7 +87,7 @@ public class DisplayItemStack {
             }
 
             CompoundTag customData = new CompoundTag();
-            customData.put("shwgconfig:fake_enchantments", enchantmentList);
+            customData.put(FAKE_ENCHANTMENTS_KEY, enchantmentList);
 
             stack.set(DataComponents.CUSTOM_DATA, CustomData.of(customData));
             stack.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
@@ -129,6 +131,32 @@ public class DisplayItemStack {
         /*?} */
     }
 
+    /**
+     * The enchantments a display stack got with {@link #withEnchantment} on 1.21+, where real enchantments
+     * need a world and are stored as custom data instead. Empty for every other stack - and always before
+     * 1.21, where {@code withEnchantment} enchants the stack for real.
+     */
+    public static List<Identifier> getFakeEnchantments(ItemStack stack) {
+        List<Identifier> result = new ArrayList<>();
+        /*? if >= 1.21 { */
+        CustomData data = stack.get(DataComponents.CUSTOM_DATA);
+        if (data == null) return result;
+        CompoundTag tag = data.copyTag();
+        /*? if >= 1.21.5 { */
+        ListTag list = tag.getListOrEmpty(FAKE_ENCHANTMENTS_KEY);
+        for (int i = 0; i < list.size(); i++) {
+            list.getString(i).map(RegistryHelper::tryBuild).ifPresent(result::add);
+        }
+        /*? } else { */
+        /*ListTag list = tag.getList(FAKE_ENCHANTMENTS_KEY, Tag.TAG_STRING);
+        for (int i = 0; i < list.size(); i++) {
+            Identifier id = RegistryHelper.tryBuild(list.getString(i));
+            if (id != null) result.add(id);
+        }
+        *//*? } */
+        /*? } */
+        return result;
+    }
 
     // Tools
     public static final int WOOD_TOOL_MAX_DAMAGE = 59;
