@@ -19,6 +19,50 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+
+/*? if >=1.19.3 {*/
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
+/*?} else {*/
+/*import com.mojang.math.Quaternion;
+import com.mojang.math.Vector3f;
+*//*?}*/
+
+/*? if >=1.21.11 {*/
+import net.minecraft.world.entity.animal.chicken.ChickenVariants;
+import net.minecraft.world.entity.animal.cow.CowVariants;
+import net.minecraft.world.entity.animal.pig.PigVariants;
+/*?} else if >=1.21.6 {*/
+/*import net.minecraft.world.entity.animal.ChickenVariants;
+import net.minecraft.world.entity.animal.CowVariants;
+import net.minecraft.world.entity.animal.PigVariants;
+*//*?}*/
+
+/*? if >=1.21.2 {*/
+import dev.shwg.shwgconfig.mixin.EntityRenderDispatcherAccessor;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.client.renderer.entity.state.*;
+/*?}*/
+
+/*? if >=1.21.6 {*/
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.data.registries.VanillaRegistries;
+import net.minecraft.resources.ResourceKey;
+/*?} else if >=1.21.2 {*/
+/*import com.mojang.blaze3d.platform.Lighting;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+*//*?} else if >=1.19.4 {*/
+//import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+/*?} else {*/
+/*import com.mojang.blaze3d.platform.Lighting;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+*//*?}*/
 
 /*? if >=1.21.11 {*/
 import net.minecraft.util.Util;
@@ -132,8 +176,8 @@ public class GenericGraphics {
         /*? if >=1.21.6 { */
         graphics.setTooltipForNextFrame(font, lines, image, mouseX, mouseY);
         /*?} else if >=1.20 { */
-        /*graphics.renderTooltip(font, lines, image, mouseX, mouseY);
-        *//*?} else { */
+        //graphics.renderTooltip(font, lines, image, mouseX, mouseY);
+        /*?} else { */
         /*Screen screen = Minecraft.getInstance().screen;
         if (screen != null) {
             screen.renderTooltip(poseStack, lines, image, mouseX, mouseY);
@@ -689,6 +733,303 @@ public class GenericGraphics {
         RenderSystem.applyModelViewMatrix();
     }
 *//*?} */
+    // --- Entities
+
+    /**
+     * Draws an entity inside the box {@code (x, y, width, height)}, scaled to fit it.
+     *
+     * @see #drawEntity(LivingEntity, int, int, int, int, float, float)
+     */
+    public void drawEntityWH(LivingEntity entity, int x, int y, int width, int height, float yaw, float pitch) {
+        drawEntity(entity, x, y, x + width, y + height, yaw, pitch);
+    }
+
+    /**
+     * Draws a default-looking entity of the given type inside the box {@code (x, y, width, height)}.
+     *
+     * @see #drawEntity(EntityType, int, int, int, int, float, float)
+     */
+    public void drawEntityWH(EntityType<?> type, int x, int y, int width, int height, float yaw, float pitch) {
+        drawEntity(type, x, y, x + width, y + height, yaw, pitch);
+    }
+
+    /**
+     * Draws an entity inside the box from {@code (x0, y0)} to {@code (x1, y1)}, centered
+     * and scaled to fit it. Anything outside the box is cut off.
+     *
+     * @param yaw   turn around the vertical axis in degrees; 0 faces the viewer, positive turns clockwise
+     * @param pitch tilt towards the viewer in degrees; positive looks down from above
+     */
+    public void drawEntity(LivingEntity entity, int x0, int y0, int x1, int y1, float yaw, float pitch) {
+        /*? if >=1.21.2 {*/
+        EntityRenderer<?, ?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(entity);
+        submitEntityState(renderer, extractFreshState(renderer, entity), x0, y0, x1, y1, yaw, pitch);
+        /*?} else {*/
+        /*// before 1.21.2: like vanilla's inventory, turn the entity for this one frame, then put it back
+        float scale = fitScale(x1 - x0, y1 - y0, entity.getBbWidth(), entity.getBbHeight());
+
+        float bodyRot = entity.yBodyRot;
+        float yRot = entity.getYRot();
+        float xRot = entity.getXRot();
+        float headRotO = entity.yHeadRotO;
+        float headRot = entity.yHeadRot;
+        entity.yBodyRot = 180.0F + yaw;
+        entity.setYRot(180.0F + yaw); // head yaw is absolute here, same as the body = straight
+        entity.setXRot(0.0F);
+        entity.yHeadRot = entity.getYRot();
+        entity.yHeadRotO = entity.getYRot();
+
+        enableScissor(x0, y0, x1, y1);
+        renderEntityInBox(entity, x0, y0, x1, y1, scale, pitch);
+        disableScissor();
+
+        entity.yBodyRot = bodyRot;
+        entity.setYRot(yRot);
+        entity.setXRot(xRot);
+        entity.yHeadRotO = headRotO;
+        entity.yHeadRot = headRot;
+        *//*?}*/
+    }
+
+    /**
+     * Draws a default-looking entity of the given type inside the box from {@code (x0, y0)}
+     * to {@code (x1, y1)}, without needing a world. Draws nothing for types without a
+     * renderer (e.g. players).
+     *
+     * @param yaw   turn around the vertical axis in degrees; 0 faces the viewer, positive turns clockwise
+     * @param pitch tilt towards the viewer in degrees; positive looks down from above
+     */
+    public void drawEntity(EntityType<?> type, int x0, int y0, int x1, int y1, float yaw, float pitch) {
+        /*? if >=1.21.2 {*/
+        Map<EntityType<?>, ?> renderers = ((EntityRenderDispatcherAccessor) Minecraft.getInstance().getEntityRenderDispatcher()).shwgconfig$getRenderers();
+        if (!(renderers.get(type) instanceof EntityRenderer<?, ?> renderer)) return;
+
+        // an empty state, filled with just what the type itself knows
+        EntityRenderState state = renderer.createRenderState();
+        state.boundingBoxWidth = type.getWidth();
+        state.boundingBoxHeight = type.getHeight();
+        /*? if >=1.21.6 {*/
+        state.entityType = type; // the GUI looks the renderer up by this
+        applyDefaults(state);
+        /*?}*/
+        submitEntityState(renderer, state, x0, y0, x1, y1, yaw, pitch);
+        /*?} else {*/
+        /*// before 1.21.2: a real entity if a world is loaded, otherwise just the model
+        LivingEntity worldEntity = EntityModelRenderer.worldEntity(type);
+        if (worldEntity != null) {
+            drawEntity(worldEntity, x0, y0, x1, y1, yaw, pitch);
+        } else {
+            EntityModelRenderer.drawModel(this, type, x0, y0, x1, y1, yaw, pitch);
+        }
+        *//*?}*/
+    }
+
+    /*? if >=1.21.2 {*/
+    /**
+     * A new render state filled from the entity. Not {@code renderer.createRenderState(entity, ...)}:
+     * that one reuses a single state object per renderer, so drawing the same type twice in one
+     * frame would make both look like the last one.
+     */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static EntityRenderState extractFreshState(EntityRenderer renderer, Entity entity) {
+        EntityRenderState state = renderer.createRenderState();
+        renderer.extractRenderState(entity, state, 1.0F);
+        return state;
+    }
+
+    private void submitEntityState(EntityRenderer<?, ?> renderer, EntityRenderState state, int x0, int y0, int x1, int y1, float yaw, float pitch) {
+        /*? if >=1.21.6 && <1.21.11 {*/
+        //state.hitboxesRenderState = null;
+        /*?}*/
+        /*? if >=1.21.9 {*/
+        state.shadowPieces.clear();
+        state.outlineColor = 0;
+        /*?}*/
+        /*? if >=1.21.9 && <26 {*/
+        state.lightCoords = 15728880; // full brightness, same as vanilla's inventory
+        /*?}*/
+
+        float entityWidth = state.boundingBoxHeight; // fallback for non-living states
+        if (state instanceof LivingEntityRenderState living) {
+            living.bodyRot = 180.0F + yaw;
+            living.yRot = 0.0F; // head straight, relative to the body
+            living.xRot = 0.0F;
+            // like vanilla: ignore the entity's own scale attribute, the box decides the size
+            float entityScale = living.scale > 0.0F ? living.scale : 1.0F;
+            living.boundingBoxWidth = living.boundingBoxWidth / entityScale;
+            living.boundingBoxHeight = living.boundingBoxHeight / entityScale;
+            living.scale = 1.0F;
+            entityWidth = living.boundingBoxWidth;
+        }
+
+        float scale = fitScale(x1 - x0, y1 - y0, entityWidth, state.boundingBoxHeight);
+        Quaternionf pitchRotation = new Quaternionf().rotateX((float) Math.toRadians(-pitch));
+        Quaternionf rotation = new Quaternionf().rotateZ((float) Math.PI).mul(pitchRotation);
+        Vector3f translation = new Vector3f(0.0F, state.boundingBoxHeight / 2.0F, 0.0F);
+        /*? if >=26 {*/
+        //graphics.entity(state, scale, translation, rotation, pitchRotation, x0, y0, x1, y1);
+        /*?} else if >=1.21.6 {*/
+        graphics.submitEntityRenderState(state, scale, translation, rotation, pitchRotation, x0, y0, x1, y1);
+        /*?} else {*/
+        //renderStateNow(renderer, state, x0, y0, x1, y1, scale, translation, rotation, pitchRotation);
+        /*?}*/
+    }
+
+    /*? if <1.21.6 {*/
+    /*// 1.21.2 - 1.21.5: the GUI can't take a render state yet, so it's drawn right away,
+    // the same way vanilla's inventory does it in these versions
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private void renderStateNow(EntityRenderer<?, ?> renderer, EntityRenderState state, int x0, int y0, int x1, int y1,
+                                float scale, Vector3f translation, Quaternionf rotation, Quaternionf pitchRotation) {
+        EntityRenderer rawRenderer = renderer; // raw: the state's exact type isn't known here
+        enableScissor(x0, y0, x1, y1);
+        graphics.pose().pushPose();
+        graphics.pose().translate((x0 + x1) / 2.0F, (y0 + y1) / 2.0F, 50.0F);
+        graphics.pose().scale(scale, scale, -scale);
+        graphics.pose().translate(translation.x, translation.y, translation.z);
+        graphics.pose().mulPose(rotation);
+        graphics.flush();
+        Lighting.setupForEntityInInventory();
+        EntityRenderDispatcher dispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
+        dispatcher.overrideCameraOrientation(pitchRotation.conjugate(new Quaternionf()).rotateY((float) Math.PI));
+        graphics.drawSpecial(buffers -> rawRenderer.render(state, graphics.pose(), buffers, 15728880));
+        graphics.flush();
+        graphics.pose().popPose();
+        Lighting.setupFor3DItems();
+        disableScissor();
+    }
+    *//*?}*/
+
+    /*? if >=1.21.6 {*/
+
+    /** Built once, the first time an entity type is drawn without a world. */
+    private static HolderLookup.Provider vanillaRegistries;
+
+    /** The world's registries if a world is loaded, otherwise vanilla's built-in ones. */
+    private static HolderLookup.Provider registries() {
+        if (Minecraft.getInstance().level != null) {
+            return Minecraft.getInstance().level.registryAccess();
+        }
+        if (vanillaRegistries == null) {
+            /*~ if >= 26.3 '.createLookup()' -> '.createWorldLookup()'*/
+            vanillaRegistries = VanillaRegistries.createLookup();
+        }
+        return vanillaRegistries;
+    }
+
+    private static <T> T registryValue(ResourceKey<? extends Registry<? extends T>> registry, ResourceKey<T> key) {
+        return registries().lookupOrThrow(registry).getOrThrow(key).value();
+    }
+
+    /**
+     * Fills in what a real entity would have provided and an empty render state lacks.
+     * Some renderers draw nothing at all without it (e.g. a pig without a variant).
+     */
+    private static void applyDefaults(EntityRenderState state) {
+        if (state instanceof PigRenderState pig) {
+            pig.variant = registryValue(Registries.PIG_VARIANT, PigVariants.DEFAULT);
+        } else if (state instanceof CowRenderState cow) {
+            cow.variant = registryValue(Registries.COW_VARIANT, CowVariants.DEFAULT);
+        } else if (state instanceof ChickenRenderState chicken) {
+            chicken.variant = registryValue(Registries.CHICKEN_VARIANT, ChickenVariants.DEFAULT);
+        }
+    }
+    /*?}*/
+    /*?}*/
+
+    /*? if >=1.20.6 && <1.21.2 {*/
+    /*private void renderEntityInBox(LivingEntity entity, int x0, int y0, int x1, int y1, float scale, float pitch) {
+        Quaternionf pitchRotation = new Quaternionf().rotateX((float) Math.toRadians(-pitch));
+        Quaternionf rotation = new Quaternionf().rotateZ((float) Math.PI).mul(pitchRotation);
+        Vector3f translation = new Vector3f(0.0F, entity.getBbHeight() / 2.0F, 0.0F);
+        InventoryScreen.renderEntityInInventory(graphics, (x0 + x1) / 2.0F, (y0 + y1) / 2.0F, scale, translation, rotation, pitchRotation, entity);
+    }
+    *//*?} else if >=1.20.2 && <1.20.6 {*/
+    /*private void renderEntityInBox(LivingEntity entity, int x0, int y0, int x1, int y1, float scale, float pitch) {
+        Quaternionf pitchRotation = new Quaternionf().rotateX((float) Math.toRadians(-pitch));
+        Quaternionf rotation = new Quaternionf().rotateZ((float) Math.PI).mul(pitchRotation);
+        Vector3f translation = new Vector3f(0.0F, entity.getBbHeight() / 2.0F, 0.0F);
+        int pixelScale = Math.max(1, Math.round(scale));
+        InventoryScreen.renderEntityInInventory(graphics, (x0 + x1) / 2.0F, (y0 + y1) / 2.0F, pixelScale, translation, rotation, pitchRotation, entity);
+    }
+    *//*?} else if >=1.19.4 && <1.20.2 {*/
+    /*private void renderEntityInBox(LivingEntity entity, int x0, int y0, int x1, int y1, float scale, float pitch) {
+        Quaternionf pitchRotation = new Quaternionf().rotateX((float) Math.toRadians(-pitch));
+        Quaternionf rotation = new Quaternionf().rotateZ((float) Math.PI).mul(pitchRotation);
+        int pixelScale = Math.max(1, Math.round(scale));
+        int feetY = Math.round((y0 + y1) / 2.0F + entity.getBbHeight() * pixelScale / 2.0F);
+        InventoryScreen.renderEntityInInventory(getGraphics(), (x0 + x1) / 2, feetY, pixelScale, rotation, pitchRotation, entity);
+    }
+    *//*?} else if >=1.19.3 && <1.19.4 {*/
+    /*private void renderEntityInBox(LivingEntity entity, int x0, int y0, int x1, int y1, float scale, float pitch) {
+        int feetX = (x0 + x1) / 2;
+        float feetY = (y0 + y1) / 2.0F + entity.getBbHeight() * scale / 2.0F;
+        PoseStack modelView = RenderSystem.getModelViewStack();
+        modelView.pushPose();
+        modelView.translate(feetX, feetY, 1050.0F);
+        modelView.scale(1.0F, 1.0F, -1.0F);
+        RenderSystem.applyModelViewMatrix();
+
+        PoseStack entityPose = new PoseStack();
+        entityPose.translate(0.0F, 0.0F, 1000.0F);
+        entityPose.scale(scale, scale, scale);
+        Quaternionf pitchRotation = new Quaternionf().rotateX((float) Math.toRadians(-pitch));
+        Quaternionf rotation = new Quaternionf().rotateZ((float) Math.PI).mul(pitchRotation);
+        entityPose.mulPose(rotation);
+
+        Lighting.setupForEntityInInventory();
+        EntityRenderDispatcher dispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
+        pitchRotation.conjugate();
+        dispatcher.overrideCameraOrientation(pitchRotation);
+        dispatcher.setRenderShadow(false);
+        MultiBufferSource.BufferSource buffers = Minecraft.getInstance().renderBuffers().bufferSource();
+        RenderSystem.runAsFancy(() -> dispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, entityPose, buffers, 15728880));
+        buffers.endBatch();
+        dispatcher.setRenderShadow(true);
+
+        modelView.popPose();
+        RenderSystem.applyModelViewMatrix();
+        Lighting.setupFor3DItems();
+    }
+    *//*?} else if <1.19.3 {*/
+    /*private void renderEntityInBox(LivingEntity entity, int x0, int y0, int x1, int y1, float scale, float pitch) {
+        int feetX = (x0 + x1) / 2;
+        double feetY = (y0 + y1) / 2.0 + entity.getBbHeight() * scale / 2.0;
+        PoseStack modelView = RenderSystem.getModelViewStack();
+        modelView.pushPose();
+        modelView.translate(feetX, feetY, 1050.0);
+        modelView.scale(1.0F, 1.0F, -1.0F);
+        RenderSystem.applyModelViewMatrix();
+
+        PoseStack entityPose = new PoseStack();
+        entityPose.translate(0.0, 0.0, 1000.0);
+        entityPose.scale(scale, scale, scale);
+        Quaternion pitchRotation = Vector3f.XP.rotationDegrees(-pitch);
+        Quaternion rotation = Vector3f.ZP.rotationDegrees(180.0F);
+        rotation.mul(pitchRotation);
+        entityPose.mulPose(rotation);
+
+        Lighting.setupForEntityInInventory();
+        EntityRenderDispatcher dispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
+        pitchRotation.conj();
+        dispatcher.overrideCameraOrientation(pitchRotation);
+        dispatcher.setRenderShadow(false);
+        MultiBufferSource.BufferSource buffers = Minecraft.getInstance().renderBuffers().bufferSource();
+        RenderSystem.runAsFancy(() -> dispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, 1.0F, entityPose, buffers, 15728880));
+        buffers.endBatch();
+        dispatcher.setRenderShadow(true);
+
+        modelView.popPose();
+        RenderSystem.applyModelViewMatrix();
+        Lighting.setupFor3DItems();
+    }
+    *//*?}*/
+
+    /** Pixels per block so an entity of the given size fits the box, with a small margin. */
+    static float fitScale(int boxWidth, int boxHeight, float entityWidth, float entityHeight) {
+        float scale = Math.min(boxWidth / Math.max(entityWidth, 0.01F), boxHeight / Math.max(entityHeight, 0.01F));
+        return scale * 0.9F;
+    }
 
     // --- Scissor
 
@@ -882,17 +1223,17 @@ public class GenericGraphics {
         /*?} else if >=1.20.2 { */
         //graphics.blitSprite(texture.getSprite(), x, y, width, height);
         /*?} else { */
-         /*if (texture instanceof TiledSprite tiled) {
+        /*if (texture instanceof TiledSprite tiled) {
             //? if < 1.20
             //RenderSystem.setShaderTexture(0, texture.getSprite());
             drawRepeating(tiled, x, y, width, height, tiled.atlasX(), tiled.atlasY(),  tiled.regionWidth(), tiled.regionHeight());
         } else if (texture instanceof NineSlicedSprite nineSliced) {
             drawNineSliced(nineSliced, x, y, width, height);
         } else {
-             //? if < 1.20
-             //RenderSystem.setShaderTexture(0, texture.getSprite());
-             internalBlit(texture, x, y, width, height);
-         }
+            //? if < 1.20
+            //RenderSystem.setShaderTexture(0, texture.getSprite());
+            internalBlit(texture, x, y, width, height);
+        }
         *//*?} */
     }
 
@@ -927,7 +1268,7 @@ public class GenericGraphics {
         /*//? if < 1.20
         //RenderSystem.setShaderTexture(0, texture.getSprite());
         internalDrawNineSliced(texture, x, y, width, height);
-         *//*?} */
+        *//*?} */
     }
 
     //own version to work with non-square textures
@@ -1095,7 +1436,7 @@ public class GenericGraphics {
         /*syncModelViewToPoseStack();
         Minecraft.getInstance().getItemRenderer().renderGuiItemDecorations(font, itemStack, x, y, countText);
         restoreModelView();
-         *//*?} */
+        *//*?} */
     }
 
     public void renderDecoratedItem(Font font, Item item, int x, int y) {
