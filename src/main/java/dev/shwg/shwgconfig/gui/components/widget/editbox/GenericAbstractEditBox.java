@@ -36,6 +36,8 @@ import net.minecraft.client.gui.components.AbstractWidget;
 /*? } */
 public abstract class GenericAbstractEditBox extends GenericAbstractWidget {
 
+    private static final int HINT_COLOR = 0x808080;
+
     protected static final int TEXT_PADDING = 4;
     protected static final int TEXT_HEIGHT = 8;
 
@@ -84,7 +86,11 @@ public abstract class GenericAbstractEditBox extends GenericAbstractWidget {
     }
 
     public void setHint(Component hint) {
-        editBox.setHint(hint);
+        if (hint == null) {
+            editBox.setHint(null);
+            return;
+        }
+        editBox.setHint(hint.copy().withStyle(style -> style.getColor() == null ? style.withColor(HINT_COLOR) : style));
     }
 
     public void setMaxLength(int maxLength) {
