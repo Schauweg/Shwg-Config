@@ -25,6 +25,7 @@ import dev.shwg.testmod.config.values.StringListValue;
 import dev.shwg.testmod.config.widgets.CatmullRomWidget;
 import dev.shwg.testmod.config.widgets.InventoryWidget;
 import dev.shwg.testmod.config.widgets.ItemListPreview;
+import dev.shwg.testmod.config.widgets.TestPreviewWidget;
 import dev.shwg.testmod.test.RenderTestScreen;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -75,7 +76,7 @@ public class TestConfig extends ConfigBase {
     public final StringValue soundSuggestion = StringValue.of("minecraft:block.note_block.pling");
     public final StringValue entitySuggestion = StringValue.of("minecraft:pig");
     public final KeybindValue keybindValue = KeybindValue.ofKeyboard(
-            "shwgconfig.keybind.test", RegistryHelper.build("shwgconfig", "test_category"), InputConstants.KEY_E);
+            "shwgconfig.keybind.test", RegistryHelper.build("shwgconfig", "test_category"), InputConstants.KEY_K);
     public final KeybindValue mouseKeybindValue = KeybindValue.ofMouse(
             "shwgconfig.keybind.mouse_test", RegistryHelper.build("shwgconfig", "test_category"), InputConstants.MOUSE_BUTTON_MIDDLE);
 
@@ -85,6 +86,7 @@ public class TestConfig extends ConfigBase {
     public final BooleanValue noTitleToggle = BooleanValue.of(true);
     public final IntValue noTitleSlider = IntValue.of(5, 0, 10);
     public final CurveValue curveValue = CurveValue.empty();
+    public final KeybindValue openTestScreen = KeybindValue.ofKeyboard("shwgconfig.keybind.testscreen", RegistryHelper.build("shwgconfig", "test_category"), InputConstants.KEY_U);
 
     // Tab 5: Lists
     public final StringListValue itemList = new StringListValue(List.of("minecraft:diamond", "minecraft:emerald"));
@@ -113,6 +115,7 @@ public class TestConfig extends ConfigBase {
                         Component.literal("Hard").withStyle(ChatFormatting.RED),
                         Component.literal("Easy").withStyle(ChatFormatting.GREEN)
                 )
+                .preview(new TestPreviewWidget())
                 .build();
 
         ConfigCategory numbers = CategoryBuilder.create(Component.literal("Numbers"))
@@ -241,6 +244,7 @@ public class TestConfig extends ConfigBase {
                     Screen currentScreen = Minecraft.getInstance().screen;
                     Minecraft.getInstance().setScreen(new RenderTestScreen(currentScreen));
                 }).build())
+                .addKeybind(openTestScreen)
                 .build();
 
         Tab layoutAndCustomWidgets = TabBuilder.create(Component.literal("Layout & Custom Widgets"))

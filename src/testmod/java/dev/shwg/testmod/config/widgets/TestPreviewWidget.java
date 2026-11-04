@@ -50,6 +50,11 @@ public class TestPreviewWidget implements GenericLayout, RenderableElement {
         int centerX = getX() + getWidth() / 2;
         graphics.renderDecoratedItem(font, itemStack, centerX - 8, getY());
         damageSlider.render(graphics, mouseX, mouseY, partialTicks);
+
+        var player = Minecraft.getInstance().player;
+        if (player != null) {
+            graphics.drawEntityWH(player, getX() + 40, getY(), 32, 48, 0, 20.0F);
+        }
     }
 
     @Override

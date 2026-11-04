@@ -6,6 +6,7 @@ import dev.shwg.shwgconfig.gui.input.events.GenericKeyEvent;
 import dev.shwg.shwgconfig.render.GenericGraphics;
 import dev.shwg.shwgconfig.render.textures.*;
 import dev.shwg.shwgconfig.util.DisplayItemStack;
+import dev.shwg.shwgconfig.util.RegistryHelper;
 import dev.shwg.testmod.TestMod;
 import dev.shwg.testmod.test.checks.MobEffectTextureChecks;
 import net.minecraft.client.Minecraft;
@@ -13,6 +14,8 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
@@ -31,7 +34,7 @@ import java.util.List;
  */
 public class RenderTestScreen extends GenericScreen {
 
-    private static final String[] PAGES = {"Primitives", "Text", "Clip & pose", "Items", "Textures", "Sprites", "Icons", "Effects"};
+    private static final String[] PAGES = {"Primitives", "Text", "Clip & pose", "Items", "Textures", "Sprites", "Icons", "Effects", "Entities", "Entity types"};
 
     // grid layout: 2 columns x 3 rows of cells
     private static final int COLS = 2, CELL_W = 226, CELL_H = 76, GAP = 4, ORIGIN_X = 10, ORIGIN_Y = 24;
@@ -99,6 +102,10 @@ public class RenderTestScreen extends GenericScreen {
             page = key - InputConstants.KEY_1;
             return true;
         }
+        if (key == InputConstants.KEY_0 && PAGES.length >= 10) {
+            page = 9;
+            return true;
+        }
         return false;
     }
 
@@ -124,6 +131,8 @@ public class RenderTestScreen extends GenericScreen {
             case 5 -> pageSprites(g, font);
             case 6 -> pageIcons(g, font);
             case 7 -> pageEffects(g, font);
+            case 8 -> pageEntities(g, font);
+            case 9 -> pageEntityTypes(g, font);
         }
 
         if (spriteError != null) {
@@ -555,13 +564,97 @@ public class RenderTestScreen extends GenericScreen {
         }
     }
 
+    // Page 9: entities
+
+    private void pageEntities(GenericGraphics g, Font font) {
+        LivingEntity player = Minecraft.getInstance().player;
+        if (player == null) {
+            g.drawString(font, "No world loaded - open this screen from inside a world", 10, 30, YELLOW);
+            return;
+        }
+
+        cell(g, font, 0, "drawEntity: yaw", "-30 / 0 / 30, the middle one faces you");
+        for (int i = 0; i < 3; i++) {
+            int x = cx + i * 40;
+            frame(g, x, cy, 32, 48);
+            g.drawEntityWH(player, x, cy, 32, 48, -30 + i * 30, 0);
+        }
+
+        cell(g, font, 1, "drawEntity: pitch", "-20 / 0 / 20: from below, level, from above");
+        for (int i = 0; i < 3; i++) {
+            int x = cx + i * 40;
+            frame(g, x, cy, 32, 48);
+            g.drawEntityWH(player, x, cy, 32, 48, 30, -20 + i * 20);
+        }
+
+        cell(g, font, 2, "fit to box", "fills each frame, never cut off");
+        frame(g, cx, cy, 16, 16);
+        g.drawEntityWH(player, cx, cy, 16, 16, 30, 0);
+        frame(g, cx + 24, cy, 24, 24);
+        g.drawEntityWH(player, cx + 24, cy, 24, 24, 30, 0);
+        frame(g, cx + 56, cy, 60, 24);
+        g.drawEntityWH(player, cx + 56, cy, 60, 24, 30, 0);
+        frame(g, cx + 124, cy, 20, 48);
+        g.drawEntityWH(player, cx + 124, cy, 20, 48, 30, 0);
+
+        cell(g, font, 3, "entity inside scissor", "left: top half only; right: complete");
+        g.enableScissorWH(cx, cy, 32, 24);
+        g.drawEntityWH(player, cx, cy, 32, 48, 30, 0);
+        g.disableScissor();
+        g.outline(cx - 1, cy - 1, 34, 26, WHITE);
+        g.drawEntityWH(player, cx + 50, cy, 32, 48, 30, 0); // after release: complete
+
+        cell(g, font, 4, "entity under translated pose", "lands in the white frame = follows pose");
+        g.outline(cx + 60 - 1, cy - 1, 34, 50, WHITE);  // where it lands if it follows the pose
+        g.pushPose();
+        g.translate(60, 0);
+        g.drawEntityWH(player, cx, cy, 32, 48, 30, 0);
+        g.popPose();
+
+        cell(g, font, 5, "entity vs later fill (z-order)", "green must cover the right half");
+        g.drawEntityWH(player, cx, cy, 32, 48, 30, 0);
+        g.fill(cx + 16, cy - 2, cx + 40, cy + 50, 0x8000FF00);
+    }
+
+    // Page 10: entity types (no world needed)
+
+    private void pageEntityTypes(GenericGraphics g, Font font) {
+        cell(g, font, 0, "common mobs", "6 mobs, each fills its frame");
+        entityRow(g, cx, cy, 32, 48, 4, "creeper", "zombie", "skeleton", "pig", "cow", "sheep");
+
+        cell(g, font, 1, "big and tall", "ghast, enderman, spider, horse");
+        entityRow(g, cx, cy, 48, 48, 6, "ghast", "enderman", "spider", "horse");
+
+        cell(g, font, 2, "small mobs", "silverfish, bee, chicken, rabbit, bat, cod");
+        entityRow(g, cx, cy, 32, 32, 4, "silverfish", "bee", "chicken", "rabbit", "bat", "cod");
+
+        cell(g, font, 3, "water mobs", "fish, squid, axolotl, dolphin, turtle");
+        entityRow(g, cx, cy, 38, 38, 4, "tropical_fish", "squid", "axolotl", "dolphin", "turtle");
+
+        cell(g, font, 4, "icon size 16x16", "12 small but recognisable mobs");
+        entityRow(g, cx, cy, 16, 16, 2, "creeper", "zombie", "skeleton", "spider", "enderman", "slime",
+                "pig", "cow", "sheep", "chicken", "wolf", "villager");
+
+        cell(g, font, 5, "edge cases", "player empty; dragon fits; stand; minecart");
+        entityRow(g, cx, cy, 48, 48, 6, "player", "ender_dragon", "armor_stand", "minecart");
+    }
+
+    /** Draws the given entity types in a row of framed boxes, all turned 30 degrees. */
+    private void entityRow(GenericGraphics g, int x, int y, int w, int h, int gap, String... ids) {
+        for (int i = 0; i < ids.length; i++) {
+            int boxX = x + i * (w + gap);
+            frame(g, boxX, y, w, h);
+            EntityType<?> type = RegistryHelper.getEntityType(RegistryHelper.build("minecraft", ids[i]));
+            if (type != null) g.drawEntityWH(type, boxX, y, w, h, 30, 0);
+        }
+    }
+
+    // Helpers
 
     /** 1px gray frame just outside the area (x, y, w, h), to check that an icon lands exactly inside it. */
     private void frame(GenericGraphics g, int x, int y, int w, int h) {
         g.outline(x - 1, y - 1, w + 2, h + 2, CELL_BORDER);
     }
-
-    // Helpers
 
     /**
      * Draws the cell frame, title and expectation hint, and sets {@link #cx}/{@link #cy} to its content origin.

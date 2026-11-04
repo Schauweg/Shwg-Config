@@ -1,10 +1,12 @@
 package dev.shwg.testmod;
 
 import dev.shwg.testmod.test.AutoTest;
+import dev.shwg.testmod.test.RenderTestScreen;
 import net.minecraft.client.Minecraft;
 import dev.shwg.shwgconfig.api.ConfigManager;
 import dev.shwg.shwgconfig.api.ClientTickDispatcher;
 import dev.shwg.testmod.config.TestConfig;
+import net.minecraft.client.gui.screens.Screen;
 
 /*? if fabric {*/
 import net.fabricmc.api.ModInitializer;
@@ -66,6 +68,18 @@ public class TestMod implements ModInitializer {
         ClientTickDispatcher.registerGUI(keyEvent ->  {
             if (keyEvent.matches(TEST_CONFIG.keybindValue)) {
                 Minecraft.getInstance().setScreen(configManager.getScreen(Minecraft.getInstance().screen));
+            }
+            if (keyEvent.matches(TEST_CONFIG.openTestScreen)) {
+                Minecraft.getInstance().setScreen(new RenderTestScreen(Minecraft.getInstance().screen));
+            }
+        });
+
+        ClientTickDispatcher.registerWorld(() -> {
+            if (TEST_CONFIG.openTestScreen.consumeClick()) {
+                Screen screen = Minecraft.getInstance().screen;
+                if (!(screen instanceof RenderTestScreen)) {
+                    Minecraft.getInstance().setScreen(new RenderTestScreen(screen));
+                }
             }
         });
     }
