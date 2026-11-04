@@ -96,10 +96,17 @@ final class EntityModelRenderer {
             return;
         }
 
-        float scale = GenericGraphics.fitScale(x1 - x0, y1 - y0, type.getWidth(), type.getHeight());
+        EntityModel model = renderer.getModel();
+        model.young = false;
+        model.riding = false;
+        model.attackTime = 0.0F;
+
+        ModelBounds bounds = ModelBounds.hitbox(type.getWidth(), type.getHeight()).union(ModelBounds.of(renderer, null));
+        ModelBounds.ScreenBounds screen = bounds.project(yaw, pitch);
+        float scale = GenericGraphics.fitScale(x1 - x0, y1 - y0, screen.width(), screen.height());
         g.enableScissor(x0, y0, x1, y1);
         Lighting.setupForEntityInInventory();
-        drawInBox(g, renderer, renderer.getModel(), texture, (x0 + x1) / 2.0F, (y0 + y1) / 2.0F, scale, type.getHeight(), yaw, pitch);
+        drawInBox(g, renderer, model, texture, (x0 + x1) / 2.0F, (y0 + y1) / 2.0F, scale, -screen.centerX(), -screen.centerY(), yaw, pitch);
         Lighting.setupFor3DItems();
         g.disableScissor();
     }
@@ -118,11 +125,6 @@ final class EntityModelRenderer {
             pose.pushPose();
         }
         pose.translate(0.0, -1.501, 0.0);
-
-        model.young = false;
-        model.riding = false;
-        model.attackTime = 0.0F;
-
         renderToBuffer(model, pose, buffers.getBuffer(model.renderType(texture)));
         pose.popPose();
         pose.popPose();
@@ -142,13 +144,13 @@ final class EntityModelRenderer {
 
     /*? if >=1.20 && <1.21.2 {*/
     /*private static void drawInBox(GenericGraphics g, LivingEntityRenderer<?, ?> renderer, EntityModel<?> model, Identifier texture,
-                                  float centerX, float centerY, float scale, float height, float yaw, float pitch) {
+                                  float centerX, float centerY, float scale, float offsetX, float offsetY, float yaw, float pitch) {
         var gui = g.getGraphics();
         PoseStack pose = gui.pose();
         pose.pushPose();
         pose.translate(centerX, centerY, 50.0);
         scaleGui(pose, scale);
-        pose.translate(0.0, height / 2.0, 0.0);
+        pose.translate(offsetX, offsetY, 0.0);
         pose.mulPose(guiRotation(pitch));
         renderModel(renderer, model, texture, pose, gui.bufferSource(), yaw);
         gui.flush();
@@ -156,7 +158,7 @@ final class EntityModelRenderer {
     }
     *//*?} else if >=1.19.4 && <1.20 {*/
     /*private static void drawInBox(GenericGraphics g, LivingEntityRenderer<?, ?> renderer, EntityModel<?> model, Identifier texture,
-                                  float centerX, float centerY, float scale, float height, float yaw, float pitch) {
+                                  float centerX, float centerY, float scale, float offsetX, float offsetY, float yaw, float pitch) {
         PoseStack modelView = RenderSystem.getModelViewStack();
         modelView.pushPose();
         modelView.translate(0.0, 0.0, 1000.0);
@@ -165,7 +167,7 @@ final class EntityModelRenderer {
         pose.pushPose();
         pose.translate(centerX, centerY, -950.0);
         scaleGui(pose, scale);
-        pose.translate(0.0, height / 2.0, 0.0);
+        pose.translate(offsetX, offsetY, 0.0);
         pose.mulPose(guiRotation(pitch));
         MultiBufferSource.BufferSource buffers = Minecraft.getInstance().renderBuffers().bufferSource();
         renderModel(renderer, model, texture, pose, buffers, yaw);
@@ -176,7 +178,7 @@ final class EntityModelRenderer {
     }
     *//*?} else if <1.19.4 {*/
     /*private static void drawInBox(GenericGraphics g, LivingEntityRenderer<?, ?> renderer, EntityModel<?> model, Identifier texture,
-                                  float centerX, float centerY, float scale, float height, float yaw, float pitch) {
+                                  float centerX, float centerY, float scale, float offsetX, float offsetY, float yaw, float pitch) {
         PoseStack modelView = RenderSystem.getModelViewStack();
         modelView.pushPose();
         modelView.translate(centerX, centerY, 1050.0);
@@ -185,7 +187,7 @@ final class EntityModelRenderer {
         PoseStack pose = new PoseStack();
         pose.translate(0.0, 0.0, 1000.0);
         pose.scale(scale, scale, scale);
-        pose.translate(0.0, height / 2.0, 0.0);
+        pose.translate(offsetX, offsetY, 0.0);
         pose.mulPose(guiRotation(pitch));
         MultiBufferSource.BufferSource buffers = Minecraft.getInstance().renderBuffers().bufferSource();
         renderModel(renderer, model, texture, pose, buffers, yaw);
@@ -206,11 +208,11 @@ final class EntityModelRenderer {
     *//*?}*/
 
     /*? if >=1.21 && <1.21.2 {*/
-    /*private static void renderToBuffer(EntityModel<?> model, PoseStack pose, VertexConsumer buffer) {
+    /*static void renderToBuffer(EntityModel<?> model, PoseStack pose, VertexConsumer buffer) {
         model.renderToBuffer(pose, buffer, 15728880, OverlayTexture.NO_OVERLAY, -1);
     }
     *//*?} else if <1.21 {*/
-    /*private static void renderToBuffer(EntityModel<?> model, PoseStack pose, VertexConsumer buffer) {
+    /*static void renderToBuffer(EntityModel<?> model, PoseStack pose, VertexConsumer buffer) {
         model.renderToBuffer(pose, buffer, 15728880, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
     }
     *//*?}*/

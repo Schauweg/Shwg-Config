@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 
@@ -34,7 +35,7 @@ import com.mojang.math.Vector3f;
 import net.minecraft.world.entity.animal.chicken.ChickenVariants;
 import net.minecraft.world.entity.animal.cow.CowVariants;
 import net.minecraft.world.entity.animal.pig.PigVariants;
-/*?} else if >=1.21.6 {*/
+/*?} else if >=1.21.5 {*/
 /*import net.minecraft.world.entity.animal.ChickenVariants;
 import net.minecraft.world.entity.animal.CowVariants;
 import net.minecraft.world.entity.animal.PigVariants;
@@ -42,23 +43,33 @@ import net.minecraft.world.entity.animal.PigVariants;
 
 /*? if >=1.21.2 {*/
 import dev.shwg.shwgconfig.mixin.EntityRenderDispatcherAccessor;
+import net.minecraft.client.renderer.entity.CodRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.SalmonRenderer;
+import net.minecraft.client.renderer.entity.TropicalFishRenderer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.client.renderer.entity.state.*;
 /*?}*/
 
-/*? if >=1.21.6 {*/
+/*? if <1.21.2 {*/
+/*import dev.shwg.shwgconfig.mixin.EntityAccessor;
+import net.minecraft.world.entity.animal.AbstractFish;
+*//*?}*/
+
+/*? if >=1.21.5 {*/
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.registries.VanillaRegistries;
 import net.minecraft.resources.ResourceKey;
-/*?} else if >=1.21.2 {*/
+/*?}*/
+
+/*? if >=1.21.2 && <1.21.6 {*/
 /*import com.mojang.blaze3d.platform.Lighting;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
-*//*?} else if >=1.19.4 {*/
+*//*?} else if >=1.19.4 && <1.21.2 {*/
 //import net.minecraft.client.gui.screens.inventory.InventoryScreen;
-/*?} else {*/
+/*?} else if <1.19.4 {*/
 /*import com.mojang.blaze3d.platform.Lighting;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
@@ -364,7 +375,7 @@ public class GenericGraphics {
      * @param shadow whether to draw a drop shadow behind the text
      */
     public void drawString(Font font, String text, int x, int y, int color, boolean shadow) {
-        /*? if <=1.21.2 {*/
+        /*? if <=1.21.5 {*/
         //if ((color & 0xFC000000) == 0) return; // old vanilla forces alpha 0-3 to opaque, newer versions draw nothing
         /*?}*/
         /*? if >=26 {*/
@@ -391,7 +402,7 @@ public class GenericGraphics {
     }
 
     public void drawString(Font font, Component text, int x, int y, int color, boolean shadow) {
-        /*? if <=1.21.2 {*/
+        /*? if <=1.21.5 {*/
         //if ((color & 0xFC000000) == 0) return; // old vanilla forces alpha 0-3 to opaque, newer versions draw nothing
         /*?}*/
         /*? if >=26 {*/
@@ -420,7 +431,7 @@ public class GenericGraphics {
     }
 
     public void drawString(Font font, FormattedCharSequence text, int x, int y, int color, boolean shadow) {
-        /*? if <=1.21.2 {*/
+        /*? if <=1.21.5 {*/
         //if ((color & 0xFC000000) == 0) return; // old vanilla forces alpha 0-3 to opaque, newer versions draw nothing
         /*?}*/
         /*? if >=26 {*/
@@ -765,22 +776,31 @@ public class GenericGraphics {
         EntityRenderer<?, ?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(entity);
         submitEntityState(renderer, extractFreshState(renderer, entity), x0, y0, x1, y1, yaw, pitch);
         /*?} else {*/
-        /*// before 1.21.2: like vanilla's inventory, turn the entity for this one frame, then put it back
-        float scale = fitScale(x1 - x0, y1 - y0, entity.getBbWidth(), entity.getBbHeight());
-
-        float bodyRot = entity.yBodyRot;
+        /*float bodyRot = entity.yBodyRot;
         float yRot = entity.getYRot();
         float xRot = entity.getXRot();
         float headRotO = entity.yHeadRotO;
         float headRot = entity.yHeadRot;
         entity.yBodyRot = 180.0F + yaw;
-        entity.setYRot(180.0F + yaw); // head yaw is absolute here, same as the body = straight
+        entity.setYRot(180.0F + yaw);
         entity.setXRot(0.0F);
         entity.yHeadRot = entity.getYRot();
         entity.yHeadRotO = entity.getYRot();
+        EntityAccessor water = (EntityAccessor) entity;
+        boolean wasInWater = water.shwgconfig$getWasTouchingWater();
+        if (entity instanceof AbstractFish) {
+            water.shwgconfig$setWasTouchingWater(true);
+        }
+
+        ModelBounds bounds = ModelBounds.hitbox(entity.getBbWidth(), entity.getBbHeight());
+        if (Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(entity) instanceof LivingEntityRenderer<?, ?> livingRenderer) {
+            bounds = bounds.union(ModelBounds.of(livingRenderer, entity));
+        }
+        ModelBounds.ScreenBounds screen = bounds.project(yaw, pitch);
+        float scale = fitScale(x1 - x0, y1 - y0, screen.width(), screen.height());
 
         enableScissor(x0, y0, x1, y1);
-        renderEntityInBox(entity, x0, y0, x1, y1, scale, pitch);
+        renderEntityInBox(entity, x0, y0, x1, y1, scale, pitch, -screen.centerX(), -screen.centerY());
         disableScissor();
 
         entity.yBodyRot = bodyRot;
@@ -788,6 +808,7 @@ public class GenericGraphics {
         entity.setXRot(xRot);
         entity.yHeadRotO = headRotO;
         entity.yHeadRot = headRot;
+        water.shwgconfig$setWasTouchingWater(wasInWater);
         *//*?}*/
     }
 
@@ -804,12 +825,13 @@ public class GenericGraphics {
         Map<EntityType<?>, ?> renderers = ((EntityRenderDispatcherAccessor) Minecraft.getInstance().getEntityRenderDispatcher()).shwgconfig$getRenderers();
         if (!(renderers.get(type) instanceof EntityRenderer<?, ?> renderer)) return;
 
-        // an empty state, filled with just what the type itself knows
         EntityRenderState state = renderer.createRenderState();
         state.boundingBoxWidth = type.getWidth();
         state.boundingBoxHeight = type.getHeight();
         /*? if >=1.21.6 {*/
-        state.entityType = type; // the GUI looks the renderer up by this
+        state.entityType = type;
+        /*?}*/
+        /*? if >=1.21.5 {*/
         applyDefaults(state);
         /*?}*/
         submitEntityState(renderer, state, x0, y0, x1, y1, yaw, pitch);
@@ -846,26 +868,34 @@ public class GenericGraphics {
         state.outlineColor = 0;
         /*?}*/
         /*? if >=1.21.9 && <26 {*/
-        state.lightCoords = 15728880; // full brightness, same as vanilla's inventory
+        state.lightCoords = 15728880;
         /*?}*/
 
-        float entityWidth = state.boundingBoxHeight; // fallback for non-living states
+        ModelBounds bounds = ModelBounds.hitbox(state.boundingBoxWidth, state.boundingBoxHeight);
+        float viewYaw = 0.0F;
         if (state instanceof LivingEntityRenderState living) {
             living.bodyRot = 180.0F + yaw;
-            living.yRot = 0.0F; // head straight, relative to the body
+            living.yRot = 0.0F;
             living.xRot = 0.0F;
-            // like vanilla: ignore the entity's own scale attribute, the box decides the size
             float entityScale = living.scale > 0.0F ? living.scale : 1.0F;
             living.boundingBoxWidth = living.boundingBoxWidth / entityScale;
             living.boundingBoxHeight = living.boundingBoxHeight / entityScale;
             living.scale = 1.0F;
-            entityWidth = living.boundingBoxWidth;
+            if (renderer instanceof CodRenderer || renderer instanceof SalmonRenderer || renderer instanceof TropicalFishRenderer) {
+                living.isInWater = true;
+            }
+            bounds = ModelBounds.hitbox(living.boundingBoxWidth, living.boundingBoxHeight);
+            if (renderer instanceof LivingEntityRenderer<?, ?, ?> livingRenderer) {
+                bounds = bounds.union(ModelBounds.of(livingRenderer, living));
+            }
+            viewYaw = yaw;
         }
 
-        float scale = fitScale(x1 - x0, y1 - y0, entityWidth, state.boundingBoxHeight);
+        ModelBounds.ScreenBounds screen = bounds.project(viewYaw, pitch);
+        float scale = fitScale(x1 - x0, y1 - y0, screen.width(), screen.height());
         Quaternionf pitchRotation = new Quaternionf().rotateX((float) Math.toRadians(-pitch));
         Quaternionf rotation = new Quaternionf().rotateZ((float) Math.PI).mul(pitchRotation);
-        Vector3f translation = new Vector3f(0.0F, state.boundingBoxHeight / 2.0F, 0.0F);
+        Vector3f translation = new Vector3f(-screen.centerX(), -screen.centerY(), 0.0F);
         /*? if >=26 {*/
         //graphics.entity(state, scale, translation, rotation, pitchRotation, x0, y0, x1, y1);
         /*?} else if >=1.21.6 {*/
@@ -900,7 +930,7 @@ public class GenericGraphics {
     }
     *//*?}*/
 
-    /*? if >=1.21.6 {*/
+    /*? if >=1.21.5 {*/
 
     /** Built once, the first time an entity type is drawn without a world. */
     private static HolderLookup.Provider vanillaRegistries;
@@ -938,32 +968,33 @@ public class GenericGraphics {
     /*?}*/
 
     /*? if >=1.20.6 && <1.21.2 {*/
-    /*private void renderEntityInBox(LivingEntity entity, int x0, int y0, int x1, int y1, float scale, float pitch) {
+    /*private void renderEntityInBox(LivingEntity entity, int x0, int y0, int x1, int y1, float scale, float pitch, float offsetX, float offsetY) {
         Quaternionf pitchRotation = new Quaternionf().rotateX((float) Math.toRadians(-pitch));
         Quaternionf rotation = new Quaternionf().rotateZ((float) Math.PI).mul(pitchRotation);
-        Vector3f translation = new Vector3f(0.0F, entity.getBbHeight() / 2.0F, 0.0F);
+        Vector3f translation = new Vector3f(offsetX, offsetY, 0.0F);
         InventoryScreen.renderEntityInInventory(graphics, (x0 + x1) / 2.0F, (y0 + y1) / 2.0F, scale, translation, rotation, pitchRotation, entity);
     }
     *//*?} else if >=1.20.2 && <1.20.6 {*/
-    /*private void renderEntityInBox(LivingEntity entity, int x0, int y0, int x1, int y1, float scale, float pitch) {
+    /*private void renderEntityInBox(LivingEntity entity, int x0, int y0, int x1, int y1, float scale, float pitch, float offsetX, float offsetY) {
         Quaternionf pitchRotation = new Quaternionf().rotateX((float) Math.toRadians(-pitch));
         Quaternionf rotation = new Quaternionf().rotateZ((float) Math.PI).mul(pitchRotation);
-        Vector3f translation = new Vector3f(0.0F, entity.getBbHeight() / 2.0F, 0.0F);
-        int pixelScale = Math.max(1, Math.round(scale));
+        Vector3f translation = new Vector3f(offsetX, offsetY, 0.0F);
+        int pixelScale = Math.max(1, (int) scale);
         InventoryScreen.renderEntityInInventory(graphics, (x0 + x1) / 2.0F, (y0 + y1) / 2.0F, pixelScale, translation, rotation, pitchRotation, entity);
     }
     *//*?} else if >=1.19.4 && <1.20.2 {*/
-    /*private void renderEntityInBox(LivingEntity entity, int x0, int y0, int x1, int y1, float scale, float pitch) {
+    /*private void renderEntityInBox(LivingEntity entity, int x0, int y0, int x1, int y1, float scale, float pitch, float offsetX, float offsetY) {
         Quaternionf pitchRotation = new Quaternionf().rotateX((float) Math.toRadians(-pitch));
         Quaternionf rotation = new Quaternionf().rotateZ((float) Math.PI).mul(pitchRotation);
-        int pixelScale = Math.max(1, Math.round(scale));
-        int feetY = Math.round((y0 + y1) / 2.0F + entity.getBbHeight() * pixelScale / 2.0F);
-        InventoryScreen.renderEntityInInventory(getGraphics(), (x0 + x1) / 2, feetY, pixelScale, rotation, pitchRotation, entity);
+        int pixelScale = Math.max(1, (int) scale);
+        int feetX = Math.round((x0 + x1) / 2.0F + offsetX * pixelScale);
+        int feetY = Math.round((y0 + y1) / 2.0F + offsetY * pixelScale);
+        InventoryScreen.renderEntityInInventory(getGraphics(), feetX, feetY, pixelScale, rotation, pitchRotation, entity);
     }
     *//*?} else if >=1.19.3 && <1.19.4 {*/
-    /*private void renderEntityInBox(LivingEntity entity, int x0, int y0, int x1, int y1, float scale, float pitch) {
-        int feetX = (x0 + x1) / 2;
-        float feetY = (y0 + y1) / 2.0F + entity.getBbHeight() * scale / 2.0F;
+    /*private void renderEntityInBox(LivingEntity entity, int x0, int y0, int x1, int y1, float scale, float pitch, float offsetX, float offsetY) {
+        float feetX = (x0 + x1) / 2.0F + offsetX * scale;
+        float feetY = (y0 + y1) / 2.0F + offsetY * scale;
         PoseStack modelView = RenderSystem.getModelViewStack();
         modelView.pushPose();
         modelView.translate(feetX, feetY, 1050.0F);
@@ -992,9 +1023,9 @@ public class GenericGraphics {
         Lighting.setupFor3DItems();
     }
     *//*?} else if <1.19.3 {*/
-    /*private void renderEntityInBox(LivingEntity entity, int x0, int y0, int x1, int y1, float scale, float pitch) {
-        int feetX = (x0 + x1) / 2;
-        double feetY = (y0 + y1) / 2.0 + entity.getBbHeight() * scale / 2.0;
+    /*private void renderEntityInBox(LivingEntity entity, int x0, int y0, int x1, int y1, float scale, float pitch, float offsetX, float offsetY) {
+        double feetX = (x0 + x1) / 2.0 + offsetX * scale;
+        double feetY = (y0 + y1) / 2.0 + offsetY * scale;
         PoseStack modelView = RenderSystem.getModelViewStack();
         modelView.pushPose();
         modelView.translate(feetX, feetY, 1050.0);

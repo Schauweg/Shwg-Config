@@ -5,10 +5,12 @@
   "minVersion": "0.8.4",
   "client": [
     "EditBoxAccessor",
+    "EntityAccessor",
     "EntityRenderDispatcherAccessor",
     "GraphicsMixin",
     "GuiRendererMixin",
-    "LivingEntityRendererInvoker"
+    "LivingEntityRendererInvoker",
+    "ModelPartAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
