@@ -3,13 +3,12 @@ package dev.shwg.testmod.test.checks;
 import dev.shwg.shwgconfig.util.DisplayItemStack;
 import dev.shwg.shwgconfig.util.RegistryHelper;
 import dev.shwg.testmod.test.AutoTestReport;
-import dev.shwg.testmod.test.CheckSuite;
 import net.minecraft.resources.Identifier;
 
 import java.util.Comparator;
 
 import static dev.shwg.testmod.test.AutoTestReport.require;
-import static dev.shwg.testmod.test.CheckHelpers.requireTranslated;
+import static dev.shwg.testmod.test.checks.CheckHelpers.requireTranslated;
 
 /** {@link RegistryHelper} entity types, and the spawn egg naming the entity suggestions use for icons. */
 public final class EntityRegistryChecks implements CheckSuite {
