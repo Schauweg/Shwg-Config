@@ -4,13 +4,12 @@ import dev.shwg.shwgconfig.gui.components.widget.editbox.suggestioneditbox.Sugge
 import dev.shwg.shwgconfig.gui.components.widget.editbox.suggestioneditbox.SuggestionEntry;
 import dev.shwg.shwgconfig.gui.components.widget.editbox.suggestioneditbox.SuggestionProviders;
 import dev.shwg.testmod.test.AutoTestReport;
-import dev.shwg.testmod.test.CheckSuite;
 
 import java.util.List;
 
 import static dev.shwg.testmod.test.AutoTestReport.require;
-import static dev.shwg.testmod.test.CheckHelpers.find;
-import static dev.shwg.testmod.test.CheckHelpers.suggest;
+import static dev.shwg.testmod.test.checks.CheckHelpers.find;
+import static dev.shwg.testmod.test.checks.CheckHelpers.suggest;
 
 /** The {@link SuggestionProviders} helpers: {@code strings(...)}, {@code excluding(...)} and search by ID. */
 public final class SuggestionHelperChecks implements CheckSuite {

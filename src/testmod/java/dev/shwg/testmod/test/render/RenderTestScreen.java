@@ -1,4 +1,4 @@
-package dev.shwg.testmod.test;
+package dev.shwg.testmod.test.render;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import dev.shwg.shwgconfig.gui.components.screens.GenericScreen;
@@ -27,14 +27,16 @@ import java.util.List;
  *
  * <p>Every cell has a title and an "expected" hint, so a wrong result is visible at a glance and
  * screenshots from different Minecraft versions can be compared side by side.
- * Controls: LEFT/RIGHT or PAGE UP/DOWN or the number keys to switch pages, ESC to close.</p>
+ * Controls: LEFT/RIGHT or PAGE UP/DOWN or the number keys to switch pages, ESC to close.
+ * The widget pages are drawn by {@link WidgetGallery}.</p>
  *
  * <p>Needs the test sprites in {@code assets/MOD_ID/textures/gui/sprites/rendertest/}
  * (nine_slice, tiled, stretch - each with a .png.mcmeta).</p>
  */
 public class RenderTestScreen extends GenericScreen {
 
-    private static final String[] PAGES = {"Primitives", "Text", "Clip & pose", "Items", "Textures", "Sprites", "Icons", "Effects", "Entities", "Entity types"};
+    private static final String[] PAGES = {"Primitives", "Text", "Clip & pose", "Items", "Textures", "Sprites", "Icons", "Effects", "Entities", "Entity types",
+            "Buttons & sliders", "Inputs", "Dropdowns & search"};
 
     // grid layout: 2 columns x 3 rows of cells
     private static final int COLS = 2, CELL_W = 226, CELL_H = 76, GAP = 4, ORIGIN_X = 10, ORIGIN_Y = 24;
@@ -57,6 +59,8 @@ public class RenderTestScreen extends GenericScreen {
 
     private List<MobEffect> effects = List.of();
 
+    private WidgetGallery gallery;
+
     public RenderTestScreen(Screen parent) {
         super(Component.literal("Render Test"), parent);
     }
@@ -77,6 +81,7 @@ public class RenderTestScreen extends GenericScreen {
             spriteError = e.toString();
         }
         effects = MobEffectTextureChecks.registeredEffects();
+        gallery = new WidgetGallery(font);
     }
 
     @Override
@@ -119,7 +124,7 @@ public class RenderTestScreen extends GenericScreen {
 
         g.fill(0, 0, width, height, BG);
         g.drawString(font, "Render test  [" + (page + 1) + "/" + PAGES.length + "] " + PAGES[page], 10, 8, TITLE);
-        String controls = "</>, 1-" + PAGES.length + ": page   ESC: close";
+        String controls = "</>, " + (PAGES.length > 10 ? "1-9, 0" : "1-" + PAGES.length) + ": page   ESC: close";
         g.drawString(font, controls, width - font.width(controls) - 10, 8, HINT, false);
 
         switch (page) {
@@ -133,6 +138,9 @@ public class RenderTestScreen extends GenericScreen {
             case 7 -> pageEffects(g, font);
             case 8 -> pageEntities(g, font);
             case 9 -> pageEntityTypes(g, font);
+            case 10 -> gallery.renderButtonsAndSliders(g, font, partialTicks);
+            case 11 -> gallery.renderInputs(g, font, partialTicks);
+            case 12 -> gallery.renderDropdownsAndSearch(g, font, partialTicks);
         }
 
         if (spriteError != null) {

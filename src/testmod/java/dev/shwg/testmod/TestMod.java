@@ -1,7 +1,7 @@
 package dev.shwg.testmod;
 
 import dev.shwg.testmod.test.AutoTest;
-import dev.shwg.testmod.test.RenderTestScreen;
+import dev.shwg.testmod.test.render.RenderTestScreen;
 import net.minecraft.client.Minecraft;
 import dev.shwg.shwgconfig.api.ConfigManager;
 import dev.shwg.shwgconfig.api.ClientTickDispatcher;

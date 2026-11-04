@@ -1,5 +1,9 @@
 package dev.shwg.testmod.test;
 
+import dev.shwg.testmod.test.checks.CheckSuite;
+import dev.shwg.testmod.test.checks.CheckSuites;
+import dev.shwg.testmod.test.interaction.InteractionTest;
+import dev.shwg.testmod.test.render.RenderTestScreen;
 import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Screenshot;
@@ -7,7 +11,10 @@ import net.minecraft.client.gui.screens.Screen;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
@@ -124,9 +131,8 @@ public final class AutoTest {
         }
 
         if (!selection.screenshots()) {
-            log("done: no screenshots selected");
-            finished = true;
-            mc.stop();
+            log("no screenshots selected");
+            afterScreenshots(mc, selection);
             return;
         }
 
@@ -230,9 +236,8 @@ public final class AutoTest {
         }
 
         private void finish() {
-            log("done: " + screen.pageCount() + " screenshots in " + AutoTestReport.reportDir().toAbsolutePath());
-            finished = true;
-            mc.stop();
+            log(screen.pageCount() + " screenshots in " + AutoTestReport.reportDir().toAbsolutePath());
+            afterScreenshots(mc, AutoTestSelection.fromEnvironment());
         }
     }
 
@@ -246,14 +251,41 @@ public final class AutoTest {
      * Minecraft#getMainRenderTarget moved to the GameRenderer in 26.2 - that accessor name is a guess,
      * check it against the 26.2 mappings.</p>
      */
-    private static void grab(Minecraft mc, File file, Consumer<String> done) {
+    public static void grab(Minecraft mc, File file, Consumer<String> done) {
         /*? if >=26.2 { */
-        //Screenshot.takeScreenshot(mc.gameRenderer.mainRenderTarget(), image -> save(image, file, done));
-        /*?} else if >=1.21.5 { */
-        Screenshot.takeScreenshot(mc.getMainRenderTarget(), image -> save(image, file, done));
+        //Object target = mc.gameRenderer.mainRenderTarget();
         /*?} else { */
-        //save(Screenshot.takeScreenshot(mc.getMainRenderTarget()), file, done);
+        Object target = mc.getMainRenderTarget();
         /*?} */
+        grabAnyVersion(target, file, done);
+    }
+
+    /**
+     * Picks the screenshot method at runtime, so a jar built for one version also works on the
+     * additional versions: takeScreenshot(RenderTarget) returning the image before 1.21.5,
+     * takeScreenshot(RenderTarget, Consumer) from 1.21.5. Found by parameter types because the
+     * method names differ at runtime (intermediary / SRG).
+     */
+    private static void grabAnyVersion(Object target, File file, Consumer<String> done) {
+        Consumer<NativeImage> callback = image -> save(image, file, done);
+        try {
+            for (Method method : Screenshot.class.getMethods()) {
+                if (!Modifier.isStatic(method.getModifiers())) continue;
+                Class<?>[] params = method.getParameterTypes();
+                if (params.length == 2 && params[0].isInstance(target) && params[1] == Consumer.class) {
+                    method.invoke(null, target, callback);
+                    return;
+                }
+                if (params.length == 1 && params[0].isInstance(target) && method.getReturnType() == NativeImage.class) {
+                    callback.accept((NativeImage) method.invoke(null, target));
+                    return;
+                }
+            }
+            done.accept("no Screenshot.takeScreenshot method found for " + target.getClass().getName());
+        } catch (ReflectiveOperationException | RuntimeException | LinkageError e) {
+            e.printStackTrace();
+            done.accept("screenshot failed: " + e);
+        }
     }
 
     private static void save(NativeImage image, File file, Consumer<String> done) {
@@ -310,5 +342,34 @@ public final class AutoTest {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
+    }
+
+    private static void markFinished() {
+        try {
+            Path dir = AutoTestReport.reportDir();
+            Files.createDirectories(dir);
+            Files.writeString(dir.resolve("FINISHED"), "ok\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+            log("could not write the FINISHED marker: " + e);
+        }
+    }
+
+    /** After the screenshots (or instead of them): the interaction test if selected, then the end of the run. */
+    private static void afterScreenshots(Minecraft mc, AutoTestSelection selection) {
+        if (selection.interaction()) {
+            log("interaction test");
+            InteractionTest.start(currentScreen(mc), () -> complete("done"));
+        } else {
+            complete("done");
+        }
+    }
+
+    /** Ends the run normally: the FINISHED marker, then quit. */
+    private static void complete(String message) {
+        log(message);
+        markFinished();
+        finished = true;
+        Minecraft.getInstance().stop();
     }
 }

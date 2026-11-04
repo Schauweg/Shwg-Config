@@ -4,7 +4,6 @@ import dev.shwg.shwgconfig.render.textures.GenericSprite;
 import dev.shwg.shwgconfig.render.textures.GenericTexture;
 import dev.shwg.shwgconfig.render.textures.MobEffectTextures;
 import dev.shwg.testmod.test.AutoTestReport;
-import dev.shwg.testmod.test.CheckSuite;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.effect.MobEffect;

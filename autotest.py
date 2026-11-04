@@ -12,6 +12,10 @@ Writes an index.html with
       - check for regressions against the screenshots of an earlier run (--baseline).
 A run without screenshots (autotestChecks) or without reports (autotestScreenshots) works too.
 
+Above all of that, a table of every run: whether the game finished it (the FINISHED marker the testmod
+writes), wrote a crash report, and links to its launcher.log / latest.log. A run that crashed before
+writing anything still shows up there instead of silently missing from the other tables.
+
 Needs Pillow:  pip install pillow
 
 Examples:
@@ -20,12 +24,13 @@ Examples:
     ./autotest.py --only "fabric$" --cols 2 --scale 2
     ./autotest.py --baseline old-autotest-report
 
-Exit code 1 if a check failed or (with --baseline) a screenshot changed.
+Exit code 1 if a run didn't finish, a check failed or (with --baseline) a screenshot changed.
 """
 
 import argparse
 import html
 import math
+import os
 import re
 import sys
 from pathlib import Path
@@ -36,10 +41,17 @@ PAGE_RE = re.compile(r"^page-(\d+)-(.+)\.png$")
 SECTION_RE = re.compile(r"^(.*?) \((\d+|could not be listed: .*)\)$")
 
 # Regions (x, y, w, h in GUI pixels) that legitimately change from run to run, per page name.
-# These are the two always-scrolling text rows on the "text" page of RenderTestScreen:
+# "text": the two always-scrolling text rows on the "text" page of RenderTestScreen:
 # cell 2 and cell 4 of the 2-column grid (origin 10,24; cell 226x76; gap 4).
 IGNORE = {
     "text": [(10, 104, 226, 76), (10, 184, 226, 76)],
+    # The blinking text cursor of the focused column on the "inputs" page (WidgetGallery in the testmod):
+    # the inside of each of the 7 focused text fields, so their focused border is still compared.
+    "inputs": [(288, 38 + 28 * row + 6, 84, 16) for row in range(7)],
+    # Same for the two suggestion boxes (rows 3 and 4) on the "dropdowns-search" page.
+    "dropdowns-search": [(288, 38 + 28 * row + 6, 84, 16) for row in (2, 3)],
+    # Interaction test (InteractionTestScreen): the focused int field with its blinking cursor.
+    "interaction-int-above-max": [(342, 72, 90, 16)],
 }
 
 BG = (24, 24, 24)
@@ -123,6 +135,63 @@ def collect_reports(root):
             if found:
                 reports[folder.name] = found
     return reports
+
+
+# Reading the run status
+
+FINISHED_MARKER = "FINISHED"
+FAILED_RE = re.compile(r"\[autotest\] FAILED: (.*)")
+
+
+class Run:
+    """One version folder: did the game finish the run, and if not, the best guess why."""
+
+    def __init__(self, folder):
+        self.id = folder.name
+        self.folder = folder
+        self.finished = (folder / FINISHED_MARKER).exists()
+        self.launcher_log = folder / "launcher.log"
+        self.latest_log = folder / "latest.log"
+        self.crash_reports = sorted((folder / "crash-reports").glob("*.txt")) if (folder / "crash-reports").is_dir() else []
+        self.reason = None if self.finished and not self.crash_reports else self.find_reason()
+
+    @property
+    def status(self):
+        """'finished', 'crashed', 'unfinished' or 'unknown' (no launcher.log: not from a launcher run)."""
+        if self.crash_reports:
+            return "crashed"
+        if self.finished:
+            return "finished"
+        if not self.launcher_log.exists():
+            return "unknown"
+        return "unfinished"
+
+    @property
+    def failed(self):
+        return self.status in ("crashed", "unfinished")
+
+    def find_reason(self):
+        """The testmod's own FAILED line, else the crash report's description, else the launcher's first error."""
+        log = self.launcher_log.read_text(encoding="utf-8", errors="replace").splitlines() \
+            if self.launcher_log.exists() else []
+        for line in log:
+            match = FAILED_RE.search(line)
+            if match:
+                return "autotest: " + match.group(1).strip()
+        for report in self.crash_reports:
+            for line in report.read_text(encoding="utf-8", errors="replace").splitlines():
+                if line.startswith("Description:"):
+                    return f"crash report: {line.removeprefix('Description:').strip()}"
+        for i, line in enumerate(log):
+            if "[ ERRO ]" in line:
+                following = [l.strip() for l in log[i + 1:i + 3] if l.strip() and "[" not in l[:8]]
+                return " ".join([line.split("[ ERRO ]", 1)[1].strip()] + following)
+        return None
+
+
+def collect_runs(root):
+    """{id: Run} - every version folder, whatever it contains."""
+    return {folder.name: Run(folder) for folder in root.iterdir() if folder.is_dir()}
 
 
 def is_value_line(line):
@@ -232,6 +301,30 @@ def build_sheet(ids, page, data, ref_id, args, font):
                         image = tint(image, mask)
         tiles.append((identifier, image, note, colour))
     return draw_grid(tiles, args.cols, args.scale, font), stats
+
+
+def run_table(runs, out):
+    """HTML: one row per run - finished or not, why not, and links to its logs."""
+    if not runs:
+        return ""
+    labels = {"finished": ("good", "finished"), "crashed": ("bad", "crashed"),
+              "unfinished": ("bad", "didn't finish"), "unknown": ("na", "no launcher.log")}
+    rows = []
+    for identifier in sorted(runs, key=version_key):
+        run = runs[identifier]
+        css, label = labels[run.status]
+        links = [f"<a href='{html.escape(Path(os.path.relpath(path, out)).as_posix())}'>{name}</a>"
+                 for name, path in [("launcher.log", run.launcher_log), ("latest.log", run.latest_log)]
+                 + [(p.name, p) for p in run.crash_reports]
+                 if path.exists()]
+        reason = html.escape(run.reason) if run.reason else ""
+        rows.append(f"<tr><th>{html.escape(identifier)}</th><td class='{css}'>{label}</td>"
+                    f"<td>{' '.join(links)}</td><td class='left'>{reason}</td></tr>")
+    failed = sum(run.failed for run in runs.values())
+    summary = (f"<p class='bad'>{failed} of {len(runs)} run(s) didn't finish.</p>" if failed
+               else f"<p class='good'>All {len(runs)} run(s) finished.</p>")
+    return (f"<h2>Runs</h2>{summary}<table><tr><th></th><th>status</th><th>logs</th><th>reason</th></tr>"
+            f"{''.join(rows)}</table>")
 
 
 def check_tables(reports):
@@ -378,13 +471,14 @@ def screenshot_section(ids, pages, ref_id, all_stats):
     return "".join(parts)
 
 
-def write_index(out, ids, pages, ref_id, all_stats, reports):
-    body = check_tables(reports) + list_tables(reports) + screenshot_section(ids, pages, ref_id, all_stats)
+def write_index(out, ids, pages, ref_id, all_stats, reports, runs):
+    body = run_table(runs, out) + check_tables(reports) + list_tables(reports) \
+           + screenshot_section(ids, pages, ref_id, all_stats)
     (out / "index.html").write_text(
         "<!doctype html><meta charset='utf-8'><title>Autotest comparison</title>"
         "<style>body{background:#181818;color:#ddd;font-family:sans-serif;margin:20px}"
         "table{border-collapse:collapse}td,th{border:1px solid #444;padding:4px 10px;text-align:center}"
-        ".good{color:#78dc78}.bad{color:#f06e6e}.na,.ref{color:#888}img{max-width:100%;margin:8px 0 16px 16px}"
+        ".good{color:#78dc78}.bad{color:#f06e6e}.na,.ref{color:#888}td.left{text-align:left}a{color:#8ab4f8}img{max-width:100%;margin:8px 0 16px 16px}"
         "details{margin:6px 0}summary{cursor:pointer}.cols{display:flex;gap:40px;align-items:flex-start;"
         "margin:8px 0 16px 16px}.cols div{font-family:monospace}h4{margin:10px 0 4px}</style>"
         f"<h1>Autotest comparison</h1>{body}", encoding="utf-8")
@@ -458,10 +552,12 @@ def main():
 
     data = collect(root)
     reports = collect_reports(root)
+    runs = collect_runs(root)
     if args.only:
         data = {i: p for i, p in data.items() if re.search(args.only, i)}
         reports = {i: r for i, r in reports.items() if re.search(args.only, i)}
-    if not data and not reports:
+        runs = {i: r for i, r in runs.items() if re.search(args.only, i)}
+    if not data and not reports and not runs:
         sys.exit(f"error: nothing found in {root} (expected <id>/<suite>.txt or <id>/page-N-name.png)")
     if args.ref and args.ref not in data:
         sys.exit(f"error: reference '{args.ref}' has no screenshots, available: {', '.join(sorted(data, key=version_key))}")
@@ -478,7 +574,14 @@ def main():
         sheet, stats = build_sheet(ids, page, data, args.ref, args, font)
         all_stats[page] = stats
         sheet.save(out / f"page-{page[0]}-{page[1]}.png")
-    write_index(out, ids, pages, args.ref, all_stats, reports)
+    write_index(out, ids, pages, args.ref, all_stats, reports, runs)
+
+    # Console summary of the runs.
+    unfinished = [runs[i] for i in sorted(runs, key=version_key) if runs[i].failed]
+    print(f"{len(runs)} run(s), {len(unfinished)} didn't finish")
+    for run in unfinished:
+        print(f"  {run.status.upper()} {run.id}" + (f": {run.reason}" if run.reason else ""))
+        print(f"       {run.launcher_log}")
 
     # Console summary of the checks.
     failed = [(i, report) for i in sorted(reports, key=version_key)
@@ -495,7 +598,7 @@ def main():
     if args.baseline:
         print()
         changed = check_baseline(data, Path(args.baseline), out, args, font)
-    sys.exit(1 if failed or changed else 0)
+    sys.exit(1 if unfinished or failed or changed else 0)
 
 
 if __name__ == "__main__":

@@ -2,7 +2,6 @@ package dev.shwg.testmod.test.checks;
 
 import dev.shwg.shwgconfig.util.RegistryHelper;
 import dev.shwg.testmod.test.AutoTestReport;
-import dev.shwg.testmod.test.CheckSuite;
 import net.minecraft.resources.Identifier;
 
 import static dev.shwg.testmod.test.AutoTestReport.require;

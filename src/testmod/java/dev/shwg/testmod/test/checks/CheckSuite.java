@@ -1,4 +1,6 @@
-package dev.shwg.testmod.test;
+package dev.shwg.testmod.test.checks;
+
+import dev.shwg.testmod.test.AutoTestReport;
 
 /**
  * A group of automated checks, run on the title screen (no world loaded) during an autotest run.

@@ -1,7 +1,8 @@
-package dev.shwg.testmod.test;
+package dev.shwg.testmod.test.checks;
 
-import dev.shwg.testmod.test.checks.*;
 
+import dev.shwg.testmod.test.AutoTestReport;
+import dev.shwg.testmod.test.AutoTestSelection;
 import java.util.List;
 
 /** Every {@link CheckSuite}, and running the selected ones. */

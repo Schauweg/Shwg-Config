@@ -1,4 +1,4 @@
-package dev.shwg.testmod.test;
+package dev.shwg.testmod.test.checks;
 
 import dev.shwg.shwgconfig.gui.components.widget.editbox.suggestioneditbox.SuggestionEditBox.SuggestionProvider;
 import dev.shwg.shwgconfig.gui.components.widget.editbox.suggestioneditbox.SuggestionEntry;

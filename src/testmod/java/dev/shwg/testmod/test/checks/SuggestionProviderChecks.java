@@ -5,7 +5,6 @@ import dev.shwg.shwgconfig.gui.components.widget.editbox.suggestioneditbox.Sugge
 import dev.shwg.shwgconfig.gui.components.widget.editbox.suggestioneditbox.SuggestionProviders;
 import dev.shwg.shwgconfig.util.DisplayItemStack;
 import dev.shwg.testmod.test.AutoTestReport;
-import dev.shwg.testmod.test.CheckSuite;
 import net.minecraft.world.item.Items;
 
 import java.util.ArrayList;
@@ -13,10 +12,10 @@ import java.util.List;
 import java.util.Locale;
 
 import static dev.shwg.testmod.test.AutoTestReport.require;
-import static dev.shwg.testmod.test.CheckHelpers.find;
-import static dev.shwg.testmod.test.CheckHelpers.requireEntry;
-import static dev.shwg.testmod.test.CheckHelpers.requireTranslated;
-import static dev.shwg.testmod.test.CheckHelpers.suggest;
+import static dev.shwg.testmod.test.checks.CheckHelpers.find;
+import static dev.shwg.testmod.test.checks.CheckHelpers.requireEntry;
+import static dev.shwg.testmod.test.checks.CheckHelpers.requireTranslated;
+import static dev.shwg.testmod.test.checks.CheckHelpers.suggest;
 
 /**
  * Every {@link SuggestionProviders} registry provider, each with a vanilla entry that exists on every

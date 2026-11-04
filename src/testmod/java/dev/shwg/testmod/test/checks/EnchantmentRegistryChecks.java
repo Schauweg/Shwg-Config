@@ -2,7 +2,6 @@ package dev.shwg.testmod.test.checks;
 
 import dev.shwg.shwgconfig.util.RegistryHelper;
 import dev.shwg.testmod.test.AutoTestReport;
-import dev.shwg.testmod.test.CheckSuite;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -12,7 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 import static dev.shwg.testmod.test.AutoTestReport.require;
-import static dev.shwg.testmod.test.CheckHelpers.requireTranslated;
+import static dev.shwg.testmod.test.checks.CheckHelpers.requireTranslated;
 
 /** {@link RegistryHelper} enchantments without a world: vanilla only, with translated names. */
 public final class EnchantmentRegistryChecks implements CheckSuite {

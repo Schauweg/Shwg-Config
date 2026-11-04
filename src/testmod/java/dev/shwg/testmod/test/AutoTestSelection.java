@@ -1,5 +1,7 @@
 package dev.shwg.testmod.test;
 
+import dev.shwg.testmod.test.checks.CheckSuite;
+import dev.shwg.testmod.test.interaction.InteractionTest;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -39,6 +41,11 @@ public record AutoTestSelection(Set<String> tokens) {
     /** Whether the render test screenshots are taken. */
     public boolean screenshots() {
         return everything() || tokens.contains("screenshots");
+    }
+
+    /** Whether the interaction test (InteractionTest) runs. */
+    public boolean interaction() {
+        return everything() || tokens.contains("interaction");
     }
 
     @Override
