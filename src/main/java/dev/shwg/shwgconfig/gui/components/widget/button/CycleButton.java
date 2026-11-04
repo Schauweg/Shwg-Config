@@ -38,11 +38,11 @@ public class CycleButton<T> extends GenericAbstractButton {
         int mouseX = (int) event.getMouseX();
         int mouseY = (int) event.getMouseY();
 
-        if (isMouseOverLeftArrow(mouseX, mouseY)) {
+        if (event.isRightClick() || isMouseOverLeftArrow(mouseX, mouseY)) {
             advance(-1);
             playDownSound(Minecraft.getInstance().getSoundManager());
             return true;
-        }  else if (isMouseOverRightArrow(mouseX, mouseY) || event.isRightClick()) {
+        } else if (isMouseOverRightArrow(mouseX, mouseY)) {
             advance(1);
             playDownSound(Minecraft.getInstance().getSoundManager());
             return true;
