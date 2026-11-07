@@ -11,9 +11,13 @@ import dev.shwg.shwgconfig.api.ConfigBase;
  */
 public interface CustomJsonSerializable {
 
-    /** Serializes this value's current state to JSON. */
+    /**
+     * Serializes this value's current state to JSON.
+     */
     JsonElement toJsonElement();
 
-    /** Restores this value's state from previously serialized JSON. */
+    /**
+     * Restores this value's state from previously serialized JSON.
+     */
     void loadFromJson(JsonElement element);
 }

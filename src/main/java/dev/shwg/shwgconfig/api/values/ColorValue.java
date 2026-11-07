@@ -13,21 +13,29 @@ public class ColorValue extends ConfigValue<Integer> implements CustomJsonSerial
         this.hasAlpha = hasAlpha;
     }
 
-    /** RGB color - is always opaque
+    /**
+     * RGB color - is always opaque
+     *
      * @param defaultValue default value best provided as {@code 0xRRGGBB }
-     * */
+     *
+     */
     public static ColorValue rgb(int defaultValue) {
         return new ColorValue(defaultValue | 0xFF000000, false);
     }
 
-    /** ARGB color - transparency is read from the first to bytes as-is.
+    /**
+     * ARGB color - transparency is read from the first to bytes as-is.
+     *
      * @param defaultValue default value best provided as {@code 0xAARRGGBB }
-     * */
+     *
+     */
     public static ColorValue argb(int defaultValue) {
         return new ColorValue(defaultValue, true);
     }
 
-    /** RGB color from a {@link TextColor} - is always opaque. */
+    /**
+     * RGB color from a {@link TextColor} - is always opaque.
+     */
     public static ColorValue ofTextColor(TextColor defaultColor) {
         return new ColorValue(defaultColor.getValue(), false);
     }
@@ -36,6 +44,7 @@ public class ColorValue extends ConfigValue<Integer> implements CustomJsonSerial
      * Whether the color supports an alpha channel for transparency or not,
      * used for example inside the: <br>
      * {@link dev.shwg.shwgconfig.gui.components.widget.editbox.HexColorEditBox}.
+     *
      * @return Boolean value whether color is transparent or not
      */
     public boolean hasAlpha() {

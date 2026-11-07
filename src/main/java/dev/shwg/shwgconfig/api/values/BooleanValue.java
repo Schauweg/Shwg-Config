@@ -2,7 +2,6 @@ package dev.shwg.shwgconfig.api.values;
 
 /**
  * A config value that holds a boolean (true/false).
- * Used for toggle buttons and checkboxes.
  */
 public class BooleanValue extends ConfigValue<Boolean> {
 

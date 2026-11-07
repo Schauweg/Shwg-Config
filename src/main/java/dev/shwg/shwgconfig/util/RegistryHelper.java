@@ -126,7 +126,9 @@ public class RegistryHelper {
         /*? } */
     }
 
-    /** The translation of "{prefix}.{namespace}.{path}", or the plain ID if there is none. */
+    /**
+     * The translation of "{prefix}.{namespace}.{path}", or the plain ID if there is none.
+     */
     private static Component translatedOrId(String prefix, Identifier id) {
         String key = prefix + "." + id.getNamespace() + "." + id.getPath().replace('/', '.');
         return Language.getInstance().has(key) ? Component.translatable(key) : Component.literal(id.toString());
@@ -196,12 +198,16 @@ public class RegistryHelper {
 
     // --- Sounds
 
-    /** Every sound the sound manager knows, including sounds added by resource packs. */
+    /**
+     * Every sound the sound manager knows, including sounds added by resource packs.
+     */
     public static Set<Identifier> getSounds() {
         return new LinkedHashSet<>(Minecraft.getInstance().getSoundManager().getAvailableSounds());
     }
 
-    /** Sounds have no translated names, so this is the plain ID. */
+    /**
+     * Sounds have no translated names, so this is the plain ID.
+     */
     public static Component soundComponent(Identifier sound) {
         return Component.literal(sound.toString());
     }

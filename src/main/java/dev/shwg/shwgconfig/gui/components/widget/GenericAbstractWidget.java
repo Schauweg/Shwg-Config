@@ -43,9 +43,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 
 public abstract class GenericAbstractWidget extends AbstractWidget implements RenderableElement {
 
-    /** Default text color of an active widget. */
     public static final int DEFAULT_TEXT_COLOR = 0xFFFFFFFF;
-    /** Default text color of an inactive widget - the gray vanilla uses for disabled buttons. */
     public static final int DEFAULT_DISABLED_TEXT_COLOR = 0xFFA0A0A0;
 
     private int textColor = DEFAULT_TEXT_COLOR;

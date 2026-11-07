@@ -37,7 +37,7 @@ import java.util.function.Supplier;
  *  ▼
  *  ▲  [ row from the mod ]  ✕
  *  ▼
- *  [            Add             ]
+ *  [            Add         ]
  * </pre>
  *
  * <p>Saving: the list is the committed element of every row, in order, skipping rows that
@@ -156,7 +156,6 @@ public final class ListController<E> implements RenderableElement, GenericLayout
         return ARROW_WIDTH + SPACING + rowWidth + SPACING + REMOVE_SIZE;
     }
 
-    /** Width of an empty row, so the list has its width even with no rows. */
     private static <E> int measureRowWidth(Function<E, ListRow<E>> rowFactory) {
         return rowFactory.apply(null).getWidth();
     }

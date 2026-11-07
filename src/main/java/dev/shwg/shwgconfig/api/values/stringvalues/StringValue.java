@@ -4,7 +4,6 @@ import dev.shwg.shwgconfig.api.values.ConfigValue;
 
 /**
  * A config value that holds a string.
- * Used for text fields.
  */
 public class StringValue extends ConfigValue<String> {
 

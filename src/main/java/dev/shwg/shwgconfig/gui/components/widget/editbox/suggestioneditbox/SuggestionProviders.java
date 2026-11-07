@@ -34,13 +34,18 @@ import java.util.function.Supplier;
  */
 public final class SuggestionProviders {
 
-    private SuggestionProviders() {}
+    private SuggestionProviders() {
+    }
 
-    /** Every item, with its icon. */
+    /**
+     * Every item, with its icon.
+     */
     public static final SuggestionProvider ITEMS =
             registry(RegistryHelper::getItems, RegistryHelper::itemComponent, DisplayItemStack::getStackSimple);
 
-    /** Every block, with its item as icon (blocks without an item, like water, show none). */
+    /**
+     * Every block, with its item as icon (blocks without an item, like water, show none).
+     */
     public static final SuggestionProvider BLOCKS =
             registry(RegistryHelper::getBlocks, RegistryHelper::itemComponent, DisplayItemStack::getStackSimple);
 
@@ -51,11 +56,15 @@ public final class SuggestionProviders {
     public static final SuggestionProvider ENCHANTMENTS =
             registry(RegistryHelper::getEnchantments, RegistryHelper::enchantmentComponent, id -> enchantedBook());
 
-    /** Every biome. Includes datapack and server biomes while a world is loaded. */
+    /**
+     * Every biome. Includes datapack and server biomes while a world is loaded.
+     */
     public static final SuggestionProvider BIOMES =
             registry(RegistryHelper::getBiomes, RegistryHelper::biomeComponent, null);
 
-    /** Every sound, including sounds added by resource packs. */
+    /**
+     * Every sound, including sounds added by resource packs.
+     */
     public static final SuggestionProvider SOUNDS =
             registry(RegistryHelper::getSounds, RegistryHelper::soundComponent, null);
 
@@ -66,7 +75,9 @@ public final class SuggestionProviders {
     public static final SuggestionProvider ENTITIES =
             registry(RegistryHelper::getEntityTypes, RegistryHelper::entityComponent, SuggestionProviders::spawnEgg);
 
-    /** Suggestions from a fixed list of strings; the string is both shown and saved. */
+    /**
+     * Suggestions from a fixed list of strings; the string is both shown and saved.
+     */
     public static SuggestionProvider strings(List<String> options) {
         return (query, overlay) -> {
             List<SuggestionEntry> results = new ArrayList<>();
@@ -118,7 +129,6 @@ public final class SuggestionProviders {
 
     private static final Map<Identifier, ItemStack> SPAWN_EGGS = new HashMap<>();
 
-    /** Looked up once per entity and reused - icons are drawn every frame. */
     private static ItemStack spawnEgg(Identifier entity) {
         return SPAWN_EGGS.computeIfAbsent(entity, id -> DisplayItemStack.getStackSimple(
                 RegistryHelper.build(id.getNamespace(), id.getPath() + "_spawn_egg")));
@@ -126,7 +136,6 @@ public final class SuggestionProviders {
 
     private static @Nullable ItemStack enchantedBook;
 
-    /** Created on first use and reused - icons are drawn every frame. */
     private static ItemStack enchantedBook() {
         if (enchantedBook == null) {
             enchantedBook = DisplayItemStack.getStackSimple(Items.ENCHANTED_BOOK);

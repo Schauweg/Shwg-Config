@@ -8,9 +8,13 @@ import java.util.List;
  */
 interface ListRowOwner<E> {
 
-    /** A row committed a new element: rebuild and save the list. */
+    /**
+     * A row committed a new element: rebuild and save the list.
+     */
     void rowChanged(ListRow<E> row);
 
-    /** The committed elements of every row except {@code row}, in list order. */
+    /**
+     * The committed elements of every row except {@code row}, in list order.
+     */
     List<E> valuesExcept(ListRow<E> row);
 }

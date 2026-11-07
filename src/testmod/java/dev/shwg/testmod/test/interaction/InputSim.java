@@ -10,6 +10,9 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.input.MouseButtonInfo;
 /*?}*/
 
+/*? if >=26.3 {*/
+//import org.lwjgl.sdl.SDLKeyboard;
+/*?}*/
 /**
  * Simulated input for the interaction test: calls the screen's own input methods, exactly like Minecraft does
  * when GLFW reports real input. So the whole chain is tested (GenericScreen, OverlayDispatch, focus, the widget),
@@ -56,7 +59,7 @@ public final class InputSim {
 
     public static boolean keyPress(Screen screen, int keyCode) {
         /*? if >=1.21.9 {*/
-        return screen.keyPressed(new KeyEvent(keyCode, 0, 0));
+        return screen.keyPressed(keyEvent(keyCode));
         /*?} else {*/
         //return screen.keyPressed(keyCode, 0, 0);
         /*?}*/
@@ -64,11 +67,24 @@ public final class InputSim {
 
     public static boolean keyRelease(Screen screen, int keyCode) {
         /*? if >=1.21.9 {*/
-        return screen.keyReleased(new KeyEvent(keyCode, 0, 0));
+        return screen.keyReleased(keyEvent(keyCode));
         /*?} else {*/
         //return screen.keyReleased(keyCode, 0, 0);
         /*?}*/
     }
+
+    // 26.3 (SDL): the first field is the scancode (the InputConstants.KEY_... values), the second the keycode
+    // for the current layout, which vanilla's EditBox and Tab navigation check. Computed like InputConstants does.
+    // Up to 26.2 (GLFW): key code, then scancode, which no vanilla check needs here.
+    /*? if >=26.3 {*/
+    /*private static KeyEvent keyEvent(int key) {
+        return new KeyEvent(key, SDLKeyboard.SDL_GetKeyFromScancode(key, (short) 0, false), 0);
+    }
+    *//*?} else if >=1.21.9 {*/
+    private static KeyEvent keyEvent(int key) {
+        return new KeyEvent(key, 0, 0);
+    }
+    /*?}*/
 
     /** Types the text character by character, like the keyboard's character events do. */
     public static void type(Screen screen, String text) {

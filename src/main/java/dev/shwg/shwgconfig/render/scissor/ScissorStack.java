@@ -1,5 +1,4 @@
 /*? if < 1.19.4 { */
-
 /*package dev.shwg.shwgconfig.render.scissor;
 
 import com.mojang.blaze3d.platform.Window;

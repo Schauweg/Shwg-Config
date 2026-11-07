@@ -55,13 +55,6 @@ public abstract class SuggestionEntry implements OverlayEntry {
         return getWidth() - reserved;
     }
 
-    /**
-     * Left edge where content (text) should start drawing. Sits past the icon when it's
-     * on the LEFT side; otherwise sits at the entry's own left padding regardless of
-     * whether a RIGHT-side icon is present, since a right icon only affects how much
-     * width is available (already handled by {@link #getContentWidth()}), not where
-     * text begins.
-     */
     protected final int getContentX() {
         if (hasIcon() && owner.getIconPosition() == Alignment.HorizontalIconPosition.LEFT) {
             return getIconX() + ICON_SIZE + ICON_PADDING;

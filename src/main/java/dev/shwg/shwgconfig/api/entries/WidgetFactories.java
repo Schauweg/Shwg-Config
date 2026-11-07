@@ -74,7 +74,6 @@ public final class WidgetFactories {
                         .build();
     }
 
-
     //editbox
     public static WidgetFactory<String> stringInput() {
         return (width, height, font, configValue) -> {

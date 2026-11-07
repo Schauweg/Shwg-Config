@@ -14,7 +14,7 @@ import java.lang.reflect.Field;
 /**
  * Base class for a mod's config. Declare your settings as public final
  * {@link ConfigValue} fields, then implement
- * {@link #buildScreen()} to describe how they should be presented — see
+ * {@link #buildScreen()} to describe how they should be presented - see
  * {@link Builder}, {@link TabBuilder}, and {@link CategoryBuilder}.
  *
  * <p>Values are (de)serialized automatically via reflection over
@@ -32,7 +32,7 @@ public abstract class ConfigBase {
      * other log output) identify *which* value it came from, rather than just printing
      * a bare value with no context.
      *
-     * <p>Runs once, automatically, when a {@code ConfigBase} is constructed — never
+     * <p>Runs once, automatically, when a {@code ConfigBase} is constructed - never
      * needs to be called manually. Only direct {@code ConfigValue} fields on this class
      * are named this way; a value nested inside something else (a list, a custom
      * wrapper object) won't be reached by this reflection pass.

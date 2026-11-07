@@ -38,11 +38,10 @@ public class ShwgConfigScreen extends GenericScreen {
     private final TabManager tabManager = new TabManager(this::addAndRegister, this::removeAndDeregister);
     private final List<SimpleTab> builtTabs = new ArrayList<>();
     private final List<GenericScrollableWidget> tabScrollables = new ArrayList<>(); // same order as builtTabs
-    private int layoutWidth = -1; // screen width the tab layouts were last built for
+    private int layoutWidth = -1;
 
-    /** Ticks to wait after the last width change before rebuilding (dragging the window border resizes many times). */
     private static final int REBUILD_DELAY_TICKS = 2;
-    private int rebuildCountdown = 0; // 0 = no rebuild pending
+    private int rebuildCountdown = 0;
     private GenericTabNavigationBar navigationBar;
     private boolean firstRun = true;
 
@@ -86,11 +85,6 @@ public class ShwgConfigScreen extends GenericScreen {
             tabManager.setCurrentTab(builtTabs.get(0), false);
             firstRun = false;
         } else {
-            // Widths (controller column, label wrapping, dividers) are baked in when a layout is
-            // built, so a different screen width (resize, fullscreen, GUI scale) needs new layouts.
-            // Not rebuilt right away: while the window border is dragged this runs for every
-            // step, so the rebuild waits until the width stopped changing (see tick()).
-            // Until then the old layout is only re-arranged at the new size.
             if (width != layoutWidth) {
                 rebuildCountdown = REBUILD_DELAY_TICKS;
             }
@@ -117,11 +111,6 @@ public class ShwgConfigScreen extends GenericScreen {
         }
     }
 
-    /**
-     * Builds every tab's layout again for the current screen width. Keeps the tabs themselves
-     * (so the navigation bar and the current tab stay valid) and each tab's scroll position.
-     * Like vanilla on resize, focus and unsaved text in widgets are not kept.
-     */
     private void rebuildTabLayouts() {
         for (int i = 0; i < tabs.size(); i++) {
             double scrollOffset = tabScrollables.get(i).getScrollOffset();
@@ -161,8 +150,6 @@ public class ShwgConfigScreen extends GenericScreen {
         int scrollbarAllowance = 20;
         int availableWidth = width - scrollbarAllowance * 2 - maxPreviewWidth * 2 - (maxPreviewWidth > 0 ? ConfigCategoryImpl.CONTROLLER_PREVIEW_SPACING : 0);
 
-        // At least the minimum width, but never more than the window offers - on a very narrow
-        // window the available width wins (clamping would return the minimum and overflow).
         int controllerWidth = Math.min(Math.max(rawControllerWidth, SimpleController.DEFAULT_CONTROLLER_WIDTH + 40), availableWidth);
 
         int dividerWidth = controllerWidth + (maxPreviewWidth == 0 ? 0 : maxPreviewWidth + ConfigCategoryImpl.CONTROLLER_PREVIEW_SPACING);

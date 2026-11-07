@@ -223,7 +223,7 @@ public class GenericGraphics {
         *//*?}*/
     }
 
-    // ── Fill ──────────────────────────────────────────────────────────────────
+    // --- Fill
 
     /**
      * Fills an axis-aligned rectangle with a solid color.
@@ -276,7 +276,7 @@ public class GenericGraphics {
     }
 
 
-    // ── Lines ─────────────────────────────────────────────────────────────────
+    // --- Lines
 
     /**
      * Draws a one-pixel-tall horizontal line from {@code x0} to {@code x1} at height {@code y}.
@@ -356,7 +356,7 @@ public class GenericGraphics {
     }
 
 
-    // ── Text ──────────────────────────────────────────────────────────────────
+    // --- Text
 
     /**
      * Draws a plain string with a drop shadow.
@@ -743,7 +743,8 @@ public class GenericGraphics {
         RenderSystem.getModelViewStack().popPose();
         RenderSystem.applyModelViewMatrix();
     }
-*//*?} */
+    *//*?} */
+
     // --- Entities
 
     /**
@@ -766,12 +767,14 @@ public class GenericGraphics {
 
     /**
      * Draws an entity inside the box from {@code (x0, y0)} to {@code (x1, y1)}, centered
-     * and scaled to fit it. Anything outside the box is cut off.
+     * and scaled to fit it. Anything outside the box is cut off. The box follows the current
+     * pose (translate/scale) on every version, like every other draw call.
      *
      * @param yaw   turn around the vertical axis in degrees; 0 faces the viewer, positive turns clockwise
      * @param pitch tilt towards the viewer in degrees; positive looks down from above
      */
     public void drawEntity(LivingEntity entity, int x0, int y0, int x1, int y1, float yaw, float pitch) {
+        if (x1 <= x0 || y1 <= y0) return; // an empty box can't be drawn (and crashes the texture creation on 1.21.6+)
         /*? if >=1.21.2 {*/
         EntityRenderer<?, ?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(entity);
         submitEntityState(renderer, extractFreshState(renderer, entity), x0, y0, x1, y1, yaw, pitch);
@@ -815,12 +818,13 @@ public class GenericGraphics {
     /**
      * Draws a default-looking entity of the given type inside the box from {@code (x0, y0)}
      * to {@code (x1, y1)}, without needing a world. Draws nothing for types without a
-     * renderer (e.g. players).
+     * renderer (e.g. players). The box follows the current pose on every version.
      *
      * @param yaw   turn around the vertical axis in degrees; 0 faces the viewer, positive turns clockwise
      * @param pitch tilt towards the viewer in degrees; positive looks down from above
      */
     public void drawEntity(EntityType<?> type, int x0, int y0, int x1, int y1, float yaw, float pitch) {
+        if (x1 <= x0 || y1 <= y0) return;
         /*? if >=1.21.2 {*/
         Map<EntityType<?>, ?> renderers = ((EntityRenderDispatcherAccessor) Minecraft.getInstance().getEntityRenderDispatcher()).shwgconfig$getRenderers();
         if (!(renderers.get(type) instanceof EntityRenderer<?, ?> renderer)) return;
@@ -847,11 +851,6 @@ public class GenericGraphics {
     }
 
     /*? if >=1.21.2 {*/
-    /**
-     * A new render state filled from the entity. Not {@code renderer.createRenderState(entity, ...)}:
-     * that one reuses a single state object per renderer, so drawing the same type twice in one
-     * frame would make both look like the last one.
-     */
     @SuppressWarnings({"unchecked", "rawtypes"})
     private static EntityRenderState extractFreshState(EntityRenderer renderer, Entity entity) {
         EntityRenderState state = renderer.createRenderState();
@@ -860,6 +859,16 @@ public class GenericGraphics {
     }
 
     private void submitEntityState(EntityRenderer<?, ?> renderer, EntityRenderState state, int x0, int y0, int x1, int y1, float yaw, float pitch) {
+        /*? if >=1.21.6 {*/
+        // The picture-in-picture render takes its box in screen coordinates and ignores the pose,
+        // so map the box through it first. The scale below is then computed from the real on-screen size.
+        int[] box = mapBoxThroughPose(x0, y0, x1, y1);
+        x0 = box[0];
+        y0 = box[1];
+        x1 = box[2];
+        y1 = box[3];
+        if (x1 <= x0 || y1 <= y0) return; // scaled down below one pixel
+        /*?}*/
         /*? if >=1.21.6 && <1.21.11 {*/
         //state.hitboxesRenderState = null;
         /*?}*/
@@ -905,6 +914,16 @@ public class GenericGraphics {
         /*?}*/
     }
 
+    /*? if >=1.21.6 {*/
+    private int[] mapBoxThroughPose(int x0, int y0, int x1, int y1) {
+        org.joml.Vector2f a = graphics.pose().transformPosition(x0, y0, new org.joml.Vector2f());
+        org.joml.Vector2f b = graphics.pose().transformPosition(x1, y1, new org.joml.Vector2f());
+        return new int[]{
+                Math.round(Math.min(a.x, b.x)), Math.round(Math.min(a.y, b.y)),
+                Math.round(Math.max(a.x, b.x)), Math.round(Math.max(a.y, b.y))};
+    }
+    /*?}*/
+
     /*? if <1.21.6 {*/
     /*// 1.21.2 - 1.21.5: the GUI can't take a render state yet, so it's drawn right away,
     // the same way vanilla's inventory does it in these versions
@@ -932,10 +951,8 @@ public class GenericGraphics {
 
     /*? if >=1.21.5 {*/
 
-    /** Built once, the first time an entity type is drawn without a world. */
     private static HolderLookup.Provider vanillaRegistries;
 
-    /** The world's registries if a world is loaded, otherwise vanilla's built-in ones. */
     private static HolderLookup.Provider registries() {
         if (Minecraft.getInstance().level != null) {
             return Minecraft.getInstance().level.registryAccess();
@@ -951,10 +968,6 @@ public class GenericGraphics {
         return registries().lookupOrThrow(registry).getOrThrow(key).value();
     }
 
-    /**
-     * Fills in what a real entity would have provided and an empty render state lacks.
-     * Some renderers draw nothing at all without it (e.g. a pig without a variant).
-     */
     private static void applyDefaults(EntityRenderState state) {
         if (state instanceof PigRenderState pig) {
             pig.variant = registryValue(Registries.PIG_VARIANT, PigVariants.DEFAULT);
@@ -1056,7 +1069,6 @@ public class GenericGraphics {
     }
     *//*?}*/
 
-    /** Pixels per block so an entity of the given size fits the box, with a small margin. */
     static float fitScale(int boxWidth, int boxHeight, float entityWidth, float entityHeight) {
         float scale = Math.min(boxWidth / Math.max(entityWidth, 0.01F), boxHeight / Math.max(entityHeight, 0.01F));
         return scale * 0.9F;
@@ -1361,8 +1373,6 @@ public class GenericGraphics {
             currentX += drawWidth;
         }
     }
-
-    // GenericGraphics
 
     /**
      * Draws a precise sub-rectangle of a texture — samples the region at

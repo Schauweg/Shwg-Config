@@ -27,7 +27,6 @@ public abstract class ListWidgetOverlay<E extends OverlayEntry> extends Scrollab
         return iconPosition;
     }
 
-    /** Fires when the user picks a row - click, or Enter on the keyboard-selected one. */
     protected abstract void onEntryChosen(E entry);
 
     public List<E> getItems() { return items; }
@@ -107,11 +106,6 @@ public abstract class ListWidgetOverlay<E extends OverlayEntry> extends Scrollab
         return false;
     }
 
-    /**
-     * Highlights {@code entry} and scrolls so it sits in the middle of the list
-     * (as far as the list can scroll). Meant for opening the overlay onto an
-     * existing value. Does nothing if the entry isn't in this list.
-     */
     public void setSelected(@Nullable E entry) {
         int index = entry != null ? items.indexOf(entry) : -1;
         if (index < 0) return;
@@ -131,14 +125,12 @@ public abstract class ListWidgetOverlay<E extends OverlayEntry> extends Scrollab
         else if (bottom > getScrollOffset() + getHeight()) setScrollOffset(bottom - getHeight());
     }
 
-    /** Moves the highlight flag from the old row to the row at {@code index}. */
     private void applySelection(int index) {
         if (selectedIndex >= 0 && selectedIndex < items.size()) items.get(selectedIndex).setSelected(false);
         selectedIndex = index;
         items.get(selectedIndex).setSelected(true);
     }
 
-    /** Distance from the top of the list content to the top of the row at {@code index}. */
     private int getEntryTop(int index) {
         int top = 0;
         for (int i = 0; i < index; i++) top += items.get(i).getHeight();

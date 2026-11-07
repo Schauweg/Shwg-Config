@@ -102,7 +102,6 @@ public class NumberEditBox<N extends Number> extends GenericAbstractEditBox {
     }
 
     private void adjustValue(int direction) {
-        // step in decimal, so 1.2 + 0.1 is exactly 1.3 instead of 1.3000001
         BigDecimal current = NumberUtil.toDecimal(fromDouble.apply(validRaw));
         BigDecimal change = NumberUtil.toDecimal(step).multiply(BigDecimal.valueOf(direction));
         double newRaw = Mth.clamp(current.add(change).doubleValue(), min, max);
@@ -116,7 +115,6 @@ public class NumberEditBox<N extends Number> extends GenericAbstractEditBox {
         Component maxComponent = Component.translatable("shwgconfig.number.max").append(": ").append(formatter.apply(fromDouble.apply(max)));
 
         return switch (violation) {
-//            case BELOW_MIN -> List.of(Component.literal("Min: " + formatter.apply(fromDouble.apply(min))));
             case BELOW_MIN -> List.of(minComponent);
             case ABOVE_MAX -> List.of(maxComponent);
             default -> List.of(minComponent, maxComponent);

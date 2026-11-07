@@ -18,11 +18,8 @@ public class GenericTooltip implements DeferredElement {
 
     private static final int MARGIN = 9;
 
-    /** Default maximum line width in pixels - the width vanilla wraps widget tooltips to. */
     public static final int DEFAULT_MAX_WIDTH = 170;
-    /** Max width that disables wrapping; lines only break at {@code \n}. */
     public static final int NO_MAX_WIDTH = -1;
-    /** Default symbol in front of bullet points. */
     public static final String DEFAULT_BULLET_SYMBOL = "•";
 
     public static final NineSlicedSprite TOOLTIP_BACKGROUND = NineSlicedSprite.fromMcMeta("minecraft", "tooltip/background");
@@ -37,10 +34,6 @@ public class GenericTooltip implements DeferredElement {
         graphics.drawSprite(TOOLTIP_FRAME, tooltipX, tooltipY, tooltipWidth, tooltipHeight);
     }
 
-    /**
-     * One line as it was added - either a normal line or a bullet point.
-     * Wrapping happens later, in {@link #getLines(Font)}.
-     */
     private record Line(Component text, boolean bullet) {
     }
 
@@ -66,7 +59,6 @@ public class GenericTooltip implements DeferredElement {
         this(List.of(singleLine));
     }
 
-    /** Used by the builder, the only place bullet lines are created. */
     private GenericTooltip(List<Line> lines, @Nullable ItemStack icon, int maxWidth, String bulletSymbol) {
         this.lines = List.copyOf(lines);
         this.icon = icon;
@@ -135,7 +127,9 @@ public class GenericTooltip implements DeferredElement {
         return Component.literal(bulletSymbol + " ");
     }
 
-    /** Splits {@code text} into lines no wider than {@code width} (no limit if {@code width <= 0}). */
+    /**
+     * Splits {@code text} into lines no wider than {@code width} (no limit if {@code width <= 0}).
+     */
     private static List<FormattedText> wrap(Font font, Component text, int width) {
         int wrapWidth = width > 0 ? width : Integer.MAX_VALUE;
         List<FormattedText> parts = font.getSplitter().splitLines(text, wrapWidth, Style.EMPTY);
@@ -143,7 +137,9 @@ public class GenericTooltip implements DeferredElement {
         return parts.isEmpty() ? List.of(FormattedText.EMPTY) : parts;
     }
 
-    /** Rebuilds a wrapped piece of text as a Component, one styled part at a time. */
+    /**
+     * Rebuilds a wrapped piece of text as a Component, one styled part at a time.
+     */
     private static MutableComponent toComponent(FormattedText text) {
         MutableComponent component = Component.empty();
         text.<Object>visit((style, string) -> {
@@ -217,13 +213,17 @@ public class GenericTooltip implements DeferredElement {
         private Builder() {
         }
 
-        /** Adds a line. Long lines are wrapped; {@code \n} also starts a new line. */
+        /**
+         * Adds a line. Long lines are wrapped; {@code \n} also starts a new line.
+         */
         public Builder line(Component line) {
             lines.add(new Line(line, false));
             return this;
         }
 
-        /** Adds several lines, in order. */
+        /**
+         * Adds several lines, in order.
+         */
         public Builder lines(Component... lines) {
             for (Component line : lines) {
                 line(line);
@@ -231,7 +231,9 @@ public class GenericTooltip implements DeferredElement {
             return this;
         }
 
-        /** Adds several lines, in order. */
+        /**
+         * Adds several lines, in order.
+         */
         public Builder lines(List<Component> lines) {
             for (Component line : lines) {
                 line(line);
@@ -239,7 +241,9 @@ public class GenericTooltip implements DeferredElement {
             return this;
         }
 
-        /** Adds an empty line, e.g. between a description and a list. */
+        /**
+         * Adds an empty line, e.g. between a description and a list.
+         */
         public Builder emptyLine() {
             return line(Component.empty());
         }
@@ -253,7 +257,9 @@ public class GenericTooltip implements DeferredElement {
             return this;
         }
 
-        /** Adds several bullet points, in order. */
+        /**
+         * Adds several bullet points, in order.
+         */
         public Builder bullets(Component... texts) {
             for (Component text : texts) {
                 bullet(text);
@@ -261,7 +267,9 @@ public class GenericTooltip implements DeferredElement {
             return this;
         }
 
-        /** Shows the item's tooltip image (e.g. bundle contents) below the text. */
+        /**
+         * Shows the item's tooltip image (e.g. bundle contents) below the text.
+         */
         public Builder icon(@Nullable ItemStack icon) {
             this.icon = icon;
             return this;
@@ -276,12 +284,16 @@ public class GenericTooltip implements DeferredElement {
             return this;
         }
 
-        /** Disables wrapping; lines only break at {@code \n}. */
+        /**
+         * Disables wrapping; lines only break at {@code \n}.
+         */
         public Builder noMaxWidth() {
             return maxWidth(NO_MAX_WIDTH);
         }
 
-        /** Symbol in front of every bullet point; defaults to {@link #DEFAULT_BULLET_SYMBOL}. */
+        /**
+         * Symbol in front of every bullet point; defaults to {@link #DEFAULT_BULLET_SYMBOL}.
+         */
         public Builder bulletSymbol(String bulletSymbol) {
             this.bulletSymbol = bulletSymbol;
             return this;

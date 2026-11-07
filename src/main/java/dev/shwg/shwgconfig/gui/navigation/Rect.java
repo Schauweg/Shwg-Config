@@ -26,7 +26,9 @@ public record Rect(int left, int top, int right, int bottom) {
         return Math.max(top, other.top) <= Math.min(bottom, other.bottom);
     }
 
-    /** A zero-thickness line just past this rect's edge facing {@code direction}, spanning its full perpendicular extent. */
+    /**
+     * A zero-thickness line just past this rect's edge facing {@code direction}, spanning its full perpendicular extent.
+     */
     public Rect border(SpatialDirection direction) {
         int edge = boundInDirection(direction);
         return switch (direction.axis()) {

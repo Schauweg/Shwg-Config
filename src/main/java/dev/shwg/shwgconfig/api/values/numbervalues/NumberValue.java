@@ -3,7 +3,7 @@ package dev.shwg.shwgconfig.api.values.numbervalues;
 import dev.shwg.shwgconfig.api.values.ConfigValue;
 
 /**
- * Base class for a bounded numeric {@link ConfigValue} —
+ * Base class for a bounded numeric {@link ConfigValue} -
  * a value, minimum, maximum, and step. Values outside {@code [min, max]} are rejected
  * by {@link #isValid(Number)}. See {@link IntValue},
  * {@link FloatValue}, and

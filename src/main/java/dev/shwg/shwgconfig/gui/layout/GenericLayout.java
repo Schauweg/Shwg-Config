@@ -4,6 +4,7 @@ import dev.shwg.shwgconfig.gui.components.widget.GenericAbstractWidget;
 import dev.shwg.shwgconfig.render.GenericGraphics;
 
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public interface GenericLayout extends LayoutElement {
 

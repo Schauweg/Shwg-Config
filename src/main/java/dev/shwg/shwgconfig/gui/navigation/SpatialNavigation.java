@@ -85,7 +85,6 @@ public final class SpatialNavigation {
         return pickChild(container, origin, direction, focused);
     }
 
-    /** Like vanilla: children ahead that overlap on the cross axis first, then anything roughly ahead. */
     @Nullable
     private static List<GuiEventListener> pickChild(ContainerEventHandler container, Rect origin,
                                                     SpatialDirection direction, @Nullable GuiEventListener excluded) {
@@ -205,12 +204,10 @@ public final class SpatialNavigation {
         }
     }
 
-    /** The path [child, ..., leaf] keyboard navigation would focus when entering {@code child} moving {@code direction}. */
     public static @Nullable List<GuiEventListener> entryPath(GuiEventListener child, SpatialDirection direction) {
         return enter(child, direction);
     }
 
-    /** The currently focused chain below {@code root}: [container, ..., leaf]. */
     private static List<GuiEventListener> currentPath(ContainerEventHandler root) {
         List<GuiEventListener> path = new ArrayList<>();
         GuiEventListener focused = root.getFocused();
@@ -233,6 +230,6 @@ public final class SpatialNavigation {
         if (listener instanceof GenericAbstractWidget widget) {
             return Rect.of(widget.getX(), widget.getY(), widget.getWidth(), widget.getHeight());
         }
-        return null; // not one of ours - vanilla's own widgets differ too much across 1.19 - 1.19.3
+        return null; // vanilla's own widgets differ too much across 1.19 - 1.19.3, ignoring it
     }
 }

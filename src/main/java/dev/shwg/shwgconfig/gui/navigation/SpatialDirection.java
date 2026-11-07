@@ -31,7 +31,9 @@ public enum SpatialDirection {
         };
     }
 
-    /** True if {@code a} lies further along this direction than {@code b}. */
+    /**
+     * True if {@code a} lies further along this direction than {@code b}.
+     */
     public boolean isAfter(int a, int b) {
         return positive ? a >= b : b >= a;
     }

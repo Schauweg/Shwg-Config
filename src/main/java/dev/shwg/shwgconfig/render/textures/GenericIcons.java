@@ -3,7 +3,8 @@ package dev.shwg.shwgconfig.render.textures;
 import dev.shwg.shwgconfig.render.GenericGraphics;
 
 public final class GenericIcons {
-    private GenericIcons() {}
+    private GenericIcons() {
+    }
 
     // Repurposed from vanilla's resource-pack transfer-list arrows. The sprites are defined
     // on an oversized 32x32 source region - only a small glyph within is visible - so draw
@@ -23,13 +24,17 @@ public final class GenericIcons {
     private static final int SMALL_ARROW_UP_GLYPH_OFFSET_Y = 5;
     private static final int SMALL_ARROW_DOWN_GLYPH_OFFSET_Y = 20;
 
-    /** Draws the small up-arrow from the resourcepack selection screen glyph so its visible triangle lands at (glyphX, glyphY). */
+    /**
+     * Draws the small up-arrow from the resourcepack selection screen glyph so its visible triangle lands at (glyphX, glyphY).
+     */
     public static void drawArrowUp(GenericGraphics graphics, int glyphX, int glyphY, boolean highlighted) {
         GenericSprite sprite = highlighted ? ARROW_UP_HIGHLIGHTED : ARROW_UP;
         graphics.drawSprite(sprite, glyphX - SMALL_ARROW_GLYPH_OFFSET_X, glyphY - SMALL_ARROW_UP_GLYPH_OFFSET_Y);
     }
 
-    /** Draws the small down-arrow from the resourcepack selection screen glyph so its visible triangle lands at (glyphX, glyphY). */
+    /**
+     * Draws the small down-arrow from the resourcepack selection screen glyph so its visible triangle lands at (glyphX, glyphY).
+     */
     public static void drawArrowDown(GenericGraphics graphics, int glyphX, int glyphY, boolean highlighted) {
         GenericSprite sprite = highlighted ? ARROW_DOWN_HIGHLIGHTED : ARROW_DOWN;
         graphics.drawSprite(sprite, glyphX - SMALL_ARROW_GLYPH_OFFSET_X, glyphY - SMALL_ARROW_DOWN_GLYPH_OFFSET_Y);
@@ -42,24 +47,28 @@ public final class GenericIcons {
     private static final int LARGE_ARROW_RIGHT_GLYPH_OFFSET_X = 10;
 
     private static final GenericSprite ARROW_LEFT = GenericSprite.changedVanillaTexture(
-            "textures/gui/resource_packs.png", 32,0, 32,32, 256, 256, "transferable_list/unselect");
+            "textures/gui/resource_packs.png", 32, 0, 32, 32, 256, 256, "transferable_list/unselect");
 
     private static final GenericSprite ARROW_LEFT_HIGHLIGHTED = GenericSprite.changedVanillaTexture(
-            "textures/gui/resource_packs.png", 32,32, 32,32, 256, 256, "transferable_list/unselect_highlighted");
+            "textures/gui/resource_packs.png", 32, 32, 32, 32, 256, 256, "transferable_list/unselect_highlighted");
 
     private static final GenericSprite ARROW_RIGHT = GenericSprite.changedVanillaTexture(
-            "textures/gui/resource_packs.png", 0,0, 32,32, 256, 256, "transferable_list/select");
+            "textures/gui/resource_packs.png", 0, 0, 32, 32, 256, 256, "transferable_list/select");
 
     private static final GenericSprite ARROW_RIGHT_HIGHLIGHTED = GenericSprite.changedVanillaTexture(
-            "textures/gui/resource_packs.png", 0,32, 32,32, 256, 256, "transferable_list/select_highlighted");
+            "textures/gui/resource_packs.png", 0, 32, 32, 32, 256, 256, "transferable_list/select_highlighted");
 
-    /** Draws the large left-arrow from the resourcepack selection screen glyph so its visible triangle lands at (glyphX, glyphY). */
+    /**
+     * Draws the large left-arrow from the resourcepack selection screen glyph so its visible triangle lands at (glyphX, glyphY).
+     */
     public static void drawArrowLeft(GenericGraphics graphics, int glyphX, int glyphY, boolean highlighted) {
         GenericSprite sprite = highlighted ? ARROW_LEFT_HIGHLIGHTED : ARROW_LEFT;
         graphics.drawSprite(sprite, glyphX - LARGE_ARROW_LEFT_GLYPH_OFFSET_X, glyphY - LARGE_ARROW_GLYPH_OFFSET_Y);
     }
 
-    /** Draws the large right-arrow from the resourcepack selection screen glyph so its visible triangle lands at (glyphX, glyphY). */
+    /**
+     * Draws the large right-arrow from the resourcepack selection screen glyph so its visible triangle lands at (glyphX, glyphY).
+     */
     public static void drawArrowRight(GenericGraphics graphics, int glyphX, int glyphY, boolean highlighted) {
         GenericSprite sprite = highlighted ? ARROW_RIGHT_HIGHLIGHTED : ARROW_RIGHT;
         graphics.drawSprite(sprite, glyphX - LARGE_ARROW_RIGHT_GLYPH_OFFSET_X, glyphY - LARGE_ARROW_GLYPH_OFFSET_Y);
@@ -74,7 +83,9 @@ public final class GenericIcons {
     public static final int CROSS_WIDTH = 8;
     public static final int CROSS_HEIGHT = 7;
 
-    /** Draws the small red cross from vanilla's Realms player list with its top left corner at (x, y). */
+    /**
+     * Draws the small red cross from vanilla's Realms player list with its top left corner at (x, y).
+     */
     public static void drawCross(GenericGraphics graphics, int x, int y) {
         graphics.drawSprite(CROSS, x, y);
     }

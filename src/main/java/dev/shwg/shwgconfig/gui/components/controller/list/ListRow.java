@@ -54,7 +54,6 @@ import java.util.Objects;
  */
 public abstract class ListRow<E> extends GenericHorizontalLayout {
 
-    /** Space between the widgets of a row. */
     public static final int WIDGET_SPACING = 4;
 
     private @Nullable E value;
@@ -85,7 +84,6 @@ public abstract class ListRow<E> extends GenericHorizontalLayout {
      * kept and picked up once the row is part of the list.</p>
      */
     protected final void commit(E newValue) {
-        Objects.requireNonNull(newValue, "ListRow#commit needs a complete element, not null");
         if (newValue.equals(value)) return;
         value = newValue;
         if (owner != null) owner.rowChanged(this);

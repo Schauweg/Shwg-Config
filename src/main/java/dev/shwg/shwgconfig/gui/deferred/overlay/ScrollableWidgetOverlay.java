@@ -20,15 +20,19 @@ public abstract class ScrollableWidgetOverlay extends WidgetOverlay {
         updateScrollbarGeometry();
     }
 
-    /** Total height of everything scrollable - not just what's currently visible. */
+    /**
+     * Total height of everything scrollable - not just what's currently visible.
+     */
     protected abstract int getContentHeight();
 
     public int getScrollbarReservedWidth() {
         return BAR_WIDTH + scrollBar.getActualBarWidth();
     }
 
-    /** Fires whenever scrollOffset actually changes. No-op by default - override to
-     *  reposition content, same relationship updateDirection() has to its own hook. */
+    /**
+     * Fires whenever scrollOffset actually changes. No-op by default - override to
+     * reposition content, same relationship updateDirection() has to its own hook.
+     */
     protected void onScrollChanged() {
     }
 
@@ -49,8 +53,10 @@ public abstract class ScrollableWidgetOverlay extends WidgetOverlay {
         clampScroll();
     }
 
-    /** The one place scrollOffset gets clamped - always ends by notifying onScrollChanged(),
-     *  so no mutation site can forget to reposition content afterward. */
+    /**
+     * The one place scrollOffset gets clamped - always ends by notifying onScrollChanged(),
+     * so no mutation site can forget to reposition content afterward.
+     */
     protected final void clampScroll() {
         scrollOffset = Mth.clamp(scrollOffset, 0, getMaxScroll());
         onScrollChanged();

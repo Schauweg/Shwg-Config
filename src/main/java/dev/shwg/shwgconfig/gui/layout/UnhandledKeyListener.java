@@ -3,6 +3,8 @@ package dev.shwg.shwgconfig.gui.layout;
 import dev.shwg.shwgconfig.gui.components.widget.GenericAbstractWidget;
 import dev.shwg.shwgconfig.gui.input.events.GenericKeyEvent;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /**
  * Implemented by a {@link GenericLayout} that wants key presses its widgets didn't handle -
  * e.g. a list moving the focused row on Shift + arrow key.
@@ -30,11 +32,11 @@ public interface UnhandledKeyListener {
         if (!(root instanceof GenericLayout layout) || !contains(layout, focused)) {
             return false;
         }
-        boolean[] handled = {false};
+        AtomicBoolean handled = new AtomicBoolean();
         layout.visitChildren(child -> {
-            if (!handled[0]) handled[0] = dispatch(child, focused, keyEvent);
+            if (!handled.get()) handled.set(dispatch(child, focused, keyEvent));
         });
-        if (handled[0]) {
+        if (handled.get()) {
             return true;
         }
         return layout instanceof UnhandledKeyListener listener && listener.onUnhandledKeyPressed(keyEvent, focused);

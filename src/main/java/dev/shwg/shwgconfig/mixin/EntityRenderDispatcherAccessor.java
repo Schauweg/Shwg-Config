@@ -10,10 +10,6 @@ import java.util.Map;
 @Mixin(EntityRenderDispatcher.class)
 public interface EntityRenderDispatcherAccessor {
 
-    /**
-     * The renderer of every entity type. Players aren't in here - vanilla keeps
-     * their renderers separately, one per skin model.
-     */
     @Accessor("renderers")
     Map<EntityType<?>, ?> shwgconfig$getRenderers();
 }

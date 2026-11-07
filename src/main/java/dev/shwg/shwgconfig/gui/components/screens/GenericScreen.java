@@ -485,7 +485,6 @@ public class GenericScreen extends Screen {
         *//*? } */
     }
 
-    /** The containers from {@code from} down to {@code target}'s parent, starting with {@code from}; {@code null} if target isn't inside. */
     private static @Nullable List<ContainerEventHandler> parentsOf(ContainerEventHandler from, GuiEventListener target) {
         for (GuiEventListener child : from.children()) {
             if (child == target) {
@@ -548,7 +547,6 @@ public class GenericScreen extends Screen {
         }
     }
 
-    /** The path as a list: [screen, container, ..., leaf]. */
     private static List<ComponentPath> nodes(ComponentPath path) {
         List<ComponentPath> nodes = new ArrayList<>();
         while (true) {
@@ -597,7 +595,9 @@ public class GenericScreen extends Screen {
     }
     *//*? }  */
 
-    /** Re-arranges this screen on the next tick, e.g. after an element changed its size. */
+    /**
+     * Re-arranges this screen on the next tick, e.g. after an element changed its size.
+     */
     public void requestLayout() {
         if (layoutRequested) return;          // several requests in one tick → one arrange
         layoutRequested = true;
@@ -607,7 +607,6 @@ public class GenericScreen extends Screen {
         });
     }
 
-    /** Positions and sizes everything on this screen. By default arranges every layout added with add(). */
     protected void arrange() {
         for (LayoutElement element : elements) {
             if (element instanceof GenericLayout layout) layout.arrange();

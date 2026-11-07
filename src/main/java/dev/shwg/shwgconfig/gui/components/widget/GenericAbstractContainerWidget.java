@@ -303,7 +303,9 @@ public abstract class GenericAbstractContainerWidget extends GenericAbstractWidg
         return onUnhandledKeyPressed(e);
     }
 
-    /** Called when the focused child didn't handle a key. Returns true if the key was used. */
+    /**
+     * Called when the focused child didn't handle a key. Returns true if the key was used.
+     */
     protected boolean onUnhandledKeyPressed(GenericKeyEvent keyEvent) {
         return false;
     }
