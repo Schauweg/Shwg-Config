@@ -25,10 +25,6 @@ import java.util.List;
 
 import static dev.shwg.testmod.test.AutoTestReport.require;
 
-/**
- * {@link MobEffectTextures} without a world: every registered effect gets a texture, and the PNG it
- * points to exists. The pictures themselves are checked on the "Effects" page of the render test screen.
- */
 public final class MobEffectTextureChecks implements CheckSuite {
 
     // Vanilla has 33 effects in 1.19 and more in newer versions.
@@ -103,7 +99,6 @@ public final class MobEffectTextureChecks implements CheckSuite {
     }
 
     /*? if >= 1.21.6 { */
-    /** Whether the GUI atlas has no sprite with this ID, so the purple/black missing texture would be drawn. */
     private static boolean isMissingSprite(Identifier spriteId) {
         /*? if >= 1.21.9 { */
         TextureAtlasSprite sprite = Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(AtlasIds.GUI).getSprite(spriteId);
@@ -114,7 +109,6 @@ public final class MobEffectTextureChecks implements CheckSuite {
     }
     /*? } */
 
-    /** Found by ID: the MobEffects field was renamed in newer versions, and holders differ before/after 1.20.5. */
     private static MobEffect speed() {
         for (MobEffect effect : registeredEffects()) {
             Identifier id = MobEffectTextures.effectId(effect);
@@ -123,7 +117,6 @@ public final class MobEffectTextureChecks implements CheckSuite {
         throw new IllegalStateException("minecraft:speed is not registered");
     }
 
-    /** Every registered effect - also used by the render test screen. */
     public static List<MobEffect> registeredEffects() {
         List<MobEffect> effects = new ArrayList<>();
         /*? if >= 1.19.3 { */

@@ -1,4 +1,4 @@
-package dev.shwg.testmod.config;
+package dev.shwg.testmod.config.widgets;
 
 import dev.shwg.shwgconfig.gui.components.controller.list.ListRow;
 import dev.shwg.shwgconfig.gui.components.widget.editbox.suggestioneditbox.SuggestionEditBox;
@@ -6,7 +6,6 @@ import dev.shwg.shwgconfig.gui.components.widget.editbox.suggestioneditbox.Sugge
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
-/** One item per row; items already used in another row are not suggested. */
 public class ItemListRow extends ListRow<String> {
 
     public ItemListRow(@Nullable String initial) {

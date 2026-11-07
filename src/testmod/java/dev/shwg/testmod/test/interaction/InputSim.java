@@ -13,14 +13,6 @@ import net.minecraft.client.input.MouseButtonInfo;
 /*? if >=26.3 {*/
 //import org.lwjgl.sdl.SDLKeyboard;
 /*?}*/
-/**
- * Simulated input for the interaction test: calls the screen's own input methods, exactly like Minecraft does
- * when GLFW reports real input. So the whole chain is tested (GenericScreen, OverlayDispatch, focus, the widget),
- * not just one widget method.
- *
- * <p>The version conditions for the input method signatures live only here: 1.21.9 switched to
- * MouseButtonEvent / KeyEvent / CharacterEvent, 26 dropped the modifiers from CharacterEvent.</p>
- */
 public final class InputSim {
 
     public static final int LEFT = InputConstants.MOUSE_BUTTON_LEFT;
@@ -29,7 +21,6 @@ public final class InputSim {
     private InputSim() {
     }
 
-    /** Press and release of a mouse button at (x, y). */
     public static void click(Screen screen, double x, double y, int button) {
         press(screen, x, y, button);
         release(screen, x, y, button);
@@ -51,7 +42,6 @@ public final class InputSim {
         /*?}*/
     }
 
-    /** Press and release of a key (an InputConstants.KEY_... code), without modifiers. */
     public static void key(Screen screen, int keyCode) {
         keyPress(screen, keyCode);
         keyRelease(screen, keyCode);
@@ -73,9 +63,6 @@ public final class InputSim {
         /*?}*/
     }
 
-    // 26.3 (SDL): the first field is the scancode (the InputConstants.KEY_... values), the second the keycode
-    // for the current layout, which vanilla's EditBox and Tab navigation check. Computed like InputConstants does.
-    // Up to 26.2 (GLFW): key code, then scancode, which no vanilla check needs here.
     /*? if >=26.3 {*/
     /*private static KeyEvent keyEvent(int key) {
         return new KeyEvent(key, SDLKeyboard.SDL_GetKeyFromScancode(key, (short) 0, false), 0);
@@ -86,7 +73,6 @@ public final class InputSim {
     }
     /*?}*/
 
-    /** Types the text character by character, like the keyboard's character events do. */
     public static void type(Screen screen, String text) {
         text.codePoints().forEach(codepoint -> typeChar(screen, codepoint));
     }

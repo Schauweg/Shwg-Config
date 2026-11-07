@@ -11,7 +11,6 @@ import static dev.shwg.testmod.test.AutoTestReport.require;
 import static dev.shwg.testmod.test.checks.CheckHelpers.find;
 import static dev.shwg.testmod.test.checks.CheckHelpers.suggest;
 
-/** The {@link SuggestionProviders} helpers: {@code strings(...)}, {@code excluding(...)} and search by ID. */
 public final class SuggestionHelperChecks implements CheckSuite {
 
     @Override

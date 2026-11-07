@@ -13,7 +13,6 @@ import java.util.Set;
 import static dev.shwg.testmod.test.AutoTestReport.require;
 import static dev.shwg.testmod.test.checks.CheckHelpers.requireTranslated;
 
-/** {@link RegistryHelper} enchantments without a world: vanilla only, with translated names. */
 public final class EnchantmentRegistryChecks implements CheckSuite {
 
     private static final Identifier FORTUNE = RegistryHelper.build("minecraft", "fortune");

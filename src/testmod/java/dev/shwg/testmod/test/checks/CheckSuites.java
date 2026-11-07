@@ -20,7 +20,6 @@ public final class CheckSuites {
 
     private CheckSuites() {}
 
-    /** Runs every suite {@code selection} includes, each into its own report. */
     public static void run(AutoTestSelection selection) {
         for (CheckSuite suite : ALL) {
             if (!selection.includes(suite.name())) continue;

@@ -6,11 +6,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Collects PASS/FAIL results for one test group and writes them to
- * {@code SHWG_AUTOTEST_REPORT_DIR/<name>.txt}. The first line is always
- * {@code RESULT PASS} or {@code RESULT FAIL} so Gradle can check it cheaply.
- */
 public final class AutoTestReport {
 
     @FunctionalInterface
@@ -31,11 +26,6 @@ public final class AutoTestReport {
         if (!condition) throw new AssertionError(message);
     }
 
-    /**
-     * Runs one check. Catches Throwable on purpose: a wrong Stonecutter branch
-     * usually shows up as NoSuchMethodError / NoSuchFieldError at runtime,
-     * and that should be a FAIL line in the report, not a crashed game.
-     */
     public void check(String checkName, Check check) {
         try {
             check.run();
@@ -49,10 +39,6 @@ public final class AutoTestReport {
         }
     }
 
-    /**
-     * Adds an informational block after the check results, e.g. a list of what was found.
-     * Never affects PASS/FAIL. If building the content throws, the error is written instead.
-     */
     public void section(String title, SectionContent content) {
         sections.add("");
         try {
@@ -69,7 +55,6 @@ public final class AutoTestReport {
         List<String> lines() throws Exception;
     }
 
-    /** Records a failure that happened outside {@link #check}, e.g. a suite crashing between checks. */
     public void fail(String checkName, Throwable t) {
         failed = true;
         lines.add("FAIL " + checkName + ": threw " + t);
@@ -79,20 +64,11 @@ public final class AutoTestReport {
         return failed;
     }
 
-    /**
-     * Where reports and screenshots go: {@code autotest-report/<project>/} in the project root, set by
-     * gradle/autotest.gradle.kts. The fallback (relative to the run directory) is only for runs started
-     * some other way.
-     */
     public static Path reportDir() {
         String reportDir = System.getenv("SHWG_AUTOTEST_REPORT_DIR");
         return reportDir != null && !reportDir.isBlank() ? Path.of(reportDir) : Path.of("autotest-report");
     }
 
-    /**
-     * Writes plain data next to the reports, e.g. a list of IDs other Gradle tasks read.
-     * Use an extension other than .txt - every .txt file there is checked as a report.
-     */
     public static void writeData(String fileName, List<String> lines) {
         Path dir = reportDir();
         try {

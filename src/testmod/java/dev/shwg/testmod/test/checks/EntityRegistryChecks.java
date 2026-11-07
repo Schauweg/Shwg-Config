@@ -10,7 +10,6 @@ import java.util.Comparator;
 import static dev.shwg.testmod.test.AutoTestReport.require;
 import static dev.shwg.testmod.test.checks.CheckHelpers.requireTranslated;
 
-/** {@link RegistryHelper} entity types, and the spawn egg naming the entity suggestions use for icons. */
 public final class EntityRegistryChecks implements CheckSuite {
 
     private static final Identifier PIG = RegistryHelper.build("minecraft", "pig");

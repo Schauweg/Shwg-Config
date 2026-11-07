@@ -6,27 +6,13 @@ import net.minecraft.client.gui.screens.Screen;
 
 import static dev.shwg.testmod.test.AutoTestReport.require;
 
-/**
- * The interaction test: opens an {@link InteractionTestScreen}, clicks and types on its widgets with simulated
- * input ({@link InputSim}) and checks what each widget applied. Runs after the render test screenshots when
- * the selection includes it ("interaction", see {@link AutoTestSelection}).
- *
- * <p>Part 3a: button, toggle and cycle button. They start as: no presses, toggle ON, cycle "Banana".</p>
- *
- * <p>Part 3b: text, number and color inputs, checked against how they are built: a number field applies while
- * typing as long as the text is a valid number in range; out of range it applies nothing and shows the red
- * min/max hint, and only when it loses focus is the value clamped and applied. A color field applies once the
- * hex code is complete. Focus is moved away with Tab, like a user would.</p>
- */
 public final class InteractionTest {
 
-    /** Ticks between an input and the check, so the screen has rendered and the widget reacted. */
     private static final int SETTLE = 3;
 
     private InteractionTest() {
     }
 
-    /** Opens the screen and runs every step; {@code onDone} runs once the report is written. */
     public static void start(Screen parent, Runnable onDone) {
         InteractionTestScreen screen = new InteractionTestScreen(parent);
         InteractionScript script = new InteractionScript(onDone);
@@ -191,7 +177,6 @@ public final class InteractionTest {
         return String.format("#%08X", color);
     }
 
-    /** The values of the 3a widgets as one string, for "nothing changed" checks and readable FAIL messages. */
     private static String state(InteractionTestScreen screen) {
         return "presses " + screen.buttonPresses + ", toggle " + screen.toggleValue + ", cycle " + screen.cycleValue;
     }

@@ -6,7 +6,6 @@ import net.minecraft.resources.Identifier;
 
 import static dev.shwg.testmod.test.AutoTestReport.require;
 
-/** {@link RegistryHelper} sounds: everything the sound manager knows. */
 public final class SoundRegistryChecks implements CheckSuite {
 
     private static final Identifier PLING = RegistryHelper.build("minecraft", "block.note_block.pling");

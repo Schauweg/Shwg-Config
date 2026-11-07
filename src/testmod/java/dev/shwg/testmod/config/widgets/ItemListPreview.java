@@ -9,10 +9,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * Test preview for the item list: shows the selected row's item next to that row.
- * The item is drawn at the selected row's height instead of this widget's own position.
- */
 public class ItemListPreview implements RenderableElement, ListSelectionListener<String> {
 
     private static final int SIZE = 16;

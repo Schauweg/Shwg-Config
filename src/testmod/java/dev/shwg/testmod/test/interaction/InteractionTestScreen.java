@@ -133,13 +133,23 @@ public class InteractionTestScreen extends GenericScreen {
 
     @Override
     public void render(GenericGraphics g, int mouseX, int mouseY, float partialTicks) {
-        Font font = Minecraft.getInstance().font;
         g.fill(0, 0, width, height, BG);
+        super.render(g, virtualX, virtualY, partialTicks);
+
+        Font font = Minecraft.getInstance().font;
         g.drawString(font, "Interaction test", 10, 8, TITLE);
         for (Label label : labels) {
             g.drawString(font, label.text(), label.x(), label.y() + (WIDGET_H - font.lineHeight) / 2 + 1, LABEL, false);
         }
-        super.render(g, virtualX, virtualY, partialTicks);
+    }
+
+    /**
+     * A solid color instead of vanilla's background (dirt, blurred panorama, ...), so the screenshots
+     * look the same on every version. Before 1.21.6 GenericScreen.render calls this.
+     */
+    @Override
+    public void renderBackground(GenericGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+        graphics.fill(0, 0, width, height, BG);
     }
 
     @Override

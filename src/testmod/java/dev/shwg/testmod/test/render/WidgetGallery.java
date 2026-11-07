@@ -22,19 +22,6 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-/**
- * The widget pages of the {@link RenderTestScreen}: every widget of the library in four states side by side
- * (normal, hovered, focused, disabled), one widget per row.
- *
- * <p>The widgets are only drawn, never added to the screen, so neither input nor the screen's focus handling
- * can change what a screenshot shows. The real mouse position is ignored as well: the "hovered" column gets a
- * fixed point inside its widget, every other column gets (-1, -1). That keeps the screenshots identical from
- * run to run, wherever the cursor happens to be.</p>
- *
- * <p>Focused text fields show a blinking cursor, so their inside changes from run to run. autotest.py ignores
- * that area on the "inputs" and "dropdowns-search" pages (see {@code IGNORE} there); the focused border around
- * it is still compared.</p>
- */
 public final class WidgetGallery {
 
     private static final String[] STATES = {"normal", "hovered", "focused", "disabled"};
@@ -46,10 +33,8 @@ public final class WidgetGallery {
 
     private static final int LABEL = 0xFFFFFFFF, HINT = 0xFF909090, ROW_LINE = 0xFF303030;
 
-    /** For the enum dropdown: a fixed set, so the labels are the same in every Minecraft version. */
     private enum Fruit {APPLE, BANANA, CHERRY}
 
-    /** One widget type: the same widget built once per state, already placed in its column. */
     private record Row(String label, List<GenericAbstractWidget> widgets) {
     }
 
@@ -57,7 +42,6 @@ public final class WidgetGallery {
     private final List<Row> inputs = new ArrayList<>();
     private final List<Row> dropdownsAndSearch = new ArrayList<>();
 
-    /** Builds every widget. Call from the screen's init(), when the font and the key mappings exist. */
     public WidgetGallery(Font font) {
         KeyMapping jump = Minecraft.getInstance().options.keyJump;
 
@@ -118,10 +102,6 @@ public final class WidgetGallery {
         });
     }
 
-    /**
-     * Builds the widget once per state, places it in its column of the next row, and sets the state.
-     * {@code setup} runs on every copy right after it is built, for what the builder can't set (e.g. a text value).
-     */
     private static <W extends GenericAbstractWidget> void add(List<Row> page, String label,
                                                               Supplier<? extends GenericAbstractWidget.Builder<W, ?>> builder,
                                                               Consumer<? super W> setup) {

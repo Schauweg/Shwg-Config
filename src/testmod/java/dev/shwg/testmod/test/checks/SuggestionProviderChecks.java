@@ -17,16 +17,8 @@ import static dev.shwg.testmod.test.checks.CheckHelpers.requireEntry;
 import static dev.shwg.testmod.test.checks.CheckHelpers.requireTranslated;
 import static dev.shwg.testmod.test.checks.CheckHelpers.suggest;
 
-/**
- * Every {@link SuggestionProviders} registry provider, each with a vanilla entry that exists on every
- * version: found by ID and by name, translated name, icon where expected.
- */
 public final class SuggestionProviderChecks implements CheckSuite {
 
-    /**
-     * @param translated whether the known entry must have a translated name (not its ID, not a raw key)
-     * @param hasIcon    whether the provider gives its entries an icon
-     */
     private record Case(String name, SuggestionProvider provider, String knownId, boolean translated, boolean hasIcon) {}
 
     private static final List<Case> CASES = List.of(

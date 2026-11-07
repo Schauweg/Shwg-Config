@@ -11,11 +11,6 @@ import java.util.Set;
 
 import static dev.shwg.testmod.test.AutoTestReport.require;
 
-/**
- * Phase 1: RegistryHelper enchantment checks on the title screen (no world loaded).
- * Called from {@link AutoTest} right before it opens the render test screen.
- * Runs on every version from 1.19 to 26.3.
- */
 public final class RegistryHelperAutotest {
 
     private static final Identifier FORTUNE = RegistryHelper.build("minecraft", "fortune");
@@ -30,7 +25,6 @@ public final class RegistryHelperAutotest {
 
     private RegistryHelperAutotest() {}
 
-    /** Safe to call every tick; only runs the first time. */
     public static void runOnce() {
         if (ran) return;
         ran = true;

@@ -245,7 +245,6 @@ public class RenderTestScreen extends GenericScreen {
         g.drawString(font, "Opaque, no shadow", cx + 110, cy + 30, 0xFFFFFFFF, false);
     }
 
-    /** Gray label with the alpha value, then a red sample text drawn with exactly that alpha. */
     private void alphaRow(GenericGraphics g, Font font, int x, int y, int alpha) {
         g.drawString(font, String.format("%02X", alpha), x, y, HINT, false);
         g.drawString(font, "Sample text", x + 16, y, (alpha << 24) | 0xFF0000);
@@ -371,10 +370,6 @@ public class RenderTestScreen extends GenericScreen {
         g.disableScissor();
         g.outline(cx - 1, cy - 1, 10, 10, WHITE);
         g.renderItem(sword, cx + 30, cy);              // after release: complete
-    }
-
-    private static int getInt() {
-        return 34;
     }
 
     // Page 5: plain textures
@@ -647,7 +642,6 @@ public class RenderTestScreen extends GenericScreen {
         entityRow(g, cx, cy, 48, 48, 6, "player", "ender_dragon", "armor_stand", "minecart");
     }
 
-    /** Draws the given entity types in a row of framed boxes, all turned 30 degrees. */
     private void entityRow(GenericGraphics g, int x, int y, int w, int h, int gap, String... ids) {
         for (int i = 0; i < ids.length; i++) {
             int boxX = x + i * (w + gap);
@@ -659,14 +653,10 @@ public class RenderTestScreen extends GenericScreen {
 
     // Helpers
 
-    /** 1px gray frame just outside the area (x, y, w, h), to check that an icon lands exactly inside it. */
     private void frame(GenericGraphics g, int x, int y, int w, int h) {
         g.outline(x - 1, y - 1, w + 2, h + 2, CELL_BORDER);
     }
 
-    /**
-     * Draws the cell frame, title and expectation hint, and sets {@link #cx}/{@link #cy} to its content origin.
-     */
     private void cell(GenericGraphics g, Font font, int index, String title, String hint) {
         int x = ORIGIN_X + (index % COLS) * (CELL_W + GAP);
         int y = ORIGIN_Y + (index / COLS) * (CELL_H + GAP);
