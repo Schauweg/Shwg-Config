@@ -1,3 +1,2 @@
-# 0.3.0-alpha.1
-- added mob effect lookup
-- added entity gui rendering
+# 0.3.0-alpha.2
+- added method to check if a specific mod is loaded
