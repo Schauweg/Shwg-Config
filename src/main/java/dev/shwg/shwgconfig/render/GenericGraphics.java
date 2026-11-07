@@ -1375,14 +1375,14 @@ public class GenericGraphics {
     }
 
     /**
-     * Draws a precise sub-rectangle of a texture — samples the region at
+     * Draws a precise sub-rectangle of a texture - samples the region at
      * ({@code u}, {@code v}) sized {@code regionWidth} x {@code regionHeight} in
      * texture-space, and draws it on screen at ({@code x}, {@code y}) sized
      * {@code width} x {@code height} (stretched if the two sizes differ).
      *
      * <p>Use this to blit an arbitrary piece of a larger texture file (one border
      * segment out of a container texture, say) rather than a {@link GenericTexture}'s
-     * own predefined region as a whole — {@link #drawTexture} always draws a
+     * own predefined region as a whole - {@link #drawTexture} always draws a
      * texture's own fixed region; this lets the caller pick a different one on the
      * fly from the same underlying image.</p>
      *
@@ -1499,10 +1499,8 @@ public class GenericGraphics {
 
     /**
      * Draws an {@code ItemStack} icon scaled to a square of the given size (native item
-     * rendering is always 16&times;16). Handles the push/translate/scale/pop pose
-     * bookkeeping internally - including the legacy pre-1.19.4 model-view sync already
-     * built into {@link #renderItem(ItemStack, int, int)} - so callers never need to
-     * touch the pose stack themselves.
+     * rendering is always 16x16). Handles the push/translate/scale/pop pose
+     * bookkeeping internally.
      *
      * @param itemStack the item to draw
      * @param x         left edge of the icon
