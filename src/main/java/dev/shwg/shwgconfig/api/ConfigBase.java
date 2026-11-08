@@ -7,9 +7,12 @@ import com.google.gson.JsonObject;
 import dev.shwg.shwgconfig.ShwgConfig;
 import dev.shwg.shwgconfig.api.values.ConfigValue;
 import dev.shwg.shwgconfig.api.values.CustomJsonSerializable;
+import dev.shwg.shwgconfig.api.values.stringvalues.KeybindValue;
 import dev.shwg.shwgconfig.util.ConfigValueAdapter;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Base class for a mod's config. Declare your settings as public final
@@ -18,28 +21,11 @@ import java.lang.reflect.Field;
  * {@link Builder}, {@link TabBuilder}, and {@link CategoryBuilder}.
  *
  * <p>Values are (de)serialized automatically via reflection over
- * {@link ConfigValue} fields — no manual
+ * {@link ConfigValue} fields - no manual
  * (de)serialization code needed. Use {@link ConfigManager} to load, save, and
  * open the resulting screen.
  */
 public abstract class ConfigBase {
-
-    /**
-     * Walks every {@link ConfigValue} field on this
-     * config via reflection and sets each value's name to its field name — e.g.
-     * {@code enableFeature}'s {@code ConfigValue} knows it's named {@code "enableFeature"}.
-     * Purely for debugging: it's what lets a failed {@code isValid(...)} check (or any
-     * other log output) identify *which* value it came from, rather than just printing
-     * a bare value with no context.
-     *
-     * <p>Runs once, automatically, when a {@code ConfigBase} is constructed - never
-     * needs to be called manually. Only direct {@code ConfigValue} fields on this class
-     * are named this way; a value nested inside something else (a list, a custom
-     * wrapper object) won't be reached by this reflection pass.
-     */
-    public ConfigBase() {
-        initializeConfigValues();
-    }
 
     private static final Gson GSON = new GsonBuilder()
             .setPrettyPrinting()
@@ -98,7 +84,7 @@ public abstract class ConfigBase {
      * This must be called after the subclass has been constructed,
      * because Java initializes the superclass before subclass fields.
      */
-    public void initializeConfigValues() {
+    void initializeConfigValues() {
         for (Field field : getClass().getDeclaredFields()) {
             if (!ConfigValue.class.isAssignableFrom(field.getType())) {
                 continue;
@@ -115,4 +101,22 @@ public abstract class ConfigBase {
         }
     }
 
+    public List<KeybindValue> getKeybindValues() {
+        List<KeybindValue> result = new ArrayList<>();
+        for (Field field : getClass().getDeclaredFields()) {
+            if (!KeybindValue.class.isAssignableFrom(field.getType())) {
+                continue;
+            }
+            try {
+                field.setAccessible(true);
+                KeybindValue value = (KeybindValue) field.get(this);
+                if (value != null) {
+                    result.add(value);
+                }
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException("Failed to read keybind value: " + field.getName(), e);
+            }
+        }
+        return result;
+    }
 }

@@ -3,14 +3,14 @@ package dev.shwg.shwgconfig.util;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.resources.Identifier;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class KeybindCategoryResolver {
 
     /*? if >= 1.21.9 { */
-    public static final Map<Identifier, KeyMapping.Category> CATEGORY_CACHE = new HashMap<>();
-    /*?} */
+    public static final Map<Identifier, KeyMapping.Category> CATEGORY_CACHE = new ConcurrentHashMap<>();
+/*?} */
 
     /*~ if >= 1.21.9 '{@code KeyMapping.Category}' -> '{@link KeyMapping.Category}' { */
     /**

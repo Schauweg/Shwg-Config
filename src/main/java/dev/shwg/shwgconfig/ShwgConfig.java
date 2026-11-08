@@ -12,9 +12,7 @@ import net.fabricmc.api.ModInitializer;
 /*? if forge {*/
 /*import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.client.ConfigScreenHandler;
-/^? if >= 1.21.6  { ^/
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
-/^? } ^/
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.ModLoadingContext;
 *//*?}*/
@@ -25,6 +23,7 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 *//*?}*/
 
 /*? if forgeLike {*/
@@ -50,13 +49,13 @@ public class ShwgConfig implements ModInitializer {
         );
 
         /^? if >= 1.21.9  { ^/
-        RegisterKeyMappingsEvent.BUS.addListener(KeybindRegistrar::registerAll);
+        RegisterKeyMappingsEvent.BUS.addListener((RegisterKeyMappingsEvent event) -> KeybindRegistrar.register(event, configManager.config()));
         /^? } else if >= 1.21.6 { ^/
-        //RegisterKeyMappingsEvent.getBus(context.getModBusGroup()).addListener(KeybindRegistrar::registerAll);
+        //RegisterKeyMappingsEvent.getBus(context.getModBusGroup()).addListener((RegisterKeyMappingsEvent event) -> KeybindRegistrar.register(event, configManager.config()));
         /^? } else if 1.20.6 { ^/
-        //context.getModEventBus().addListener(KeybindRegistrar::registerAll);
+        //context.getModEventBus().addListener((RegisterKeyMappingsEvent event) -> KeybindRegistrar.register(event, configManager.config()));
         /^? } else { ^/
-        //FMLJavaModLoadingContext.get().getModEventBus().addListener(KeybindRegistrar::registerAll);
+        //FMLJavaModLoadingContext.get().getModEventBus().addListener((RegisterKeyMappingsEvent event) -> KeybindRegistrar.register(event, configManager.config()));
         /^? } ^/
     }
 
@@ -69,7 +68,7 @@ public class ShwgConfig implements ModInitializer {
     /*public static void neoForgeInit(ConfigManager configManager, IEventBus modEventBus, ModContainer modContainer) {
         ModLoadingContext.get().registerExtensionPoint(IConfigScreenFactory.class,
                 () -> (client, parent) -> configManager.getScreen(parent));
-        modEventBus.addListener(KeybindRegistrar::registerAll);
+        modEventBus.addListener((RegisterKeyMappingsEvent event) -> KeybindRegistrar.register(event, configManager.config()));
     }
 
     public ShwgConfig(IEventBus modEventBus, ModContainer modContainer) {
