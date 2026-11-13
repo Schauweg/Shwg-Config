@@ -203,6 +203,10 @@ val testmodJar = tasks.register<Jar>("testmodJar") {
     // Pre-26.1 this is only the unremapped dev jar; remapTestmodJar makes the real "-testmod" one.
     archiveClassifier.set(if (isDeobfuscated) "testmod" else "testmod-dev")
     from(sourceSets["testmod"].output)
+    // Forge finds mixin configs only through this manifest entry ([[mixins]] in mods.toml is NeoForge only).
+    if (mod.isForge) {
+        manifest.attributes("MixinConfigs" to "shwgconfigtestmod.client.mixins.json")
+    }
 }
 
 // Pre-26.1 output is obfuscated and needs the same remap step as the main jar.
