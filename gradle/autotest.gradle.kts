@@ -16,13 +16,21 @@
 //     -Pautotest.timeout=<minutes>   kill a run after this long (default 15, includes the first download)
 //     -Pautotest.portablemc=<path>   the portablemc executable (default: "portablemc" from the PATH)
 //     -Pautotest.dir=<path>          cache and run folders (default: .gradle/autotest)
+//     -Pautotest.skipProcessorChecks=true   skip the hash check of the Forge / NeoForge installer steps
+//                                    (needs a portablemc build with --no-check-processor-outputs; for systems
+//                                    with zlib-ng like Fedora, where the installed files are fine but hash differently)
+//     -Pautotest.keepScreenOn=false  let the screen turn off during the runs (default: kept on, Linux only)
 //
 // Runs: every project whose name ends in -fabric, -forge or -neoforge (e.g. 1.21-fabric) is tested on
 // its own Minecraft version and on every additional_versions entry of versions/dependencies/<version>.properties.
 // One run = the built jars (lib + testmod) of that project, launched with portablemc in a real instance:
 //
 //     own version:         the exact loader version from the properties (Fabric API / ModMenu: the pinned ones)
-//     additional versions: the latest stable Forge / NeoForge build, the newest Fabric API / ModMenu for that version
+//     additional versions: the latest stable Forge build, the newest NeoForge build (betas included, some
+//                          versions only have those), the newest Fabric API / ModMenu for that version
+//
+// Every run uses X11 (XWayland), also on a Wayland desktop: Forge 26.x stops on a GLFW error under Wayland,
+// and one display system for all runs keeps the screenshots comparable.
 //
 // Folders (in -Pautotest.dir):
 //     minecraft/                  portablemc's shared folder: versions, libraries, assets, Java runtimes
@@ -46,6 +54,7 @@ val autotestSuitesProperty = providers.gradleProperty("autotest.suites").orNull
 val autotestTimeoutMinutes = providers.gradleProperty("autotest.timeout").orNull?.toLong() ?: 15L
 val portablemc = providers.gradleProperty("autotest.portablemc").orNull ?: "portablemc"
 val skipProcessorChecks = providers.gradleProperty("autotest.skipProcessorChecks").orNull?.toBoolean() ?: false
+val keepScreenOn = providers.gradleProperty("autotest.keepScreenOn").orNull?.toBoolean() ?: true
 
 // Set in stonecutter.gradle.kts before this file is applied (this script can't see the stonecutter extension).
 val activeProjectPath = findProperty("autotest.activeProject") as String?
@@ -280,6 +289,9 @@ fun launch(run: AutotestRun) {
             "SHWG_AUTOTEST_SUITES" to autotestSuites
         )
     )
+    // GLFW 3.4 (26.x) picks Wayland, where Forge stops on a harmless "no window position" error.
+    // It decides by XDG_SESSION_TYPE and falls back to the default Wayland socket, so both are changed:
+    // every version then runs on X11 (XWayland), which also keeps the screenshots comparable.
     builder.environment().remove("WAYLAND_DISPLAY")
     builder.environment()["XDG_SESSION_TYPE"] = "x11"
 
@@ -289,7 +301,7 @@ fun launch(run: AutotestRun) {
     val process = try {
         builder.start()
     } catch (e: java.io.IOException) {
-        throw GradleException("autotest: could not start '$portablemc' - is it installed (pip install portablemc) or set with -Pautotest.portablemc?", e)
+        throw GradleException("autotest: could not start '$portablemc' - is it installed (on the PATH) or set with -Pautotest.portablemc?", e)
     }
 
     // Also kills the game when Gradle is cancelled (Ctrl+C interrupts waitFor).
@@ -333,6 +345,45 @@ fun verify(run: AutotestRun, reportDir: File, exitedInTime: Boolean, exitCode: I
 }
 
 // ---------------------------------------------------------------------------------------------------------
+// Keeping the screen on
+// ---------------------------------------------------------------------------------------------------------
+
+// With the screen off, the desktop stops drawing the game window, the autotest gets no new frames and the run
+// times out. While runs are in progress this holds an "idle" lock (systemd-inhibit, Linux), so the screen stays
+// on. Taken on the first run and released when the build ends - Gradle closes the service then, also after a
+// failure or Ctrl+C - so the screen can't turn off in the gaps between two runs either.
+abstract class ScreenAwake : org.gradle.api.services.BuildService<org.gradle.api.services.BuildServiceParameters.None>, AutoCloseable {
+    private var inhibitor: Process? = null
+
+    @Synchronized
+    fun acquire(logger: org.gradle.api.logging.Logger) {
+        if (inhibitor != null) return
+        if (!System.getProperty("os.name").lowercase().contains("linux")) return
+        inhibitor = try {
+            ProcessBuilder(
+                "systemd-inhibit", "--what=idle", "--mode=block",
+                "--who=ShwgConfig autotest", "--why=Minecraft windows must keep rendering for the screenshots",
+                "sleep", "infinity"
+            ).redirectErrorStream(true).redirectOutput(ProcessBuilder.Redirect.DISCARD).start()
+        } catch (e: java.io.IOException) {
+            logger.warn("autotest: could not start systemd-inhibit, the screen may turn off during the runs ($e)")
+            null
+        }
+    }
+
+    @Synchronized
+    override fun close() {
+        inhibitor?.let { process ->
+            process.descendants().forEach { it.destroy() }
+            process.destroy()
+        }
+        inhibitor = null
+    }
+}
+
+val screenAwake = gradle.sharedServices.registerIfAbsent("autotestScreenAwake", ScreenAwake::class.java) {}
+
+// ---------------------------------------------------------------------------------------------------------
 // Tasks
 // ---------------------------------------------------------------------------------------------------------
 
@@ -371,7 +422,11 @@ gradle.projectsEvaluated {
             description = "Launches ${run.project.name}'s jars on ${run.mcVersion} (${run.loader}) and checks the results"
             dependsOn("${run.project.path}:$libTask", "${run.project.path}:$testmodTask")
             runs.take(index).forEach { earlier -> mustRunAfter(earlier.taskName) }
-            doLast { launch(run) }
+            usesService(screenAwake)
+            doLast {
+                if (keepScreenOn) screenAwake.get().acquire(logger)
+                launch(run)
+            }
         }
     }
 
