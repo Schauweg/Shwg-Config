@@ -3,7 +3,10 @@
   "package": "dev.shwg.testmod.mixin",
   "compatibilityLevel": "JAVA_17",
   "minVersion": "0.8.4",
+  "plugin": "dev.shwg.testmod.mixin.TestMixinPlugin",
   "client": [
+    "ModAbsentMixin",
+    "ModPresentMixin"
   ],
   "injectors": {
     "defaultRequire": 1

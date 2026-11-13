@@ -15,7 +15,8 @@ public final class CheckSuites {
             new EntityRegistryChecks(),
             new SuggestionProviderChecks(),
             new SuggestionHelperChecks(),
-            new MobEffectTextureChecks()
+            new MobEffectTextureChecks(),
+            new ModLoaderChecks()
     );
 
     private CheckSuites() {}
