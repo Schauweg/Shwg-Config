@@ -40,8 +40,12 @@ public class Builder {
      * given category in a single internal tab (reusing the screen's own title) and
      * skips the tab-navigation bar entirely.
      */
-    public Builder addSingleTabCategory(ConfigCategory category) {
-        return addTab(TabBuilder.create(title).addCategory(category).build());
+    public ConfigManager.ScreenManager createSingleTabCategory(ConfigCategory... categories) {
+        TabBuilder tab = TabBuilder.create(title);
+        for (ConfigCategory category : categories) {
+            tab.addCategory(category);
+        }
+        return addTab(tab.build()).build();
     }
 
     /**
