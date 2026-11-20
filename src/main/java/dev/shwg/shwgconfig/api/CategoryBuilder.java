@@ -104,7 +104,7 @@ public class CategoryBuilder {
     // --- Toggle Button
     /** @see #addToggle(BooleanValue, Component, Component, Component, EntryOptions) */
     public CategoryBuilder addToggle(BooleanValue value, Component label) {
-        return addToggle(value, label, EntryOptions.NONE);
+        return addToggle(value, label, EntryOptions.create());
     }
 
     /** @see #addToggle(BooleanValue, Component, Component, Component, EntryOptions) */
@@ -117,7 +117,7 @@ public class CategoryBuilder {
 
     /** @see #addToggle(BooleanValue, Component, Component, Component, EntryOptions) */
     public CategoryBuilder addToggle(BooleanValue value, Component label, Component trueText, Component falseText) {
-        return addToggle(value, label, trueText, falseText, EntryOptions.NONE);
+        return addToggle(value, label, trueText, falseText, EntryOptions.create());
     }
 
     /**
@@ -134,7 +134,7 @@ public class CategoryBuilder {
     // --- Keybind Button
     /** @see #addKeybind(KeybindValue, EntryOptions) */
     public CategoryBuilder addKeybind(KeybindValue value) {
-        return addKeybind(value, EntryOptions.NONE);
+        return addKeybind(value, EntryOptions.create());
     }
 
     /**
@@ -160,12 +160,12 @@ public class CategoryBuilder {
     // --- Number Slider
     /** @see #addNumberSlider(IntValue, Component, NumberDisplay, EntryOptions) */
     public CategoryBuilder addNumberSlider(IntValue value, Component label) {
-        return addNumberSlider(value, label, NumberDisplay.raw(), EntryOptions.NONE);
+        return addNumberSlider(value, label, NumberDisplay.raw(), EntryOptions.create());
     }
 
     /** @see #addNumberSlider(IntValue, Component, NumberDisplay, EntryOptions) */
     public CategoryBuilder addNumberSlider(IntValue value, Component label, NumberDisplay<Integer> display) {
-        return addNumberSlider(value, label, display, EntryOptions.NONE);
+        return addNumberSlider(value, label, display, EntryOptions.create());
     }
 
     /**
@@ -186,12 +186,12 @@ public class CategoryBuilder {
 
     /** @see #addNumberSlider(FloatValue, Component, NumberDisplay, EntryOptions) */
     public CategoryBuilder addNumberSlider(FloatValue value, Component label) {
-        return addNumberSlider(value, label, NumberDisplay.raw(), EntryOptions.NONE);
+        return addNumberSlider(value, label, NumberDisplay.raw(), EntryOptions.create());
     }
 
     /** @see #addNumberSlider(FloatValue, Component, NumberDisplay, EntryOptions) */
     public CategoryBuilder addNumberSlider(FloatValue value, Component label, NumberDisplay<Float> display) {
-        return addNumberSlider(value, label, display, EntryOptions.NONE);
+        return addNumberSlider(value, label, display, EntryOptions.create());
     }
 
     /**
@@ -212,12 +212,12 @@ public class CategoryBuilder {
 
     /** @see #addNumberSlider(DoubleValue, Component, NumberDisplay, EntryOptions) */
     public CategoryBuilder addNumberSlider(DoubleValue value, Component label) {
-        return addNumberSlider(value, label, NumberDisplay.raw(), EntryOptions.NONE);
+        return addNumberSlider(value, label, NumberDisplay.raw(), EntryOptions.create());
     }
 
     /** @see #addNumberSlider(DoubleValue, Component, NumberDisplay, EntryOptions) */
     public CategoryBuilder addNumberSlider(DoubleValue value, Component label, NumberDisplay<Double> display) {
-        return addNumberSlider(value, label, display, EntryOptions.NONE);
+        return addNumberSlider(value, label, display, EntryOptions.create());
     }
 
     /**
@@ -240,7 +240,7 @@ public class CategoryBuilder {
     // --- Number EditBox
     /** @see #addNumberInput(IntValue, Component, EntryOptions) */
     public CategoryBuilder addNumberInput(IntValue value, Component label) {
-        return addNumberInput(value, label, EntryOptions.NONE);
+        return addNumberInput(value, label, EntryOptions.create());
     }
 
     /**
@@ -255,7 +255,7 @@ public class CategoryBuilder {
 
     /** @see #addNumberInput(FloatValue, Component, EntryOptions) */
     public CategoryBuilder addNumberInput(FloatValue value, Component label) {
-        return addNumberInput(value, label, EntryOptions.NONE);
+        return addNumberInput(value, label, EntryOptions.create());
     }
 
     /**
@@ -270,7 +270,7 @@ public class CategoryBuilder {
 
     /** @see #addNumberInput(DoubleValue, Component, EntryOptions) */
     public CategoryBuilder addNumberInput(DoubleValue value, Component label) {
-        return addNumberInput(value, label, EntryOptions.NONE);
+        return addNumberInput(value, label, EntryOptions.create());
     }
 
     /**
@@ -287,7 +287,7 @@ public class CategoryBuilder {
     // --- Hex Color EditBox
     /** @see #addColor(ColorValue, Component, EntryOptions) */
     public CategoryBuilder addColor(ColorValue value, Component label) {
-        return addColor(value, label, EntryOptions.NONE);
+        return addColor(value, label, EntryOptions.create());
     }
 
     /**
@@ -303,7 +303,7 @@ public class CategoryBuilder {
     // --- EditBox
     /** @see #addStringInput(StringValue, Component, EntryOptions) */
     public CategoryBuilder addStringInput(StringValue value, Component label) {
-        return addStringInput(value, label, EntryOptions.NONE);
+        return addStringInput(value, label, EntryOptions.create());
     }
 
     /**
@@ -319,7 +319,7 @@ public class CategoryBuilder {
     // --- Cycle Button
     /** @see #addCycleButton(StringValue, Component, List, EntryOptions) */
     public CategoryBuilder addCycleButton(StringValue value, Component label, List<String> options) {
-        return addCycleButton(value, label, options, EntryOptions.NONE);
+        return addCycleButton(value, label, options, EntryOptions.create());
     }
 
     /**
@@ -333,12 +333,12 @@ public class CategoryBuilder {
 
     /** @see #addCycleButton(EnumValue, Component, Function, EntryOptions) */
     public <E extends Enum<E>> CategoryBuilder addCycleButton(EnumValue<E> value, Component label) {
-        return addCycleButton(value, label, EnumLabels.formatted(), EntryOptions.NONE);
+        return addCycleButton(value, label, EnumLabels.formatted(), EntryOptions.create());
     }
 
     /** @see #addCycleButton(EnumValue, Component, Function, EntryOptions) */
     public <E extends Enum<E>> CategoryBuilder addCycleButton(EnumValue<E> value, Component label, Function<E, Component> labelFn) {
-        return addCycleButton(value, label, labelFn, EntryOptions.NONE);
+        return addCycleButton(value, label, labelFn, EntryOptions.create());
     }
 
     /**
@@ -355,7 +355,7 @@ public class CategoryBuilder {
     // --- Dropdown menu
     /** @see #addDropdown(StringValue, Component, List, EntryOptions) */
     public CategoryBuilder addDropdown(StringValue value, Component label, List<String> options) {
-        return addDropdown(value, label, options, EntryOptions.NONE);
+        return addDropdown(value, label, options, EntryOptions.create());
     }
 
     /**
@@ -368,12 +368,12 @@ public class CategoryBuilder {
 
     /** @see #addDropdown(EnumValue, Component, Function, EntryOptions) */
     public <E extends Enum<E>> CategoryBuilder addDropdown(EnumValue<E> value, Component label) {
-        return addDropdown(value, label, EnumLabels.formatted(), EntryOptions.NONE);
+        return addDropdown(value, label, EnumLabels.formatted(), EntryOptions.create());
     }
 
     /** @see #addDropdown(EnumValue, Component, Function, EntryOptions) */
     public <E extends Enum<E>> CategoryBuilder addDropdown(EnumValue<E> value, Component label, Function<E, Component> labelFn) {
-        return addDropdown(value, label, labelFn, EntryOptions.NONE);
+        return addDropdown(value, label, labelFn, EntryOptions.create());
     }
 
     /**
@@ -388,7 +388,7 @@ public class CategoryBuilder {
     // --- Suggestion EditBox
     /** @see #addSuggestionInput(StringValue, Component, SuggestionEditBox.SuggestionProvider, EntryOptions) */
     public CategoryBuilder addSuggestionInput(StringValue value, Component label, SuggestionEditBox.SuggestionProvider provider) {
-        return addSuggestionInput(value, label, provider, EntryOptions.NONE);
+        return addSuggestionInput(value, label, provider, EntryOptions.create());
     }
 
     /**
@@ -405,7 +405,7 @@ public class CategoryBuilder {
 
     /** @see #addSuggestionInput(StringValue, Component, List, EntryOptions) */
     public CategoryBuilder addSuggestionInput(StringValue value, Component label, List<String> options) {
-        return addSuggestionInput(value, label, options, EntryOptions.NONE);
+        return addSuggestionInput(value, label, options, EntryOptions.create());
     }
 
     /**
@@ -417,7 +417,7 @@ public class CategoryBuilder {
 
     /** @see #addItemSuggestionInput(ItemValue, Component, EntryOptions) */
     public CategoryBuilder addItemSuggestionInput(ItemValue value, Component label) {
-        return addItemSuggestionInput(value, label, EntryOptions.NONE);
+        return addItemSuggestionInput(value, label, EntryOptions.create());
     }
 
     /**
@@ -429,7 +429,7 @@ public class CategoryBuilder {
 
     /** @see #addBlockSuggestionInput(BlockValue, Component, EntryOptions) */
     public CategoryBuilder addBlockSuggestionInput(BlockValue value, Component label) {
-        return addBlockSuggestionInput(value, label, EntryOptions.NONE);
+        return addBlockSuggestionInput(value, label, EntryOptions.create());
     }
 
     /**

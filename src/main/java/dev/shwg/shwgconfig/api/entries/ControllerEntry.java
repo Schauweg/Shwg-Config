@@ -24,7 +24,7 @@ public class ControllerEntry<T> implements CategoryEntry {
     private final EntryOptions entryOptions;
 
     public ControllerEntry(Component label, ConfigValue<T> configValue, WidgetFactory<T> widgetFactory) {
-        this(label, configValue, widgetFactory, EntryOptions.NONE);
+        this(label, configValue, widgetFactory, EntryOptions.create());
     }
 
     public ControllerEntry(Component label, ConfigValue<T> configValue, WidgetFactory<T> widgetFactory, EntryOptions entryOptions) {

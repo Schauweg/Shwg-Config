@@ -9,8 +9,7 @@ import java.util.function.Supplier;
 /**
  * Optional per-entry configuration - tooltip, label tooltip, and a condition for
  * whether the entry is enabled. Pass to any {@link CategoryBuilder} {@code addX(...)}
- * overload that accepts one; use {@link #NONE} (the default) for an entry with none
- * of these.
+ * overload that accepts one;
  *
  * <pre>{@code
  * EntryOptions.create()
@@ -19,11 +18,6 @@ import java.util.function.Supplier;
  * }</pre>
  */
 public final class EntryOptions {
-
-    /**
-     * Shared instance for an entry with no tooltip, label tooltip, or enabled condition.
-     */
-    public static final EntryOptions NONE = new EntryOptions();
 
     private GenericTooltip tooltip;
     private GenericTooltip labelTooltip;
