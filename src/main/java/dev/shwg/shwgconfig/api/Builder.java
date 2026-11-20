@@ -37,10 +37,10 @@ public class Builder {
 
     /**
      * Convenience for a screen that only has one tab's worth of content - wraps the
-     * given category in a single internal tab (reusing the screen's own title) and
+     * given categories in a single internal tab (reusing the screen's own title) and
      * skips the tab-navigation bar entirely.
      */
-    public ConfigManager.ScreenManager createSingleTabCategory(ConfigCategory... categories) {
+    public ConfigManager.ScreenManager buildSingeTab(ConfigCategory... categories) {
         TabBuilder tab = TabBuilder.create(title);
         for (ConfigCategory category : categories) {
             tab.addCategory(category);
