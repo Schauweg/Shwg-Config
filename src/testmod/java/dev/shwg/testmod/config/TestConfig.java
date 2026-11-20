@@ -73,9 +73,9 @@ public class TestConfig extends ConfigBase {
     public final StringValue soundSuggestion = StringValue.of("minecraft:block.note_block.pling");
     public final StringValue entitySuggestion = StringValue.of("minecraft:pig");
     public final KeybindValue keybindValue = KeybindValue.ofKeyboard(
-            "shwgconfig.keybind.test", RegistryHelper.build("shwgconfig", "test_category"), InputConstants.KEY_K);
+            "shwgconfig.keybind.test", RegistryHelper.build("shwgconfig", "test_category"), InputConstants.UNKNOWN.getValue());
     public final KeybindValue mouseKeybindValue = KeybindValue.ofMouse(
-            "shwgconfig.keybind.mouse_test", RegistryHelper.build("shwgconfig", "test_category"), InputConstants.MOUSE_BUTTON_MIDDLE);
+            "shwgconfig.keybind.mouse_test", RegistryHelper.build("shwgconfig", "test_category"), InputConstants.UNKNOWN.getValue());
 
     // Tab 4: Layout & custom widgets
     public final BooleanValue previewToggleA = BooleanValue.of(true);
@@ -83,7 +83,7 @@ public class TestConfig extends ConfigBase {
     public final BooleanValue noTitleToggle = BooleanValue.of(true);
     public final IntValue noTitleSlider = IntValue.of(5, 0, 10);
     public final CurveValue curveValue = CurveValue.empty();
-    public final KeybindValue openTestScreen = KeybindValue.ofKeyboard("shwgconfig.keybind.testscreen", RegistryHelper.build("shwgconfig", "test_category"), InputConstants.KEY_U);
+    public final KeybindValue openTestScreen = KeybindValue.ofKeyboard("shwgconfig.keybind.testscreen", RegistryHelper.build("shwgconfig", "test_category"), InputConstants.UNKNOWN.getValue());
 
     // Tab 5: Lists
     public final StringListValue itemList = new StringListValue(List.of("minecraft:diamond", "minecraft:emerald"));
