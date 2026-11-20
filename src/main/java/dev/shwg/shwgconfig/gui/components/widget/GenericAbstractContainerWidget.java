@@ -20,8 +20,8 @@ import net.minecraft.client.input.CharacterEvent;
 /*? } */
 
 /*? if < 1.20.2 {*/
-//import net.minecraft.client.gui.screens.Screen;
-/*? } */
+/*import net.minecraft.client.gui.screens.Screen;
+*//*? } */
 
 /*? if >= 1.19.4 { */
 import net.minecraft.client.gui.ComponentPath;
@@ -154,8 +154,8 @@ public abstract class GenericAbstractContainerWidget extends GenericAbstractWidg
         /*? if >= 1.21.9 { */
         boolean handled = ContainerEventHandler.super.mouseClicked(mouseButtonEvent, doubleClick);
          /*?} else {*/
-        //boolean handled = ContainerEventHandler.super.mouseClicked(mouseX, mouseY, button);
-        /*?}*/
+        /*boolean handled = ContainerEventHandler.super.mouseClicked(mouseX, mouseY, button);
+        *//*?}*/
 
         // ContainerEventHandler only starts "dragging" for the primary button.
         // Do it for the others too, so drag and release events reach the child that took the press.
@@ -191,15 +191,15 @@ public abstract class GenericAbstractContainerWidget extends GenericAbstractWidg
             /*? if >= 1.21.9 { */
             return focusedChild.mouseReleased(mouseButtonEvent);
             /*?} else {*/
-            //return focusedChild.mouseReleased(mouseX, mouseY, button);
-            /*?}*/
+            /*return focusedChild.mouseReleased(mouseX, mouseY, button);
+            *//*?}*/
         }
 
         /*? if >= 1.21.9 { */
         return ContainerEventHandler.super.mouseReleased(mouseButtonEvent);
          /*?} else {*/
-        //return ContainerEventHandler.super.mouseReleased(mouseX, mouseY, button);
-        /*?}*/
+        /*return ContainerEventHandler.super.mouseReleased(mouseX, mouseY, button);
+        *//*?}*/
     }
 
     // --- mouse drag ---
@@ -221,15 +221,15 @@ public abstract class GenericAbstractContainerWidget extends GenericAbstractWidg
             /*? if >= 1.21.9 { */
             return getFocused().mouseDragged(event, deltaX, deltaY);
             /*?} else {*/
-            //return getFocused().mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
-            /*?}*/
+            /*return getFocused().mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+            *//*?}*/
         }
 
         /*? if >= 1.21.9 { */
         return ContainerEventHandler.super.mouseDragged(event, deltaX, deltaY);
          /*?} else {*/
-        //return ContainerEventHandler.super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
-        /*?}*/
+        /*return ContainerEventHandler.super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+        *//*?}*/
     }
 
     // --- mouse scroll ---
@@ -296,8 +296,8 @@ public abstract class GenericAbstractContainerWidget extends GenericAbstractWidg
         /*? if >= 1.21.9 { */
         boolean handled = ContainerEventHandler.super.keyPressed(keyEvent);
         /*?} else {*/
-        //boolean handled = ContainerEventHandler.super.keyPressed(keyCode, scanCode, modifiers);
-        /*?}*/
+        /*boolean handled = ContainerEventHandler.super.keyPressed(keyCode, scanCode, modifiers);
+        *//*?}*/
         if (handled) return true;
         // The focused child didn't use the key: let the container offer it elsewhere.
         return onUnhandledKeyPressed(e);
@@ -324,8 +324,8 @@ public abstract class GenericAbstractContainerWidget extends GenericAbstractWidg
         /*? if >= 1.21.9 { */
         return ContainerEventHandler.super.keyReleased(keyEvent);
          /*?} else {*/
-        //return ContainerEventHandler.super.keyReleased(keyCode, scanCode, modifiers);
-        /*?}*/
+        /*return ContainerEventHandler.super.keyReleased(keyCode, scanCode, modifiers);
+        *//*?}*/
     }
 
     @Override
@@ -342,7 +342,7 @@ public abstract class GenericAbstractContainerWidget extends GenericAbstractWidg
         /*? if >= 1.21.9 { */
         return ContainerEventHandler.super.charTyped(characterEvent);
          /*?} else {*/
-        //return ContainerEventHandler.super.charTyped(character, modifiers);
-        /*?}*/
+        /*return ContainerEventHandler.super.charTyped(character, modifiers);
+        *//*?}*/
     }
 }

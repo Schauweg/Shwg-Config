@@ -11,8 +11,8 @@ import net.minecraft.client.input.MouseButtonInfo;
 /*?}*/
 
 /*? if >=26.3 {*/
-//import org.lwjgl.sdl.SDLKeyboard;
-/*?}*/
+/*import org.lwjgl.sdl.SDLKeyboard;
+*//*?}*/
 public final class InputSim {
 
     public static final int LEFT = InputConstants.MOUSE_BUTTON_LEFT;
@@ -30,16 +30,16 @@ public final class InputSim {
         /*? if >=1.21.9 {*/
         return screen.mouseClicked(new MouseButtonEvent(x, y, new MouseButtonInfo(button, 0)), false);
         /*?} else {*/
-        //return screen.mouseClicked(x, y, button);
-        /*?}*/
+        /*return screen.mouseClicked(x, y, button);
+        *//*?}*/
     }
 
     public static boolean release(Screen screen, double x, double y, int button) {
         /*? if >=1.21.9 {*/
         return screen.mouseReleased(new MouseButtonEvent(x, y, new MouseButtonInfo(button, 0)));
         /*?} else {*/
-        //return screen.mouseReleased(x, y, button);
-        /*?}*/
+        /*return screen.mouseReleased(x, y, button);
+        *//*?}*/
     }
 
     public static void key(Screen screen, int keyCode) {
@@ -51,16 +51,16 @@ public final class InputSim {
         /*? if >=1.21.9 {*/
         return screen.keyPressed(keyEvent(keyCode));
         /*?} else {*/
-        //return screen.keyPressed(keyCode, 0, 0);
-        /*?}*/
+        /*return screen.keyPressed(keyCode, 0, 0);
+        *//*?}*/
     }
 
     public static boolean keyRelease(Screen screen, int keyCode) {
         /*? if >=1.21.9 {*/
         return screen.keyReleased(keyEvent(keyCode));
         /*?} else {*/
-        //return screen.keyReleased(keyCode, 0, 0);
-        /*?}*/
+        /*return screen.keyReleased(keyCode, 0, 0);
+        *//*?}*/
     }
 
     /*? if >=26.3 {*/
@@ -79,11 +79,11 @@ public final class InputSim {
 
     public static boolean typeChar(Screen screen, int codepoint) {
         /*? if >=26 {*/
-        //return screen.charTyped(new CharacterEvent(codepoint));
-        /*?} else if >=1.21.9 {*/
+        /*return screen.charTyped(new CharacterEvent(codepoint));
+        *//*?} else if >=1.21.9 {*/
         return screen.charTyped(new CharacterEvent(codepoint, 0));
         /*?} else {*/
-        //return screen.charTyped((char) codepoint, 0);
-        /*?}*/
+        /*return screen.charTyped((char) codepoint, 0);
+        *//*?}*/
     }
 }

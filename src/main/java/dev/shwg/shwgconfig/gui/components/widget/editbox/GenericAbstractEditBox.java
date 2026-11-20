@@ -32,8 +32,8 @@ import net.minecraft.client.gui.components.AbstractWidget;
 /*? } */
 
 /*? if < 1.19.3 { */
-//import com.mojang.blaze3d.vertex.PoseStack;
-/*? } */
+/*import com.mojang.blaze3d.vertex.PoseStack;
+*//*? } */
 public abstract class GenericAbstractEditBox extends GenericAbstractWidget {
 
     private static final int HINT_COLOR = 0x808080;
@@ -51,8 +51,8 @@ public abstract class GenericAbstractEditBox extends GenericAbstractWidget {
         /*? if >= 1.20.2 { */
         this.editBox = new CustomEditBox(font, x, y, width, height, message);
          /*? } else { */
-        //this.editBox = new CustomEditBox(font, x + 1, y + 1, width - 2, height - 2, message);
-        /*? } */
+        /*this.editBox = new CustomEditBox(font, x + 1, y + 1, width - 2, height - 2, message);
+        *//*? } */
         this.setFocused(false);
         this.font = font;
     }
@@ -61,12 +61,12 @@ public abstract class GenericAbstractEditBox extends GenericAbstractWidget {
     public void renderWidget(@NotNull GenericGraphics graphics, int mouseX, int mouseY, float partialTick) {
         syncEditBoxState();
         /*? if >= 26 { */
-        //editBox.extractRenderState(graphics.getGraphics(),  mouseX, mouseY, partialTick);
-        /*? } else if >= 1.19.4 { */
+        /*editBox.extractRenderState(graphics.getGraphics(),  mouseX, mouseY, partialTick);
+        *//*? } else if >= 1.19.4 { */
         editBox.render(graphics.getGraphics(), mouseX, mouseY, partialTick);
         /*? } else { */
-        //editBox.render(graphics.getGraphics(), mouseX, mouseY, partialTick);
-        /*? }*/
+        /*editBox.render(graphics.getGraphics(), mouseX, mouseY, partialTick);
+        *//*? }*/
     }
 
     protected final CustomEditBox getEditBox() {
@@ -162,8 +162,8 @@ public abstract class GenericAbstractEditBox extends GenericAbstractWidget {
         /*? if >= 1.20.2 { */
         editBox.setX(x);
          /*? } else { */
-        //editBox.setX(x + 1);
-        /*? } */
+        /*editBox.setX(x + 1);
+        *//*? } */
     }
 
     @Override
@@ -172,8 +172,8 @@ public abstract class GenericAbstractEditBox extends GenericAbstractWidget {
         /*? if >= 1.20.2 { */
         editBox.setY(y);
          /*? } else { */
-        //editBox.setY(y + 1);
-        /*? } */
+        /*editBox.setY(y + 1);
+        *//*? } */
     }
 
     @Override
@@ -182,8 +182,8 @@ public abstract class GenericAbstractEditBox extends GenericAbstractWidget {
         /*? if >= 1.20.2 { */
         editBox.setWidth(width);
         /*? } else { */
-        //editBox.setWidth(width - 2);
-        /*? } */
+        /*editBox.setWidth(width - 2);
+        *//*? } */
     }
 
     @Override
@@ -192,8 +192,8 @@ public abstract class GenericAbstractEditBox extends GenericAbstractWidget {
         /*? if >= 1.20.2 { */
         editBox.setHeight(height);
         /*? } else { */
-        //editBox.setHeight(height - 2);
-        /*? } */
+        /*editBox.setHeight(height - 2);
+        *//*? } */
     }
 
     @Override
@@ -214,19 +214,19 @@ public abstract class GenericAbstractEditBox extends GenericAbstractWidget {
         /*? if >= 1.21.9 { */
         return editBox.keyPressed(keyEvent.getKeyEvent());
          /*? } else { */
-        //return editBox.keyPressed(keyEvent.key(), keyEvent.getScanCode(), keyEvent.getModifiers());
-        /*? } */
+        /*return editBox.keyPressed(keyEvent.key(), keyEvent.getScanCode(), keyEvent.getModifiers());
+        *//*? } */
     }
 
     @Override
     protected boolean onCharTyped(GenericCharacterEvent characterEvent) {
         /*? if >= 26 { */
-        //return editBox.charTyped(new CharacterEvent(characterEvent.getCodepoint()));
-        /*? } else if >= 1.21.9 { */
+        /*return editBox.charTyped(new CharacterEvent(characterEvent.getCodepoint()));
+        *//*? } else if >= 1.21.9 { */
         return editBox.charTyped(new CharacterEvent(characterEvent.getCodepoint(), characterEvent.getModifier()));
         /*? } else { */
-        //return editBox.charTyped(characterEvent.getCodepointAsChar(), characterEvent.getModifier());
-        /*? } */
+        /*return editBox.charTyped(characterEvent.getCodepointAsChar(), characterEvent.getModifier());
+        *//*? } */
     }
 
     @Override
@@ -234,8 +234,8 @@ public abstract class GenericAbstractEditBox extends GenericAbstractWidget {
         /*? if >= 1.21.9 { */
         return editBox.mouseClicked(new MouseButtonEvent(mouseButtonEvent.getMouseX(), mouseButtonEvent.getMouseY(), new MouseButtonInfo(mouseButtonEvent.getButton(), mouseButtonEvent.getModifiers())), mouseButtonEvent.isDoubleClick());
          /*? } else { */
-        //return editBox.mouseClicked(mouseButtonEvent.getMouseX(), mouseButtonEvent.getMouseY(), mouseButtonEvent.getButton());
-        /*? } */
+        /*return editBox.mouseClicked(mouseButtonEvent.getMouseX(), mouseButtonEvent.getMouseY(), mouseButtonEvent.getButton());
+        *//*? } */
     }
 
     @Override
@@ -243,8 +243,8 @@ public abstract class GenericAbstractEditBox extends GenericAbstractWidget {
         /*? if >= 1.21.9 { */
         return editBox.mouseDragged(new MouseButtonEvent(mouseButtonEvent.getMouseX(), mouseButtonEvent.getMouseY(), new  MouseButtonInfo(mouseButtonEvent.getButton(), mouseButtonEvent.getModifiers())), deltaX, deltaY);
         /*? } else { */
-        //return editBox.mouseDragged(mouseButtonEvent.getMouseX(), mouseButtonEvent.getMouseY(), mouseButtonEvent.getButton(), deltaX, deltaY);
-         /*? } */
+        /*return editBox.mouseDragged(mouseButtonEvent.getMouseX(), mouseButtonEvent.getMouseY(), mouseButtonEvent.getButton(), deltaX, deltaY);
+         *//*? } */
     }
 
     /*? if >= 1.19.4 { */

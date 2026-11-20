@@ -9,8 +9,8 @@ import net.minecraft.data.AtlasIds;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.metadata.gui.GuiMetadataSection;
 /*? } else if >= 1.20.2 { */
-//import net.minecraft.client.gui.GuiSpriteManager;
- /*? } */
+/*import net.minecraft.client.gui.GuiSpriteManager;
+ *//*? } */
 
 /*? if >= 1.20.2 { */
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -92,8 +92,8 @@ public class GenericSprite extends GenericTexture {
         /*? if >= 1.21.9 { */
         GuiSpriteScaling scaling = textureAtlasSprite.contents().getAdditionalMetadata(GuiMetadataSection.TYPE).orElse(GuiMetadataSection.DEFAULT).scaling();
         /*? } else { */
-        //GuiSpriteScaling scaling = manager().getSpriteScaling(textureAtlasSprite);
-        /*? } */
+        /*GuiSpriteScaling scaling = manager().getSpriteScaling(textureAtlasSprite);
+        *//*? } */
         if (scaling instanceof GuiSpriteScaling.Stretch) {
             return new StretchedSprite(namespace, path, 0, 0, width, height, width, height, path);
         } else if (scaling instanceof GuiSpriteScaling.Tile tile) {
@@ -165,8 +165,8 @@ public class GenericSprite extends GenericTexture {
                     /*? if >= 1.21.4 { */
                     nineSlice.stretchInner()
                     /*? } else { */
-                    //false
-                    /*? } */
+                    /*false
+                    *//*? } */
             );
         } else {
             throw new IllegalArgumentException("The sprite is not a nice_slice type " + namespace + ":" + path);

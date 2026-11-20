@@ -27,8 +27,8 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.core.registries.BuiltInRegistries;
 /*? } else { */
-//import net.minecraft.data.BuiltinRegistries;
-/*? } */
+/*import net.minecraft.data.BuiltinRegistries;
+*//*? } */
 
 public class RegistryHelper {
 
@@ -36,24 +36,24 @@ public class RegistryHelper {
         /*? if >= 1.21.11 { */
         return resourceKey.identifier();
         /*? } else { */
-        //return resourceKey.location();
-        /*? } */
+        /*return resourceKey.location();
+        *//*? } */
     }
 
     public static Identifier build(String namespace, String path) {
         /*? if >= 1.21 {*/
         return Identifier.fromNamespaceAndPath(namespace, path);
         /*? } else {*/
-        //return Identifier.tryBuild(namespace, path);
-        /*? } */
+        /*return Identifier.tryBuild(namespace, path);
+        *//*? } */
     }
 
     public static Identifier tryBuild(String id) {
         /*? if >= 1.21 { */
         return Identifier.tryBySeparator(id, ':');
         /*? } else {*/
-        //return Identifier.of(id, ':');
-        /*? } */
+        /*return Identifier.of(id, ':');
+        *//*? } */
     }
 
     @SuppressWarnings("unchecked")
@@ -103,8 +103,8 @@ public class RegistryHelper {
                         /*? if >= 1.21.2 { */
                         if (reg.getValue(key) == value) return reg;
                         /*? } else { */
-                        //if (reg.get(key) == value) return reg;
-                        /*? } */
+                        /*if (reg.get(key) == value) return reg;
+                        *//*? } */
                     }
                 }
             } catch (IllegalAccessException | ClassCastException ignored) {}
@@ -122,8 +122,8 @@ public class RegistryHelper {
         /*? if >= 1.21.2 { */
         return level.registryAccess().lookup(key).orElse(null);
         /*? } else { */
-        //return level.registryAccess().registry(key).orElse(null);
-        /*? } */
+        /*return level.registryAccess().registry(key).orElse(null);
+        *//*? } */
     }
 
     /**
@@ -144,10 +144,10 @@ public class RegistryHelper {
         if (registry != null) result.addAll(registry.keySet());
         return result;
         /*? } else if >= 1.19.3 { */
-        //return BuiltInRegistries.ENCHANTMENT.keySet();
-        /*? } else { */
-        //return Registry.ENCHANTMENT.keySet();
-        /*? } */
+        /*return BuiltInRegistries.ENCHANTMENT.keySet();
+        *//*? } else { */
+        /*return Registry.ENCHANTMENT.keySet();
+        *//*? } */
     }
 
     public static Component enchantmentComponent(Identifier id) {
@@ -156,8 +156,8 @@ public class RegistryHelper {
             /*? if >= 1.21 { */
             return enchantment.description();
             /*? } else { */
-            //return Component.translatable(enchantment.getDescriptionId());
-            /*? } */
+            /*return Component.translatable(enchantment.getDescriptionId());
+            *//*? } */
         }
         return translatedOrId("enchantment", id);
     }
@@ -170,10 +170,10 @@ public class RegistryHelper {
         /*Registry<Enchantment> registry = clientRegistry(Registries.ENCHANTMENT);
         return registry == null ? null : registry.get(id);
         *//*? } else if >= 1.19.3 { */
-        //return BuiltInRegistries.ENCHANTMENT.get(id);
-        /*? } else { */
-        //return Registry.ENCHANTMENT.get(id);
-        /*? } */
+        /*return BuiltInRegistries.ENCHANTMENT.get(id);
+        *//*? } else { */
+        /*return Registry.ENCHANTMENT.get(id);
+        *//*? } */
     }
 
     // --- Biomes
@@ -181,8 +181,8 @@ public class RegistryHelper {
     /*? if >= 1.19.3 { */
     private static final ResourceKey<Registry<Biome>> BIOME_REGISTRY = Registries.BIOME;
     /*? } else { */
-    //private static final ResourceKey<Registry<Biome>> BIOME_REGISTRY = Registry.BIOME_REGISTRY;
-    /*? } */
+    /*private static final ResourceKey<Registry<Biome>> BIOME_REGISTRY = Registry.BIOME_REGISTRY;
+    *//*? } */
 
     public static Set<Identifier> getBiomes() {
         // Vanilla biomes are always known; with a world loaded, datapack / server biomes are added.
@@ -218,24 +218,24 @@ public class RegistryHelper {
         /*? if >= 1.19.3 { */
         return BuiltInRegistries.ITEM.keySet();
         /*? } else { */
-        //return Registry.ITEM.keySet();
-        /*? } */
+        /*return Registry.ITEM.keySet();
+        *//*? } */
     }
 
     public static Set<Identifier> getBlocks() {
         /*? if >= 1.19.3 { */
         return BuiltInRegistries.BLOCK.keySet();
         /*? } else { */
-        //return Registry.BLOCK.keySet();
-        /*? } */
+        /*return Registry.BLOCK.keySet();
+        *//*? } */
     }
 
     public static Set<Identifier> getEntityTypes() {
         /*? if >= 1.19.3 { */
         return BuiltInRegistries.ENTITY_TYPE.keySet();
         /*? } else { */
-        //return Registry.ENTITY_TYPE.keySet();
-        /*? } */
+        /*return Registry.ENTITY_TYPE.keySet();
+        *//*? } */
     }
 
     public static Component component(String prefix, Identifier identifier) {
@@ -253,8 +253,8 @@ public class RegistryHelper {
         /*? if >= 1.21.2 { */
         return Component.translatable(i.getDescriptionId());
         /*? } else { */
-        //return i.getDescription();
-        /*? } */
+        /*return i.getDescription();
+        *//*? } */
     }
 
     public static Component blockComponent(Block block) {
@@ -268,8 +268,8 @@ public class RegistryHelper {
         /*? if >= 1.21.2 { */
         return Component.translatable(i.getDescriptionId());
         /*? } else { */
-        //return i.getName();
-        /*? } */
+        /*return i.getName();
+        *//*? } */
     }
 
     public static Component entityComponent(EntityType<?> entityType) {
@@ -283,8 +283,8 @@ public class RegistryHelper {
         /*? if >= 1.21.2 { */
         return Component.translatable(i.getDescriptionId());
         /*? } else { */
-        //return i.getDescription();
-        /*? } */
+        /*return i.getDescription();
+        *//*? } */
     }
     
     public static Item getItem(Identifier item) {
@@ -296,10 +296,10 @@ public class RegistryHelper {
         }
         return null;
         /*? } else if >= 1.19.3 { */
-        //return BuiltInRegistries.ITEM.get(item);
-        /*? } else { */
-        //return Registry.ITEM.get(item);
-        /*? } */
+        /*return BuiltInRegistries.ITEM.get(item);
+        *//*? } else { */
+        /*return Registry.ITEM.get(item);
+        *//*? } */
     }
 
     public static Block getBlock(Identifier block) {
@@ -311,10 +311,10 @@ public class RegistryHelper {
         }
         return null;
         /*? } else if >= 1.19.3 { */
-        //return BuiltInRegistries.BLOCK.get(block);
-        /*? } else { */
-        //return Registry.BLOCK.get(block);
-        /*? } */
+        /*return BuiltInRegistries.BLOCK.get(block);
+        *//*? } else { */
+        /*return Registry.BLOCK.get(block);
+        *//*? } */
     }
 
     public static EntityType<?> getEntityType(Identifier entityType) {
@@ -326,34 +326,34 @@ public class RegistryHelper {
         }
         return null;
         /*? } else if >= 1.19.3 { */
-        //return BuiltInRegistries.ENTITY_TYPE.get(entityType);
-        /*? } else { */
-        //return Registry.ENTITY_TYPE.get(entityType);
-        /*? } */
+        /*return BuiltInRegistries.ENTITY_TYPE.get(entityType);
+        *//*? } else { */
+        /*return Registry.ENTITY_TYPE.get(entityType);
+        *//*? } */
     }
 
     public static Identifier getID(Item item) {
         /*? if >= 1.19.3 { */
         return BuiltInRegistries.ITEM.getKey(item);
         /*? } else { */
-        //return Registry.ITEM.getKey(item);
-        /*? } */
+        /*return Registry.ITEM.getKey(item);
+        *//*? } */
     }
 
     public static Identifier getID(Block block) {
         /*? if >= 1.19.3 { */
         return BuiltInRegistries.BLOCK.getKey(block);
         /*? } else { */
-        //return Registry.BLOCK.getKey(block);
-        /*? } */
+        /*return Registry.BLOCK.getKey(block);
+        *//*? } */
     }
 
     public static Identifier getID(EntityType<?> entityType) {
         /*? if >= 1.19.3 { */
         return BuiltInRegistries.ENTITY_TYPE.getKey(entityType);
         /*? } else { */
-        //return Registry.ENTITY_TYPE.getKey(entityType);
-        /*? } */
+        /*return Registry.ENTITY_TYPE.getKey(entityType);
+        *//*? } */
     }
 
     /*? if < 1.21 { */
@@ -361,8 +361,8 @@ public class RegistryHelper {
         /^? if >= 1.19.3 { ^/
         return BuiltInRegistries.ENCHANTMENT.getKey(enchantment);
         /^? } else { ^/
-        //return Registry.ENCHANTMENT.getKey(enchantment);
-        /^? } ^/
+        /^return Registry.ENCHANTMENT.getKey(enchantment);
+        ^//^? } ^/
     }
     *//*? } */
 }

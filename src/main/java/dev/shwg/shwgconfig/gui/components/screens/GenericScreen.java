@@ -35,8 +35,8 @@ import net.minecraft.client.input.CharacterEvent;
 /*? if >= 1.20 { */
 import net.minecraft.client.gui.GuiGraphics;
 /*?} else {*/
-//import com.mojang.blaze3d.vertex.PoseStack;
-/*?} */
+/*import com.mojang.blaze3d.vertex.PoseStack;
+*//*?} */
 
 /*? if >= 1.19.4 { */
 import net.minecraft.client.gui.ComponentPath;
@@ -59,8 +59,8 @@ import com.mojang.blaze3d.platform.InputConstants;
 public class GenericScreen extends Screen {
 
     /*? if < 1.19.4 { */
-        //public static final int TAB_BYPASS_KEYCODE = -999999;
-    /*? } */
+        /*public static final int TAB_BYPASS_KEYCODE = -999999;
+    *//*? } */
 
     protected final List<LayoutElement> elements = new ArrayList<>();
     private final Screen parent;
@@ -75,12 +75,12 @@ public class GenericScreen extends Screen {
 
     @Override
     /*? if >= 26 { */
-    //public final void extractRenderState(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-     /*? } else if >= 1.20 { */
+    /*public final void extractRenderState(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+     *//*? } else if >= 1.20 { */
     public final void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
      /*? } else { */
-    //public final void render(@NotNull PoseStack graphics, int mouseX, int mouseY, float partialTicks) {
-        /*? } */
+    /*public final void render(@NotNull PoseStack graphics, int mouseX, int mouseY, float partialTicks) {
+        *//*? } */
         GenericGraphics g = ((GraphicsAccessor) graphics).shwgConfigs$getGraphics();
         updateOverlayBoundaries();
         render(g, mouseX, mouseY, partialTicks);
@@ -158,12 +158,12 @@ public class GenericScreen extends Screen {
 
     public void renderBackground(GenericGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         /*?  if >= 26 { */
-        //super.extractBackground(graphics.getGraphics(), mouseX, mouseY, partialTicks);
-         /*? } else if >= 1.20.2 { */
+        /*super.extractBackground(graphics.getGraphics(), mouseX, mouseY, partialTicks);
+         *//*? } else if >= 1.20.2 { */
         super.renderBackground(graphics.getGraphics(), mouseX, mouseY, partialTicks);
          /*? } else { */
-        //super.renderBackground(graphics.getGraphics());
-        /*? } */
+        /*super.renderBackground(graphics.getGraphics());
+        *//*? } */
     }
 
     public void updateOverlayBoundaries() {
@@ -195,8 +195,8 @@ public class GenericScreen extends Screen {
         /*? if >= 1.21.9 { */
         boolean handled = super.mouseClicked(mouseButtonEvent, doubleClick);
          /*?} else {*/
-        //boolean handled = super.mouseClicked(mouseX, mouseY, button);
-        /*?}*/
+        /*boolean handled = super.mouseClicked(mouseX, mouseY, button);
+        *//*?}*/
 
         // Vanilla only starts "dragging" for the primary button. Do it for the others too,
         // so drag and release events reach the widget that took the press.
@@ -239,15 +239,15 @@ public class GenericScreen extends Screen {
             /*? if >= 1.21.9 { */
             return focused.mouseReleased(mouseButtonEvent);
             /*?} else {*/
-            //return focused.mouseReleased(mouseX, mouseY, button);
-            /*?}*/
+            /*return focused.mouseReleased(mouseX, mouseY, button);
+            *//*?}*/
         }
 
         /*? if >= 1.21.9 { */
         return super.mouseReleased(mouseButtonEvent);
          /*?} else {*/
-        //return super.mouseReleased(mouseX, mouseY, button);
-        /*?}*/
+        /*return super.mouseReleased(mouseX, mouseY, button);
+        *//*?}*/
     }
 
     // --- mouse drag
@@ -273,15 +273,15 @@ public class GenericScreen extends Screen {
             /*? if >= 1.21.9 { */
             return getFocused().mouseDragged(event, deltaX, deltaY);
             /*?} else {*/
-            //return getFocused().mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
-            /*?}*/
+            /*return getFocused().mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+            *//*?}*/
         }
 
         /*? if >= 1.21.9 { */
         return super.mouseDragged(event, deltaX, deltaY);
          /*?} else {*/
-        //return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
-        /*?}*/
+        /*return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+        *//*?}*/
     }
 
     // --- mouse scroll
@@ -310,8 +310,8 @@ public class GenericScreen extends Screen {
         /*? if >= 1.20.2 { */
         return super.mouseScrolled(mouseX, mouseY, horizontal, vertical);
          /*?} else {*/
-        //return super.mouseScrolled(mouseX, mouseY, vertical);
-        /*?}*/
+        /*return super.mouseScrolled(mouseX, mouseY, vertical);
+        *//*?}*/
     }
 
     // --- Key press
@@ -339,8 +339,8 @@ public class GenericScreen extends Screen {
         /*? if >= 1.21.9 { */
         boolean handled = super.keyPressed(keyEvent);
          /*?} else {*/
-        //boolean handled = super.keyPressed(keyCode, scanCode, modifiers);
-        /*?}*/
+        /*boolean handled = super.keyPressed(keyCode, scanCode, modifiers);
+        *//*?}*/
         closeOnEsc = true;
         if (handled) {
             return true;
@@ -351,8 +351,8 @@ public class GenericScreen extends Screen {
             /*? if >= 1.21.9 { */
             return super.keyPressed(keyEvent);
             /*?} else {*/
-            //return super.keyPressed(keyCode, scanCode, modifiers);
-             /*?}*/
+            /*return super.keyPressed(keyCode, scanCode, modifiers);
+             *//*?}*/
         }
 
         return false;
@@ -406,8 +406,8 @@ public class GenericScreen extends Screen {
         /*? if >= 1.21.9 { */
         return super.keyReleased(keyEvent);
          /*?} else {*/
-        //return super.keyReleased(keyCode, scanCode, modifiers);
-        /*?}*/
+        /*return super.keyReleased(keyCode, scanCode, modifiers);
+        *//*?}*/
     }
 
     protected boolean onCharTyped(GenericCharacterEvent keyEvent) {
@@ -429,8 +429,8 @@ public class GenericScreen extends Screen {
         /*? if >= 1.21.9 { */
         return super.charTyped(characterEvent);
          /*?} else {*/
-        //return super.charTyped(character, modifiers);
-        /*?}*/
+        /*return super.charTyped(character, modifiers);
+        *//*?}*/
     }
 
     @Override
@@ -445,8 +445,8 @@ public class GenericScreen extends Screen {
 
     public void setScreen(Screen screen) {
         /*? if >= 26.2 { */
-        //Minecraft.getInstance().setScreenAndShow(screen);
-         /*? } else { */
+        /*Minecraft.getInstance().setScreenAndShow(screen);
+         *//*? } else { */
         Minecraft.getInstance().setScreen(screen);
         /*? } */
     }

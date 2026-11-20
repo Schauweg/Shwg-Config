@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /*? if >=26 { */
-//import net.minecraft.core.component.DataComponentPatch;
-/*?} */
+/*import net.minecraft.core.component.DataComponentPatch;
+*//*?} */
 
 /*? if >=1.21.2 { */
 import net.minecraft.core.Holder;
@@ -31,8 +31,8 @@ import java.util.Optional;
 /*? if >=1.19.3 { */
 import net.minecraft.core.registries.BuiltInRegistries;
 /*?} else { */
-//import net.minecraft.core.Registry;
-/*?} */
+/*import net.minecraft.core.Registry;
+*//*?} */
 
 public class DisplayItemStack {
 
@@ -54,14 +54,14 @@ public class DisplayItemStack {
             /*? if >=1.21 { */
             ResourceKey<Enchantment> enchantment
             /*?} else { */
-            //Enchantment enchantment
-            /*?} */
+            /*Enchantment enchantment
+            *//*?} */
     ) {
         /*? if >=1.21 { */
         fakeEnchantments.add(RegistryHelper.getID(enchantment));
         /*?} else { */
-        //stack.enchant(enchantment, 1);
-        /*?} */
+        /*stack.enchant(enchantment, 1);
+        *//*?} */
         return this;
     }
 
@@ -125,10 +125,10 @@ public class DisplayItemStack {
         }
         return ItemStack.EMPTY;
         /*?} else if >=1.19.3 { */
-        //return getStackSimple(BuiltInRegistries.ITEM.get(id));
-        /*?} else { */
-        //return getStackSimple(Registry.ITEM.get(id));
-        /*?} */
+        /*return getStackSimple(BuiltInRegistries.ITEM.get(id));
+        *//*?} else { */
+        /*return getStackSimple(Registry.ITEM.get(id));
+        *//*?} */
     }
 
     /**

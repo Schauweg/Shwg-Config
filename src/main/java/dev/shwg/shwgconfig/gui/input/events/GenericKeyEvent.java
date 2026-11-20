@@ -5,8 +5,8 @@ import dev.shwg.shwgconfig.api.values.stringvalues.KeybindValue;
 /*? if >= 1.21.9 { */
 import net.minecraft.client.input.KeyEvent;
 /*? } else {*/
-//import org.lwjgl.glfw.GLFW;
-/*? } */
+/*import org.lwjgl.glfw.GLFW;
+*//*? } */
 
 public class GenericKeyEvent {
 
@@ -26,8 +26,8 @@ public class GenericKeyEvent {
         this.modifiers = keyEvent.modifiers();
         this.key = keyEvent.key();
         /*? if >= 26.3 {*/
-        //this.scanCode = keyEvent.keycode();
-        /*? } else {*/
+        /*this.scanCode = keyEvent.keycode();
+        *//*? } else {*/
         this.scanCode = keyEvent.scancode();
         /*? } */
         this.shiftDown = keyEvent.hasShiftDown();
@@ -152,7 +152,7 @@ public class GenericKeyEvent {
         /*? if >= 1.21.9 { */
         return keybindValue.keyMapping().matches(keyEvent);
         /*? } else {*/
-        //return keybindValue.keyMapping().matches(key, scanCode);
-        /*? } */
+        /*return keybindValue.keyMapping().matches(key, scanCode);
+        *//*? } */
     }
 }

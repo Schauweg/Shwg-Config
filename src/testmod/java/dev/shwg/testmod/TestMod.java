@@ -25,7 +25,7 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.bus.api.IEventBus;
 *//*?}*/
 
-/*? if forgeLike{ */
+/*? if forgeLike { */
 /*import dev.shwg.shwgconfig.ShwgConfig;
 @Mod(TestMod.MOD_ID)
 *//*?}*/
@@ -59,13 +59,13 @@ public class TestMod implements ModInitializer {
     }
     /*?}*/
 
-    private void init(){
+    private void init() {
         configManager = ConfigManager.of(TEST_CONFIG, "shwgconfig-testmod.json");
         configManager.load();
 
         AutoTest.start();
 
-        ClientTickDispatcher.registerGUI(keyEvent ->  {
+        ClientTickDispatcher.registerGUI(keyEvent -> {
             if (keyEvent.matches(TEST_CONFIG.keybindValue)) {
                 Minecraft.getInstance().setScreen(configManager.getScreen(Minecraft.getInstance().screen));
             }

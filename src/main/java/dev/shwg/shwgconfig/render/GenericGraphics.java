@@ -68,8 +68,8 @@ import net.minecraft.resources.ResourceKey;
 /*import com.mojang.blaze3d.platform.Lighting;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 *//*?} else if >=1.19.4 && <1.21.2 {*/
-//import net.minecraft.client.gui.screens.inventory.InventoryScreen;
-/*?} else if <1.19.4 {*/
+/*import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+*//*?} else if <1.19.4 {*/
 /*import com.mojang.blaze3d.platform.Lighting;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
@@ -78,19 +78,19 @@ import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 /*? if >=1.21.11 {*/
 import net.minecraft.util.Util;
 /*?} else {*/
-//import net.minecraft.Util;
-/*?}*/
+/*import net.minecraft.Util;
+*//*?}*/
 
 /*? if >=1.21.6 {*/
 import net.minecraft.client.renderer.RenderPipelines;
 import org.joml.Matrix3x2fStack;
 /*?} else {*/
-//import com.mojang.blaze3d.vertex.PoseStack;
-/*?}*/
+/*import com.mojang.blaze3d.vertex.PoseStack;
+*//*?}*/
 
 /*? if <=1.21.5 && >=1.21.2 {*/
-//import net.minecraft.client.renderer.RenderType;
-/*?}*/
+/*import net.minecraft.client.renderer.RenderType;
+*//*?}*/
 
 /*? if >=1.20 {*/
 import net.minecraft.client.gui.GuiGraphics;
@@ -101,8 +101,8 @@ import net.minecraft.client.gui.screens.Screen;
 *//*?}*/
 
 /*? if <1.19.4 { */
-//import dev.shwg.shwgconfig.render.scissor.ScissorStack;
-/*?} */
+/*import dev.shwg.shwgconfig.render.scissor.ScissorStack;
+*//*?} */
 
 /**
  * Cross-version abstraction layer over Minecraft's GUI rendering API.
@@ -187,8 +187,8 @@ public class GenericGraphics {
         /*? if >=1.21.6 { */
         graphics.setTooltipForNextFrame(font, lines, image, mouseX, mouseY);
         /*?} else if >=1.20 { */
-        //graphics.renderTooltip(font, lines, image, mouseX, mouseY);
-        /*?} else { */
+        /*graphics.renderTooltip(font, lines, image, mouseX, mouseY);
+        *//*?} else { */
         /*Screen screen = Minecraft.getInstance().screen;
         if (screen != null) {
             screen.renderTooltip(poseStack, lines, image, mouseX, mouseY);
@@ -238,8 +238,8 @@ public class GenericGraphics {
         /*? if >=1.20 {*/
         graphics.fill(x1, y1, x2, y2, color);
         /*?} else {*/
-        //GuiComponent.fill(poseStack, x1, y1, x2, y2, color);
-        /*?}*/
+        /*GuiComponent.fill(poseStack, x1, y1, x2, y2, color);
+        *//*?}*/
     }
 
     /**
@@ -271,8 +271,8 @@ public class GenericGraphics {
         /*? if >=1.20 {*/
         graphics.fillGradient(x0, y0, x1, y1, colorTop, colorBottom);
         /*?} else {*/
-        //GuiComponentAccessor.gradient(poseStack, x0, y0, x1, y1, colorTop, colorBottom);
-        /*?}*/
+        /*GuiComponentAccessor.gradient(poseStack, x0, y0, x1, y1, colorTop, colorBottom);
+        *//*?}*/
     }
 
 
@@ -290,12 +290,12 @@ public class GenericGraphics {
      */
     public void hLine(int x0, int x1, int y, int color) {
         /*? if >=26 {*/
-        //graphics.horizontalLine(x0, x1, y, color);
-        /*?} else if >=1.20 { */
+        /*graphics.horizontalLine(x0, x1, y, color);
+        *//*?} else if >=1.20 { */
         graphics.hLine(x0, x1, y, color);
         /*?} else { */
-        //GuiComponentAccessor.shLine(poseStack, x0, x1, y, color);
-        /*?} */
+        /*GuiComponentAccessor.shLine(poseStack, x0, x1, y, color);
+        *//*?} */
     }
 
     /**
@@ -310,12 +310,12 @@ public class GenericGraphics {
      */
     public void vLine(int x, int y0, int y1, int color) {
         /*? if >=26 {*/
-        //graphics.verticalLine(x, y0, y1, color);
-        /*?} else if >=1.20 { */
+        /*graphics.verticalLine(x, y0, y1, color);
+        *//*?} else if >=1.20 { */
         graphics.vLine(x, y0, y1, color);
         /*?} else { */
-        //GuiComponentAccessor.svLine(poseStack, x, y0, y1, color);
-        /*?} */
+        /*GuiComponentAccessor.svLine(poseStack, x, y0, y1, color);
+        *//*?} */
     }
 
     /**
@@ -330,8 +330,8 @@ public class GenericGraphics {
      */
     public void outline(int x, int y, int width, int height, int color) {
         /*? if >=26 {*/
-        //graphics.outline(x, y, width, height, color);
-        /*?} else if =1.21.11 { */
+        /*graphics.outline(x, y, width, height, color);
+        *//*?} else if =1.21.11 { */
         graphics.renderOutline(x, y, width, height, color);
         /*?} else if <1.21.11 && >=1.21.9 { */
         /*/^for some reason in version 1.21.9 and 1.21.10 renderOutline does not exist?!^/
@@ -340,10 +340,10 @@ public class GenericGraphics {
         this.vLine(x, y, y + height - 1, color); //left
         this.vLine(x + width - 1, y, y + height - 1, color); //right
         *//*?} else if >=1.20 { */
-        //graphics.renderOutline(x, y, width, height, color);
-        /*?} else if >=1.19.4 { */
-        //GuiComponent.renderOutline(poseStack, x, y, width, height, color);
-        /*?} else {*/
+        /*graphics.renderOutline(x, y, width, height, color);
+        *//*?} else if >=1.19.4 { */
+        /*GuiComponent.renderOutline(poseStack, x, y, width, height, color);
+        *//*?} else {*/
         /*this.hLine(x, x + width - 1, y, color); // top
         this.hLine(x, x + width - 1, y + height - 1, color); // bottom
         this.vLine(x, y, y + height - 1, color); //left
@@ -376,11 +376,11 @@ public class GenericGraphics {
      */
     public void drawString(Font font, String text, int x, int y, int color, boolean shadow) {
         /*? if <=1.21.5 {*/
-        //if ((color & 0xFC000000) == 0) return; // old vanilla forces alpha 0-3 to opaque, newer versions draw nothing
-        /*?}*/
+        /*if ((color & 0xFC000000) == 0) return; // old vanilla forces alpha 0-3 to opaque, newer versions draw nothing
+        *//*?}*/
         /*? if >=26 {*/
-        //graphics.text(font, text, x, y, color, shadow);
-        /*?} else if >=1.20 { */
+        /*graphics.text(font, text, x, y, color, shadow);
+        *//*?} else if >=1.20 { */
         graphics.drawString(font, text, x, y, color, shadow);
         /*?} else { */
         /*if (shadow) font.drawShadow(poseStack, text, x, y, color);
@@ -403,11 +403,11 @@ public class GenericGraphics {
 
     public void drawString(Font font, Component text, int x, int y, int color, boolean shadow) {
         /*? if <=1.21.5 {*/
-        //if ((color & 0xFC000000) == 0) return; // old vanilla forces alpha 0-3 to opaque, newer versions draw nothing
-        /*?}*/
+        /*if ((color & 0xFC000000) == 0) return; // old vanilla forces alpha 0-3 to opaque, newer versions draw nothing
+        *//*?}*/
         /*? if >=26 {*/
-        //graphics.text(font, text, x, y, color, shadow);
-        /*?} else if >=1.20 { */
+        /*graphics.text(font, text, x, y, color, shadow);
+        *//*?} else if >=1.20 { */
         graphics.drawString(font, text, x, y, color, shadow);
         /*?} else { */
         /*if (shadow) font.drawShadow(poseStack, text, x, y, color);
@@ -432,11 +432,11 @@ public class GenericGraphics {
 
     public void drawString(Font font, FormattedCharSequence text, int x, int y, int color, boolean shadow) {
         /*? if <=1.21.5 {*/
-        //if ((color & 0xFC000000) == 0) return; // old vanilla forces alpha 0-3 to opaque, newer versions draw nothing
-        /*?}*/
+        /*if ((color & 0xFC000000) == 0) return; // old vanilla forces alpha 0-3 to opaque, newer versions draw nothing
+        *//*?}*/
         /*? if >=26 {*/
-        //graphics.text(font, text, x, y, color, shadow);
-        /*?} else if >=1.20 { */
+        /*graphics.text(font, text, x, y, color, shadow);
+        *//*?} else if >=1.20 { */
         graphics.drawString(font, text, x, y, color, shadow);
         /*?} else { */
         /*if (shadow) font.drawShadow(poseStack, text, x, y, color);
@@ -627,20 +627,20 @@ public class GenericGraphics {
         /*? if >=1.21.6 { */
         graphics.pose().pushMatrix();
         /*?} else if >=1.20 { */
-        //graphics.pose().pushPose();
-        /*?} else { */
-        //poseStack.pushPose();
-        /*?} */
+        /*graphics.pose().pushPose();
+        *//*?} else { */
+        /*poseStack.pushPose();
+        *//*?} */
     }
 
     public void popPose() {
         /*? if >=1.21.6 { */
         graphics.pose().popMatrix();
         /*?} else if >=1.20 { */
-        //graphics.pose().popPose();
-        /*?} else { */
-        //poseStack.popPose();
-        /*?} */
+        /*graphics.pose().popPose();
+        *//*?} else { */
+        /*poseStack.popPose();
+        *//*?} */
     }
 
     /**
@@ -674,10 +674,10 @@ public class GenericGraphics {
         /*? if >=1.21.6 { */
         graphics.pose().translate(x, y);
         /*?} else if >=1.20 { */
-        //graphics.pose().translate(x, y, z);
-        /*?} else { */
-        //poseStack.translate(x, y, z);
-        /*?} */
+        /*graphics.pose().translate(x, y, z);
+        *//*?} else { */
+        /*poseStack.translate(x, y, z);
+        *//*?} */
     }
 
     /**
@@ -695,10 +695,10 @@ public class GenericGraphics {
         /*? if >=1.21.6 { */
         graphics.pose().scale(x, y);
         /*?} else if >=1.20 { */
-        //graphics.pose().scale(x, y, z);
-        /*?} else { */
-        //poseStack.scale(x, y, z);
-        /*?} */
+        /*graphics.pose().scale(x, y, z);
+        *//*?} else { */
+        /*poseStack.scale(x, y, z);
+        *//*?} */
     }
 
     /**
@@ -717,12 +717,12 @@ public class GenericGraphics {
         /*? if >=1.21.6 { */
         graphics.pose().rotate(radians);
         /*?} else if >=1.20 { */
-        //graphics.pose().mulPose(com.mojang.math.Axis.ZP.rotation(radians));
-        /*?} else if >=1.19.3 { */
-        //poseStack.mulPose(com.mojang.math.Axis.ZP.rotation(radians));
-        /*?} else { */
-        //poseStack.mulPose(com.mojang.math.Vector3f.ZP.rotation(radians));
-        /*?} */
+        /*graphics.pose().mulPose(com.mojang.math.Axis.ZP.rotation(radians));
+        *//*?} else if >=1.19.3 { */
+        /*poseStack.mulPose(com.mojang.math.Axis.ZP.rotation(radians));
+        *//*?} else { */
+        /*poseStack.mulPose(com.mojang.math.Vector3f.ZP.rotation(radians));
+        *//*?} */
     }
 
     /*? if <1.19.4 { */
@@ -870,8 +870,8 @@ public class GenericGraphics {
         if (x1 <= x0 || y1 <= y0) return; // scaled down below one pixel
         /*?}*/
         /*? if >=1.21.6 && <1.21.11 {*/
-        //state.hitboxesRenderState = null;
-        /*?}*/
+        /*state.hitboxesRenderState = null;
+        *//*?}*/
         /*? if >=1.21.9 {*/
         state.shadowPieces.clear();
         state.outlineColor = 0;
@@ -906,12 +906,12 @@ public class GenericGraphics {
         Quaternionf rotation = new Quaternionf().rotateZ((float) Math.PI).mul(pitchRotation);
         Vector3f translation = new Vector3f(-screen.centerX(), -screen.centerY(), 0.0F);
         /*? if >=26 {*/
-        //graphics.entity(state, scale, translation, rotation, pitchRotation, x0, y0, x1, y1);
-        /*?} else if >=1.21.6 {*/
+        /*graphics.entity(state, scale, translation, rotation, pitchRotation, x0, y0, x1, y1);
+        *//*?} else if >=1.21.6 {*/
         graphics.submitEntityRenderState(state, scale, translation, rotation, pitchRotation, x0, y0, x1, y1);
         /*?} else {*/
-        //renderStateNow(renderer, state, x0, y0, x1, y1, scale, translation, rotation, pitchRotation);
-        /*?}*/
+        /*renderStateNow(renderer, state, x0, y0, x1, y1, scale, translation, rotation, pitchRotation);
+        *//*?}*/
     }
 
     /*? if >=1.21.6 {*/
@@ -1121,10 +1121,10 @@ public class GenericGraphics {
         /*? if >=1.20 {*/
         graphics.enableScissor(x1, y1, x2, y2);
         /*?} else if >=1.19.4 {*/
-        //GuiComponent.enableScissor(x1, y1, x2, y2);
-        /*?} else {*/
-        //ScissorStack.push(x1, y1, x2, y2);
-        /*?}*/
+        /*GuiComponent.enableScissor(x1, y1, x2, y2);
+        *//*?} else {*/
+        /*ScissorStack.push(x1, y1, x2, y2);
+        *//*?}*/
     }
 
     /**
@@ -1138,10 +1138,10 @@ public class GenericGraphics {
         /*? if >=1.20 {*/
         graphics.disableScissor();
         /*?} else if >=1.19.4 {*/
-        //GuiComponent.disableScissor();
-        /*?} else {*/
-        //ScissorStack.pop();
-        /*?}*/
+        /*GuiComponent.disableScissor();
+        *//*?} else {*/
+        /*ScissorStack.pop();
+        *//*?}*/
     }
 
     /*? if < 1.21.6 { */
@@ -1149,10 +1149,10 @@ public class GenericGraphics {
         /^? if >=1.20 {^/
         org.joml.Matrix4f m = graphics.pose().last().pose();
         /^?} else if >=1.19.3 {^/
-        //org.joml.Matrix4f m = poseStack.last().pose();
-        /^?} else {^/
-        //com.mojang.math.Matrix4f m = poseStack.last().pose();
-        /^?}^/
+        /^org.joml.Matrix4f m = poseStack.last().pose();
+        ^//^?} else {^/
+        /^com.mojang.math.Matrix4f m = poseStack.last().pose();
+        ^//^?}^/
 
         /^? if >=1.19.3 {^/
         org.joml.Vector4f a = new org.joml.Vector4f(x1, y1, 0, 1).mul(m);
@@ -1262,10 +1262,10 @@ public class GenericGraphics {
         /*? if >=1.21.6 {*/
         graphics.blitSprite(RenderPipelines.GUI_TEXTURED, texture.getSprite(), x, y, width, height);
         /*?} else if >=1.21.2 { */
-        //graphics.blitSprite(RenderType::guiTextured, texture.getSprite(), x, y, width, height);
-        /*?} else if >=1.20.2 { */
-        //graphics.blitSprite(texture.getSprite(), x, y, width, height);
-        /*?} else { */
+        /*graphics.blitSprite(RenderType::guiTextured, texture.getSprite(), x, y, width, height);
+        *//*?} else if >=1.20.2 { */
+        /*graphics.blitSprite(texture.getSprite(), x, y, width, height);
+        *//*?} else { */
         /*if (texture instanceof TiledSprite tiled) {
             //? if < 1.20
             //RenderSystem.setShaderTexture(0, texture.getSprite());
@@ -1450,12 +1450,12 @@ public class GenericGraphics {
 
     public void renderItem(ItemStack itemStack, int x, int y) {
         /*? if >=26 { */
-        //graphics.item(itemStack, x, y);
-        /*?} else if >=1.20 { */
+        /*graphics.item(itemStack, x, y);
+        *//*?} else if >=1.20 { */
         graphics.renderItem(itemStack, x, y);
         /*?} else if >=1.19.4 {*/
-        //Minecraft.getInstance().getItemRenderer().renderGuiItem(poseStack, itemStack, x, y);
-        /*?} else {*/
+        /*Minecraft.getInstance().getItemRenderer().renderGuiItem(poseStack, itemStack, x, y);
+        *//*?} else {*/
         /*syncModelViewToPoseStack();
         Minecraft.getInstance().getItemRenderer().renderGuiItem(itemStack, x, y);
         restoreModelView();
@@ -1468,12 +1468,12 @@ public class GenericGraphics {
 
     public void renderItemDecorations(Font font, ItemStack itemStack, int x, int y, @Nullable String countText) {
         /*? if >=26 { */
-        //graphics.itemDecorations(font, itemStack, x, y, countText);
-        /*?} else if >=1.20 { */
+        /*graphics.itemDecorations(font, itemStack, x, y, countText);
+        *//*?} else if >=1.20 { */
         graphics.renderItemDecorations(font, itemStack, x, y, countText);
         /*?} else if >=1.19.4 {*/
-        //Minecraft.getInstance().getItemRenderer().renderGuiItemDecorations(poseStack, font, itemStack, x, y, countText);
-        /*?} else {*/
+        /*Minecraft.getInstance().getItemRenderer().renderGuiItemDecorations(poseStack, font, itemStack, x, y, countText);
+        *//*?} else {*/
         /*syncModelViewToPoseStack();
         Minecraft.getInstance().getItemRenderer().renderGuiItemDecorations(font, itemStack, x, y, countText);
         restoreModelView();

@@ -5,8 +5,8 @@ import com.mojang.blaze3d.platform.InputConstants;
 /*? if >= 1.21.9 { */
 import net.minecraft.client.input.MouseButtonEvent;
 /*?} else {*/
-//import net.minecraft.client.gui.screens.Screen;
-/*?}*/
+/*import net.minecraft.client.gui.screens.Screen;
+*//*?}*/
 
 public class GenericMouseButtonEvent {
 

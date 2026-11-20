@@ -9,20 +9,20 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /*? if >= 26 { */
-//import net.minecraft.client.renderer.state.gui.GuiRenderState;
-/*? } else if >= 1.21.6 { */
+/*import net.minecraft.client.renderer.state.gui.GuiRenderState;
+*//*? } else if >= 1.21.6 { */
 import net.minecraft.client.gui.render.state.GuiRenderState;
 /*? } */
 
 /*? if >= 1.21.6 { */
 import org.joml.Matrix3x2fStack;
 /*? } else { */
-//import com.mojang.blaze3d.vertex.PoseStack;
-/*? } */
+/*import com.mojang.blaze3d.vertex.PoseStack;
+*//*? } */
 
 /*? if < 1.21.6 && >= 1.20 { */
-//import net.minecraft.client.renderer.MultiBufferSource;
-/*? } */
+/*import net.minecraft.client.renderer.MultiBufferSource;
+*//*? } */
 
 /*? if >= 1.20 { */
 import net.minecraft.client.Minecraft;
@@ -32,8 +32,8 @@ import net.minecraft.client.gui.GuiGraphics;
 /*? if >= 1.20 { */
 @Mixin(GuiGraphics.class)
 /*? } else { */
-//@Mixin(PoseStack.class)
-/*? } */
+/*@Mixin(PoseStack.class)
+*//*? } */
 public class GraphicsMixin implements GraphicsAccessor {
 
     @Unique

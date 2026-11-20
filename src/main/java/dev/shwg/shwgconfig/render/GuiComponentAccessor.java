@@ -28,8 +28,8 @@ public class GuiComponentAccessor extends GuiComponent {
         /^? if >= 1.19.4 { ^/
         GuiComponent.hLine(poseStack, x0, x1, y, color);
         /^? } else {^/
-        //INSTANCE().hLine(poseStack, x0, x1, y, color);
-        /^? } ^/
+        /^INSTANCE().hLine(poseStack, x0, x1, y, color);
+        ^//^? } ^/
 
 
     }
@@ -38,8 +38,8 @@ public class GuiComponentAccessor extends GuiComponent {
         /^? if >= 1.19.4 { ^/
         GuiComponent.vLine(poseStack, x, y0, y1, color);
         /^? } else {^/
-        //INSTANCE().vLine(poseStack, x, y0, y1, color);
-        /^? } ^/
+        /^INSTANCE().vLine(poseStack, x, y0, y1, color);
+        ^//^? } ^/
     }
 
 }

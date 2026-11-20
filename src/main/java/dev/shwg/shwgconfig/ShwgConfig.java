@@ -51,12 +51,12 @@ public class ShwgConfig implements ModInitializer {
         /^? if >= 1.21.9  { ^/
         RegisterKeyMappingsEvent.BUS.addListener((RegisterKeyMappingsEvent event) -> KeybindRegistrar.register(event, configManager.config()));
         /^? } else if >= 1.21.6 { ^/
-        //RegisterKeyMappingsEvent.getBus(context.getModBusGroup()).addListener((RegisterKeyMappingsEvent event) -> KeybindRegistrar.register(event, configManager.config()));
-        /^? } else if 1.20.6 { ^/
-        //context.getModEventBus().addListener((RegisterKeyMappingsEvent event) -> KeybindRegistrar.register(event, configManager.config()));
-        /^? } else { ^/
-        //FMLJavaModLoadingContext.get().getModEventBus().addListener((RegisterKeyMappingsEvent event) -> KeybindRegistrar.register(event, configManager.config()));
-        /^? } ^/
+        /^RegisterKeyMappingsEvent.getBus(context.getModBusGroup()).addListener((RegisterKeyMappingsEvent event) -> KeybindRegistrar.register(event, configManager.config()));
+        ^//^? } else if 1.20.6 { ^/
+        /^context.getModEventBus().addListener((RegisterKeyMappingsEvent event) -> KeybindRegistrar.register(event, configManager.config()));
+        ^//^? } else { ^/
+        /^FMLJavaModLoadingContext.get().getModEventBus().addListener((RegisterKeyMappingsEvent event) -> KeybindRegistrar.register(event, configManager.config()));
+        ^//^? } ^/
     }
 
     public ShwgConfig() {

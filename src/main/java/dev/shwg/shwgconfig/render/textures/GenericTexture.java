@@ -8,8 +8,8 @@ import net.minecraft.world.level.block.Block;
 /*? if >= 1.19.3 { */
 import net.minecraft.core.registries.BuiltInRegistries;
 /*? } else { */
-//import net.minecraft.core.Registry;
-/*? } */
+/*import net.minecraft.core.Registry;
+*//*? } */
 
 /**
  * Represents a general texture that can be drawn in the GUI.
@@ -43,8 +43,8 @@ public class GenericTexture {
         /*? if >= 1.19.3 { */
         Identifier id = BuiltInRegistries.BLOCK.getKey(block);
         /*? } else { */
-        //Identifier id = Registry.BLOCK.getKey(block);
-        /*? } */
+        /*Identifier id = Registry.BLOCK.getKey(block);
+        *//*? } */
         String namespace = id.getNamespace();
         String path = id.getPath();
         return customTexture(namespace, rootPath + path + ".png", 16, 16);
@@ -55,8 +55,8 @@ public class GenericTexture {
         /*? if >= 1.19.3 { */
         Identifier id = BuiltInRegistries.ITEM.getKey(item);
         /*? } else { */
-        //Identifier id = Registry.ITEM.getKey(item);
-        /*? } */
+        /*Identifier id = Registry.ITEM.getKey(item);
+        *//*? } */
         String namespace = id.getNamespace();
         String path = id.getPath();
         return customTexture(namespace, rootPath + path + ".png", 16, 16);
@@ -73,10 +73,10 @@ public class GenericTexture {
         /*? if >= 1.21 {*/
         this.sprite = RegistryHelper.build(namespace, texturePath);
         /*? } else if > 1.20.1 {*/
-        //this.sprite = RegistryHelper.build(namespace, texturePath);
-        /*? } else {*/
-        //this.sprite = RegistryHelper.build(namespace, atlasPath);
-         /*? } */
+        /*this.sprite = RegistryHelper.build(namespace, texturePath);
+        *//*? } else {*/
+        /*this.sprite = RegistryHelper.build(namespace, atlasPath);
+         *//*? } */
     }
 
     public Identifier getSprite() {

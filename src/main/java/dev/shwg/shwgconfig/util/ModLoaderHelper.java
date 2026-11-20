@@ -22,8 +22,8 @@ public final class ModLoaderHelper {
         /*? if fabric {*/
         return FabricLoader.getInstance().isModLoaded(modId);
         /*?} else if neoforge {*/
-        //return ModList.get().isLoaded(modId);
-        /*?} else if forge {*/
+        /*return ModList.get().isLoaded(modId);
+        *//*?} else if forge {*/
         /*/^~ if >= 26 '.get().isLoaded(' -> '.isLoaded(' ^/
         return ModList.get().isLoaded(modId);
         *//*?}*/

@@ -28,10 +28,10 @@ import net.minecraft.client.gui.render.state.pip.PictureInPictureRenderState;
 *//*?}*/
 
 /*? if >=26.2 && forge {*/
-//import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
-/*?} else if >=1.21.6 && (forge || (fabric && <1.21.9)) {*/
-//import net.minecraft.client.renderer.MultiBufferSource;
-/*?}*/
+/*import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
+*//*?} else if >=1.21.6 && (forge || (fabric && <1.21.9)) {*/
+/*import net.minecraft.client.renderer.MultiBufferSource;
+*//*?}*/
 
 /*? if >=1.21.6 && (forge || (fabric && <1.21.9)) {*/
 /*@Mixin(GuiRenderer.class)

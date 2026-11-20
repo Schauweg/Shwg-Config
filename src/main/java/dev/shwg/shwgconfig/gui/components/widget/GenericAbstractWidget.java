@@ -23,14 +23,14 @@ import net.minecraft.client.input.MouseButtonInfo;
 /*?} */
 
 /*? if < 1.20.2 { */
-//import net.minecraft.client.gui.screens.Screen;
-/*?} */
+/*import net.minecraft.client.gui.screens.Screen;
+*//*?} */
 
 /*? if >= 1.20 { */
 import net.minecraft.client.gui.GuiGraphics;
 /*?} else {*/
-//import com.mojang.blaze3d.vertex.PoseStack;
-/*?} */
+/*import com.mojang.blaze3d.vertex.PoseStack;
+*//*?} */
 
 /*? if < 1.19.4 { */
 /*import dev.shwg.shwgconfig.gui.components.screens.GenericScreen;
@@ -38,8 +38,8 @@ import com.mojang.blaze3d.platform.InputConstants;
 *//*?} */
 
 /*? if < 1.19.3 { */
-//import net.minecraft.client.gui.narration.NarratedElementType;
-/*?} */
+/*import net.minecraft.client.gui.narration.NarratedElementType;
+*//*?} */
 
 public abstract class GenericAbstractWidget extends AbstractWidget implements RenderableElement {
 
@@ -63,22 +63,22 @@ public abstract class GenericAbstractWidget extends AbstractWidget implements Re
 
     @Override
     /*? if >= 26 { */
-    //public final void extractWidgetRenderState(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-    /*? } else if >= 1.20 { */
+    /*public final void extractWidgetRenderState(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+    *//*? } else if >= 1.20 { */
     public final void renderWidget(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
     /*? } else if >= 1.19.4 { */
-    //public final void renderWidget(@NotNull PoseStack graphics, int mouseX, int mouseY, float partialTick) {
-    /*? } else { */
-    //public final void renderButton(@NotNull PoseStack graphics, int mouseX, int mouseY, float partialTick) {
-    /*? }*/
+    /*public final void renderWidget(@NotNull PoseStack graphics, int mouseX, int mouseY, float partialTick) {
+    *//*? } else { */
+    /*public final void renderButton(@NotNull PoseStack graphics, int mouseX, int mouseY, float partialTick) {
+    *//*? }*/
         GenericGraphics g = ((GraphicsAccessor) graphics).shwgConfigs$getGraphics();
         renderWidget(g, mouseX, mouseY, partialTick);
     }
 
     public final void render(@NotNull GenericGraphics graphics, int mouseX, int mouseY, float partialTick) {
         /*? if >= 26 { */
-        //super.extractRenderState(graphics.getGraphics(), mouseX, mouseY, partialTick);
-        /*? } else { */
+        /*super.extractRenderState(graphics.getGraphics(), mouseX, mouseY, partialTick);
+        *//*? } else { */
         super.render(graphics.getGraphics(), mouseX, mouseY, partialTick);
         /*? }*/
     }
@@ -279,7 +279,7 @@ public abstract class GenericAbstractWidget extends AbstractWidget implements Re
     }
     *//*?}*/
 
-    /*? < 1.21.9 */
+    /*? if < 1.21.9 */
     //@Override
     protected boolean isValidClickButton(int button) {
         return button == InputConstants.MOUSE_BUTTON_LEFT;
@@ -321,8 +321,8 @@ public abstract class GenericAbstractWidget extends AbstractWidget implements Re
         /*? if >= 1.19.3 { */
         this.defaultButtonNarrationText(output);
         /*? } else { */
-        //output.add(NarratedElementType.TITLE, this.getMessage());
-        /*? }*/
+        /*output.add(NarratedElementType.TITLE, this.getMessage());
+        *//*? }*/
     }
 
     @Override
@@ -347,8 +347,8 @@ public abstract class GenericAbstractWidget extends AbstractWidget implements Re
         /*? if >= 1.19.3 { */
         return super.getX();
         /*? } else { */
-        //return x;
-        /*? }*/
+        /*return x;
+        *//*? }*/
     }
 
     @Override
@@ -356,8 +356,8 @@ public abstract class GenericAbstractWidget extends AbstractWidget implements Re
         /*? if >= 1.19.3 { */
         super.setX(x);
         /*? } else { */
-        //this.x = x;
-        /*? }*/
+        /*this.x = x;
+        *//*? }*/
         if (onXChanged != null) {
             onXChanged.accept(x);
         }
@@ -368,8 +368,8 @@ public abstract class GenericAbstractWidget extends AbstractWidget implements Re
         /*? if >= 1.19.3 { */
         return super.getY();
         /*? } else { */
-        //return y;
-        /*? }*/
+        /*return y;
+        *//*? }*/
     }
 
     @Override
@@ -377,8 +377,8 @@ public abstract class GenericAbstractWidget extends AbstractWidget implements Re
         /*? if >= 1.19.3 { */
         super.setY(y);
         /*? } else { */
-        //this.y = y;
-        /*? }*/
+        /*this.y = y;
+        *//*? }*/
         if (onYChanged != null){
             onYChanged.accept(y);
         }

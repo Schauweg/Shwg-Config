@@ -27,19 +27,19 @@ import java.util.Map;
 *//*?}*/
 
 /*? if >=1.19.3 && <1.21.2 {*/
-//import org.joml.Quaternionf;
-/*?} else if <1.19.3 {*/
+/*import org.joml.Quaternionf;
+*//*?} else if <1.19.3 {*/
 /*import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 *//*?}*/
 
 /*? if >=1.19.4 && <1.20.6 {*/
-//import org.joml.Matrix4f;
-/*?}*/
+/*import org.joml.Matrix4f;
+*//*?}*/
 
 /*? if <1.20 {*/
-//import com.mojang.blaze3d.systems.RenderSystem;
-/*?}*/
+/*import com.mojang.blaze3d.systems.RenderSystem;
+*//*?}*/
 
 final class EntityModelRenderer {
 

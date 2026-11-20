@@ -26,8 +26,8 @@ import net.minecraftforge.event.TickEvent;
 /^? if >= 1.21.6 { ^/
 import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 /^? } else { ^/
-//import net.minecraftforge.eventbus.api.SubscribeEvent;
-/^? } ^/
+/^import net.minecraftforge.eventbus.api.SubscribeEvent;
+^//^? } ^/
 import net.minecraftforge.fml.common.Mod;
 *//*? } */
 
@@ -154,8 +154,8 @@ public class ClientTickDispatcher {
         /^? if >= 1.21.9 { ^/
         guiKeyPress(new GenericKeyEvent(event.getKeyEvent()));
         /^? } else {^/
-        //guiKeyPress(new GenericKeyEvent(event.getKeyCode(), event.getScanCode(), event.getModifiers()));
-        /^? } ^/
+        /^guiKeyPress(new GenericKeyEvent(event.getKeyCode(), event.getScanCode(), event.getModifiers()));
+        ^//^? } ^/
     }
     *//*? } */
 
@@ -173,8 +173,8 @@ public class ClientTickDispatcher {
         TickEvent.ClientTickEvent.Post.BUS.addListener(ClientTickDispatcher::onClientTick);
         ScreenEvent.KeyPressed.Pre.BUS.addListener(ClientTickDispatcher::onScreenKeyPress);
         /^? } else {^/
-        //MinecraftForge.EVENT_BUS.register(ClientTickDispatcher.class);
-        /^? } ^/
+        /^MinecraftForge.EVENT_BUS.register(ClientTickDispatcher.class);
+        ^//^? } ^/
     }
 
     @SubscribeEvent
@@ -187,8 +187,8 @@ public class ClientTickDispatcher {
         /^? if >= 1.21.9 { ^/
             guiKeyPress(new GenericKeyEvent(event.getInfo()));
         /^? } else {^/
-            //guiKeyPress(new GenericKeyEvent(event.getKeyCode(), event.getScanCode(), event.getModifiers()));
-        /^? } ^/
+            /^guiKeyPress(new GenericKeyEvent(event.getKeyCode(), event.getScanCode(), event.getModifiers()));
+        ^//^? } ^/
     }
     *//*? } */
 

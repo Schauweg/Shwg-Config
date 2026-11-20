@@ -16,8 +16,8 @@ import net.minecraft.data.AtlasIds;
 /*? if >= 1.19.3 { */
 import net.minecraft.core.registries.BuiltInRegistries;
 /*? } else { */
-//import net.minecraft.core.Registry;
-/*? } */
+/*import net.minecraft.core.Registry;
+*//*? } */
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -48,8 +48,8 @@ public final class MobEffectTextureChecks implements CheckSuite {
             /*? if >= 1.21.6 { */
             require(texture instanceof GenericSprite, "expected a GUI sprite on 1.21.6+, got " + texture.getClass().getSimpleName());
             /*? } else { */
-            //require(!(texture instanceof GenericSprite), "expected a plain texture before 1.21.6, got a sprite");
-            /*? } */
+            /*require(!(texture instanceof GenericSprite), "expected a plain texture before 1.21.6, got a sprite");
+            *//*? } */
             require(texture.regionWidth() == MobEffectTextures.ICON_SIZE && texture.regionHeight() == MobEffectTextures.ICON_SIZE,
                     "size is " + texture.regionWidth() + "x" + texture.regionHeight());
         });
@@ -103,8 +103,8 @@ public final class MobEffectTextureChecks implements CheckSuite {
         /*? if >= 1.21.9 { */
         TextureAtlasSprite sprite = Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(AtlasIds.GUI).getSprite(spriteId);
         /*? } else { */
-        //TextureAtlasSprite sprite = Minecraft.getInstance().getGuiSprites().getSprite(spriteId);
-        /*? } */
+        /*TextureAtlasSprite sprite = Minecraft.getInstance().getGuiSprites().getSprite(spriteId);
+        *//*? } */
         return sprite.contents().name().equals(MissingTextureAtlasSprite.getLocation());
     }
     /*? } */
@@ -122,8 +122,8 @@ public final class MobEffectTextureChecks implements CheckSuite {
         /*? if >= 1.19.3 { */
         BuiltInRegistries.MOB_EFFECT.forEach(effects::add);
         /*? } else { */
-        //Registry.MOB_EFFECT.forEach(effects::add);
-        /*? } */
+        /*Registry.MOB_EFFECT.forEach(effects::add);
+        *//*? } */
         return effects;
     }
 }

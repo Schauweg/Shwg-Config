@@ -66,8 +66,8 @@ public final class RegistryHelperAutotest {
             /*? if >= 1.21 { */
             require(fortune == null, "expected null without a world on 1.21+ (no client registry yet)");
             /*? } else { */
-            //require(fortune != null, "fortune not found in the static registry");
-            /*? } */
+            /*require(fortune != null, "fortune not found in the static registry");
+            *//*? } */
         });
 
         // Not comparing against "Fortune" so the test works with any game language.

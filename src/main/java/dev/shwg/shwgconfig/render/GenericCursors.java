@@ -28,6 +28,6 @@ public enum GenericCursors {
         };
     }
     /*? } else { */
-    //public void getVanillaType() { }
-    /*? } */
+    /*public void getVanillaType() { }
+    *//*? } */
 }

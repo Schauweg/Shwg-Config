@@ -11,15 +11,15 @@ import java.util.concurrent.ConcurrentHashMap;
 *//*? } */
 
 /*? if neoforge {*/
-//import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
-/*?}*/
+/*import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+*//*?}*/
 /*? if forge {*/
-//import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
-/*?}*/
+/*import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
+*//*?}*/
 /*? if fabric {*/
 /*? if >= 26 { */
-//import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
-/*? } else { */
+/*import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
+*//*? } else { */
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 /*? } */
 /*? } */
@@ -50,8 +50,8 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 public class KeybindRegistrar {
 
     /*? if >= 1.21.9 && forgeLike {*/
-    //private static final Set<Identifier> REGISTERED_CATEGORIES = ConcurrentHashMap.newKeySet();
-    /*?}*/
+    /*private static final Set<Identifier> REGISTERED_CATEGORIES = ConcurrentHashMap.newKeySet();
+    *//*?}*/
 
     /*? if fabric { */
     public static void registerImmediately(KeyMapping keyMapping) {
@@ -66,8 +66,8 @@ public class KeybindRegistrar {
             KeyMapping.Category category = keyMapping.getCategory();
             if (REGISTERED_CATEGORIES.add(category.id())) {
                 /^? if forge { ^/
-                //KeyMapping.Category.register(category.id());
-                /^? } else { ^/
+                /^KeyMapping.Category.register(category.id());
+                ^//^? } else { ^/
                 event.registerCategory(category);
                 /^? } ^/
             }

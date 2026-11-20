@@ -7,8 +7,8 @@ import org.jetbrains.annotations.Nullable;
 /*? if >= 1.19.3 { */
 import net.minecraft.core.registries.BuiltInRegistries;
 /*? } else { */
-//import net.minecraft.core.Registry;
-/*? } */
+/*import net.minecraft.core.Registry;
+*//*? } */
 
 import java.util.HashMap;
 import java.util.Map;
@@ -50,8 +50,8 @@ public final class MobEffectTextures {
         // textures/mob_effect/<path>.png, stitched into the GUI atlas as mob_effect/<path>, drawn with blitSprite
         return GenericSprite.plain(id.getNamespace(), "mob_effect/" + id.getPath(), ICON_SIZE, ICON_SIZE);
         /*? } else { */
-        //return GenericTexture.customTexture(id.getNamespace(), "textures/mob_effect/" + id.getPath() + ".png", ICON_SIZE, ICON_SIZE);
-        /*? } */
+        /*return GenericTexture.customTexture(id.getNamespace(), "textures/mob_effect/" + id.getPath() + ".png", ICON_SIZE, ICON_SIZE);
+        *//*? } */
     }
 
     /**
@@ -72,7 +72,7 @@ public final class MobEffectTextures {
         /*? if >= 1.19.3 { */
         return BuiltInRegistries.MOB_EFFECT.getKey(effect);
         /*? } else { */
-        //return Registry.MOB_EFFECT.getKey(effect);
-        /*? } */
+        /*return Registry.MOB_EFFECT.getKey(effect);
+        *//*? } */
     }
 }

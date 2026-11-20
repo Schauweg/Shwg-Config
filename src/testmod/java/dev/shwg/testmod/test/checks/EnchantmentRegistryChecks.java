@@ -62,8 +62,8 @@ public final class EnchantmentRegistryChecks implements CheckSuite {
             /*? if >= 1.21 { */
             require(fortune == null, "expected null without a world on 1.21+ (no client registry yet)");
             /*? } else { */
-            //require(fortune != null, "fortune not found in the static registry");
-            /*? } */
+            /*require(fortune != null, "fortune not found in the static registry");
+            *//*? } */
         });
 
         report.check("vanilla name is translated", () ->

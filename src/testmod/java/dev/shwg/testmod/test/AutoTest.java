@@ -203,8 +203,8 @@ public final class AutoTest {
 
     public static void grab(Minecraft mc, File file, Consumer<String> done) {
         /*? if >=26.2 { */
-        //Object target = mc.gameRenderer.mainRenderTarget();
-        /*?} else { */
+        /*Object target = mc.gameRenderer.mainRenderTarget();
+        *//*?} else { */
         Object target = mc.getMainRenderTarget();
         /*?} */
         grabAnyVersion(target, file, done);
@@ -245,8 +245,8 @@ public final class AutoTest {
 
     private static Screen currentScreen(Minecraft mc) {
         /*? if >=26.2 { */
-        //return mc.gui.screen();
-        /*?} else { */
+        /*return mc.gui.screen();
+        *//*?} else { */
         return mc.screen;
         /*?} */
     }

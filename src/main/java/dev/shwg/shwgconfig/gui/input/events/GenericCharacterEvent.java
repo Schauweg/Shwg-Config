@@ -13,8 +13,8 @@ public class GenericCharacterEvent {
     public GenericCharacterEvent(CharacterEvent event) {
         this.codepoint = event.codepoint();
         /*? if >= 26 { */
-        //this.modifiers = 0;
-        /*? } else { */
+        /*this.modifiers = 0;
+        *//*? } else { */
         this.modifiers = event.modifiers();
         /*? } */
     }
