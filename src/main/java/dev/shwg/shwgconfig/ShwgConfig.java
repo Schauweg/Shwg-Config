@@ -2,6 +2,7 @@ package dev.shwg.shwgconfig;
 
 import dev.shwg.shwgconfig.api.ClientTickDispatcher;
 
+import dev.shwg.shwgconfig.api.hud.HudRenderDispatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,8 +60,11 @@ public class ShwgConfig implements ModInitializer {
         ^//^? } ^/
     }
 
-    public ShwgConfig() {
+    /^~ if 1.20.6 || >= 1.21.6 '()' -> '(FMLJavaModLoadingContext context)' ^/
+    public ShwgConfig(FMLJavaModLoadingContext context) {
         initializePlatform();
+        /^~ if 1.20.6 || >= 1.21.6 'FMLJavaModLoadingContext.get()' -> 'context' ^/
+        HudRenderDispatcher.forgeInit(context);
     }
     *//*?}*/
 
@@ -73,6 +77,7 @@ public class ShwgConfig implements ModInitializer {
 
     public ShwgConfig(IEventBus modEventBus, ModContainer modContainer) {
         initializePlatform();
+        HudRenderDispatcher.neoForgeInit(modEventBus);
     }
     *//*?}*/
 
@@ -80,6 +85,7 @@ public class ShwgConfig implements ModInitializer {
     @Override
     public void onInitialize() {
         initializePlatform();
+        HudRenderDispatcher.fabricInit();
     }
     /*?}*/
 

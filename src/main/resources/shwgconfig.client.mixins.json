@@ -8,6 +8,7 @@
     "EntityAccessor",
     "EntityRenderDispatcherAccessor",
     "GraphicsMixin",
+    "GuiHudMixin",
     "GuiRendererMixin",
     "LivingEntityRendererInvoker",
     "ModelPartAccessor"
