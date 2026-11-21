@@ -1,11 +1,14 @@
 package dev.shwg.testmod;
 
+import dev.shwg.shwgconfig.api.hud.HudOptions;
+import dev.shwg.shwgconfig.api.hud.HudRenderDispatcher;
 import dev.shwg.testmod.test.AutoTest;
 import dev.shwg.testmod.test.render.RenderTestScreen;
 import net.minecraft.client.Minecraft;
 import dev.shwg.shwgconfig.api.ConfigManager;
 import dev.shwg.shwgconfig.api.ClientTickDispatcher;
 import dev.shwg.testmod.config.TestConfig;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
 
 /*? if fabric {*/
@@ -82,5 +85,21 @@ public class TestMod implements ModInitializer {
                 }
             }
         });
+
+        HudRenderDispatcher.register(MOD_ID, "huddebughide",
+                context -> {
+                    Font font = Minecraft.getInstance().font;
+                    context.graphics().drawString(font, "Hud Test hide with debug screen", 5, 5, -1);
+                },
+                HudOptions.create().hideWithDebugScreen()
+        );
+
+        HudRenderDispatcher.register(MOD_ID, "hudalways", context -> {
+                    Font font = Minecraft.getInstance().font;
+                    context.graphics().drawString(font, "Hud Test show always", 5, context.screenHeight() - font.lineHeight - 5, -1);
+                }
+        );
+
+
     }
 }
