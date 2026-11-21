@@ -38,6 +38,7 @@ public class TestMod implements ModInitializer {
     public static final String MOD_ID = "shwgconfigtestmod";
     public static final TestConfig TEST_CONFIG = new TestConfig();
     public static ConfigManager configManager;
+    public static int Z_OFFSET = 0;
 
     /*? if forge {*/
     /*/^~ if 1.20.6 || >= 1.21.6 '()' -> '(FMLJavaModLoadingContext context)' ^/
@@ -74,6 +75,18 @@ public class TestMod implements ModInitializer {
             }
             if (keyEvent.matches(TEST_CONFIG.openTestScreen)) {
                 Minecraft.getInstance().setScreen(new RenderTestScreen(Minecraft.getInstance().screen));
+            }
+        });
+
+        ClientTickDispatcher.registerGUI(keyEvent -> {
+            if (keyEvent.isUp() || keyEvent.isDown()) {
+                int offset = !keyEvent.hasShiftDown() ? 1 : 10;
+                if (keyEvent.isDown()) {
+                    Z_OFFSET -= offset;
+                } else {
+                    Z_OFFSET += offset;
+                }
+                System.out.println("z offset: " + Z_OFFSET);
             }
         });
 
